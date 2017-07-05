@@ -11,8 +11,8 @@
 #include "layer_koh.h"
 #include "serial.h"
 #include <QThread>
-#include "ab_practice/include/MYO_lib.h"
-#include "ab_practice/include/stand_dev.h"
+#include "MYO_lib.h"
+#include "stand_dev.h"
 
 using namespace std;
 
