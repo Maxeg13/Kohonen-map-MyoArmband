@@ -1,4 +1,4 @@
-#include "stand_dev.h"
+#include "../stand_dev.h"
 #include<math.h>
 
 int threshB(int x, int a)
@@ -48,7 +48,7 @@ float frBuHp2::operator()(float x) //class II
 
 standartDev::standartDev()
 {
-    N=250;
+    N=400;
     accumD=0;
     xPr=new int8_t[N];
     for(int i=0;i<N;i++)
@@ -59,7 +59,7 @@ float standartDev::operator()(int y)
 {
     j++;
     if(j==N)j=0;
-    xPr[j]=threshB(y,3);
+    xPr[j]=killRange(y,3);
     accumD+=((int16_t)xPr[j])*((int16_t)xPr[j]);//int16_t
     accumD-=((int16_t)xPr[(j==(N-1))?0:(j+1)])*
             ((int16_t)xPr[(j==(N-1))?0:(j+1)]);
@@ -125,8 +125,8 @@ float WillisonAmp::operator()(int y)
     j++;
     if(j==N)j=0;
     xPr[j]=y;
-    accumD+=threshB(((int)xPr[j])-((int)xPr[(j-1+N)%N]),3);//int16_t
-    accumD-=threshB((int)xPr[(j+2)%N]-(int)xPr[(j+1)%N],3);
+    accumD+=threshB(((int)xPr[j])-((int)xPr[(j-1+N)%N]),5);//int16_t
+    accumD-=threshB((int)xPr[(j+2)%N]-(int)xPr[(j+1)%N],5);
     return(2000*((float)accumD)/N);
 }
 
@@ -139,7 +139,7 @@ float featureExtr1::operator()(int8_t x)
     //        return(400*LPF2((killRange(MF(x),30))));//demo of bipolar LPF
     //    return(LPF(WA(x)));
     //    return(threshB(abs(x),20)*100);
-    return(400*LPF2(upperVal(killRange(MF(x),30))));
+    return(10000*LPF2((killRange(MF(x),30))));
 }
 
 
