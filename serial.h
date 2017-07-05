@@ -1,3 +1,4 @@
+//modified from http://blablacode.ru/programmirovanie/392
 #ifndef SERIAL_DLL
 #define SERIAL_DLL
 #include "stdafx.h"
