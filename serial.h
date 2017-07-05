@@ -3,9 +3,12 @@
 #include "stdafx.h"
 #include "targetver.h"
 #include <Windows.h>
+class Serial
+{
+public:
+    HANDLE hSerial;
+void  InitCOM(LPCTSTR );
+char  ReadCOM(bool& );
 
-void SERIAL_DLL InitCOM(HANDLE& ,LPCTSTR );
-
-char SERIAL_DLL ReadCOM(HANDLE& ,bool& );
-
+};
 #endif // SERIAL_H

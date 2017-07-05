@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include <Windows.h>
 #include "targetver.h"
-void InitCOM(HANDLE& hSerial,LPCTSTR sPortName)
+void Serial::InitCOM(LPCTSTR sPortName)
 {
 
 
@@ -30,7 +30,7 @@ void InitCOM(HANDLE& hSerial,LPCTSTR sPortName)
     BOOL iRet = WriteFile (hSerial,data,dwSize,&dwBytesWritten ,NULL);
 }
 
-char ReadCOM(HANDLE& hSerial,bool& ON)
+char Serial::ReadCOM(bool& ON)
 {
     DWORD iSize;
     char sReceivedChar;

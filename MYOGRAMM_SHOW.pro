@@ -13,7 +13,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 #LIBS += "$$OUT_PWD/release/stand_dev.dll"
 #LIBS+="C:\Users\123\Documents\MYOGRAMM_SHOW\serial.dll"
 LIBS+="$$PWD/serial.o"
-#LIBS+="$$PWD/ab_practice/stand_dev.o"
+LIBS+="$$PWD/stand_dev.o"
 INCLUDEPATH += "$$PWD"
 
 TARGET = MYOGRAMM_SHOW
@@ -36,17 +36,13 @@ SOURCES += main.cpp\
     stdafx.cpp \
     layer_koh.cpp \
     kohonenwidget.cpp \
-    stand_dev.cpp \
-    serial.cpp \
-    stand_dev.cpp
+#    stand_dev.cpp
 
 HEADERS  += mainwindow.h \
     headers.h \
     serial.h \
     stdafx.h \
     targetver.h \
-#    MYO_lib.h
-#    ab_practice/include/MYO_lib.h
     stand_dev.h \
     drawing.h \
     layer_koh.h \

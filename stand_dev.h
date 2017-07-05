@@ -1,4 +1,6 @@
 #include<stdint.h>
+#ifndef STANDART_DEV
+#define STANDART_DEV
 class standartDev
 {
 public:
@@ -9,6 +11,15 @@ public:
     float  preNorm;
     standartDev();
     float operator()(int);
+};
+
+
+
+class  frBuHp2
+{
+public:
+    float v[3];
+    float operator()(float );
 };
 
 
@@ -74,3 +85,4 @@ public:
     WillisonAmp WA;
     float operator()(int8_t);
 };
+#endif

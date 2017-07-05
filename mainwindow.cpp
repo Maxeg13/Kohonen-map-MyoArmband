@@ -11,21 +11,21 @@
 #include "layer_koh.h"
 #include "serial.h"
 #include <QThread>
-#include "MYO_lib.h"
+//#include "MYO_lib.h"
 #include "stand_dev.h"
 
 using namespace std;
 
 
 QThread* thread;
-HANDLE hSerial;
+Serial hSerial;
 int readVar;
 int axisScale=10000;
 
 int8_t EMG1;
 standartDev STD[2];
 frBuHp2 FBH[2];
-bandPassFr BPF[2];
+//bandPassFr BPF[2];
 matchedFr MF[2];
 lowPassFr LPF[2];
 integrator INTEGR[2];
@@ -41,7 +41,7 @@ int ind_c[2];
 
 serial_obj::serial_obj()
 {
-    InitCOM(hSerial,L"COM5");
+    hSerial.InitCOM(L"COM5");
 //    featureOut.resize(3);
     featureOut.resize(3);
     for(int i=0;i<featureOut.size();i++)
@@ -57,7 +57,7 @@ void serial_obj::doWork()
     {
 
         bool readVarON;
-        readVar=(int8_t)ReadCOM(hSerial,readVarON);
+        readVar=(int8_t)hSerial.ReadCOM(readVarON);
 
         if(readVarON)
         {
