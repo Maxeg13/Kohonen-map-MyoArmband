@@ -1,0 +1,3 @@
+g++ -c -DBUILDING_EXAMPLE_DLL stand_dev.cpp
+g++ -shared -o ../../build-MYOGRAMM_SHOW-Desktop_Qt_5_7_1_MinGW_32bit-Release/release/stand_dev.dll stand_dev.o -Wl,--out-implib,-libstand_dev.a
+C:\Users\123\Documents\build-MYOGRAMM_SHOW-Desktop_Qt_5_7_1_MinGW_32bit-Release\release\MYOGRAMM_SHOW.EXE
