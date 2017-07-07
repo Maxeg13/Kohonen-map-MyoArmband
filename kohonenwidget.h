@@ -14,6 +14,7 @@ public:
     QPushButton *learnB2;
     QPushButton *learnB3;
     QPushButton *learnB4;
+    QPushButton *learnB5;
     QPushButton *rstLearningB;
     layer_koh *LK;
     QTimer *timer;
@@ -27,6 +28,7 @@ public slots:
     void rst();
     void learning_3();
     void learning_4();
+    void learning_5();
 protected:
     void paintEvent(QPaintEvent *e);
 };

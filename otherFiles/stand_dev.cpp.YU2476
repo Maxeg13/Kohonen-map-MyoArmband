@@ -86,6 +86,21 @@ float matchedFr::operator()(float xi)
 
 
 
+float matchedFrV::operator()(float xi)
+{
+    sum = 0;
+    for (int8_t i = 0; i < MFN; i++)
+    {
+        sum += a[MFN - 1 - i] * x[i];
+    }
+    for (int8_t i = MFN - 1; i > 0; i--)
+    {
+        x[i] = x[i - 1];
+    }
+    x[0] = xi;
+    return (sum);
+}
+
 matchedFr::matchedFr(){
     weight=7;
     MFN=7;
@@ -102,21 +117,19 @@ matchedFr::matchedFr(){
 }
 
 
-matchedFrV::matchedFrV(){
+matchedFr::matchedFrV(){
     weight=7;
-    MFN=9;
+    MFN=12;
     a=new float[MFN];
     x=new float[MFN];
 
     a[0]=1;
-    a[1]=2;
-    a[2]=3;
-    a[3]=4;
-    a[4]=4;
+    a[1]=4;
+    a[2]=6;
+    a[3]=7;
+    a[4]=6;
     a[5]=4;
-    a[6]=3;
-    a[7]=2;
-    a[8]=1;
+    a[6]=1;
 }
 
 

@@ -93,10 +93,9 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
     learnB2=new QPushButton("learn 1");
     learnB3=new QPushButton("learn 2");
     learnB4=new QPushButton("learn 3");
-    learnB5=new QPushButton("learn 4");
     rstLearningB=new QPushButton("rst learning");
 
-    data_learn.resize(5);
+    data_learn.resize(4);
     for(int i=0;i<data_learn.size();i++)
         data_learn[i].resize(3);
     data_learn[0][0]=200;
