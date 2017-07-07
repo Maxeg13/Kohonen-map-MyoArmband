@@ -51,7 +51,7 @@ void KohonenWidget::learning_5()
 void KohonenWidget::rst()
 {
     LK->rst();
-    for(int i=0;i<(10000-10000%data_learn.size());i++)
+    for(int i=0;i<(4000-4000%data_learn.size());i++)
     {
         LK->learnW(data_learn[i%data_learn.size()]);
     }
@@ -99,11 +99,10 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
 
     data_learn.resize(5);
     for(int i=0;i<data_learn.size();i++)
-        data_learn[i].resize(4);
+        data_learn[i].resize(3);
     data_learn[0][0]=200;
     data_learn[0][1]=100;
     data_learn[0][2]=100;
-    data_learn[0][3]=100;
     data_learn[1]=data_learn[0];
     data_learn[2]=data_learn[0];
     data_learn[3]=data_learn[0];

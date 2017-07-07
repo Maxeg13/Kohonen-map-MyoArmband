@@ -36,8 +36,8 @@ WillisonAmp WA[2];
 int bufShowSize=1500;
 QTimer *timer;
 QPainter *painter;
-myCurve *curveTest, *curveFeature1, *curveFeature2, *curveFeature3;
-QVector <QVector<float>> dataEMG1, dataEMG2,featureEMG11, featureEMG12, featureEMG13;
+myCurve *curveTest, *curveFeature1, *curveFeature2, *curveFeature3, *curveFeature4;
+QVector <QVector<float>> dataEMG1, dataEMG2,featureEMG11, featureEMG12, featureEMG13, featureEMG14;
 int ind_c[2];
 
 
@@ -45,7 +45,7 @@ serial_obj::serial_obj()
 {
     hSerial.InitCOM(L"COM5");
 //    featureOut.resize(3);
-    featureOut.resize(3);
+    featureOut.resize(4);
     for(int i=0;i<featureOut.size();i++)
         featureOut[i]=1;
 
@@ -85,9 +85,9 @@ void serial_obj::doWork()
                             8*readVar;//);
 
                     featureOut[0]=featureEMG11[1][ind_c[0]]=FE1[0](EMG1)/20;
-                    featureOut[1]=featureEMG12[1][ind_c[0]]=3*LPF[0](STD[0](EMG1));
-//                    featureOut[2]=featureEMG13[1][ind_c[0]]=LPF[1](WA[0](EMG1));
-                    featureOut[2]=featureEMG13[1][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
+                    featureOut[1]=featureEMG12[1][ind_c[0]]=2.5*LPF[0](STD[0](EMG1));
+                    featureOut[2]=featureEMG13[1][ind_c[0]]=LPF[1](WA[0](EMG1));
+                    featureOut[3]=featureEMG14[1][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
 //emit(learnSig())
                 }
             }
@@ -110,11 +110,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     curveTest=new myCurve(bufShowSize, dataEMG1,d_plot,"EMG_1",Qt::black,Qt::black,ind_c[0]);
 
-    curveFeature1=new myCurve(bufShowSize,featureEMG11,d_plot,"bipolar feature",Qt::red,Qt::black,ind_c[0]);
+    curveFeature1=new myCurve(bufShowSize,featureEMG11,d_plot,"bipolar feature1",Qt::red,Qt::black,ind_c[0]);
 
     curveFeature2=new myCurve(bufShowSize, featureEMG12,d_plot,"force feature",Qt::green,Qt::black,ind_c[0]);
 
-    curveFeature3=new myCurve(bufShowSize, featureEMG13,d_plot,"Willison's feature",Qt::blue,Qt::black,ind_c[0]);
+    curveFeature3=new myCurve(bufShowSize, featureEMG13,d_plot,"Willison's feature2",Qt::blue,Qt::black,ind_c[0]);
+
+    curveFeature4=new myCurve(bufShowSize, featureEMG14,d_plot,"bipolar feature2",Qt::red,Qt::black,ind_c[0]);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
@@ -140,6 +142,7 @@ void MainWindow::drawing()
     curveFeature1->signalDrawing();
     curveFeature2->signalDrawing();
     curveFeature3->signalDrawing();
+    curveFeature4->signalDrawing();
 
     featureOut=SO->featureOut;
 //    qDebug()<<SO->featureOut[0];

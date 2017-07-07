@@ -51,7 +51,7 @@ void KohonenWidget::learning_5()
 void KohonenWidget::rst()
 {
     LK->rst();
-    for(int i=0;i<(10000-10000%data_learn.size());i++)
+    for(int i=0;i<(40000-40000%data_learn.size());i++)
     {
         LK->learnW(data_learn[i%data_learn.size()]);
     }
