@@ -1,6 +1,6 @@
 //works with KULER_myolib
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
+//#include "ui_mainwindow.h"
 #include "drawing.h"
 #include "headers.h"
 //#include ""
