@@ -1,16 +1,19 @@
 //works with KULER_myolib
+#define SERIAL
+
+#ifdef SERIAL
+#include "serial.h"
+#endif
+
 #include "mainwindow.h"
-//#include "ui_mainwindow.h"
 #include "drawing.h"
 #include "headers.h"
-//#include ""
 #include "stdafx.h"
 #include "targetver.h"
 #include <Windows.h>
-
-
 #include "layer_koh.h"
-#include "serial.h"
+
+
 #include <QThread>
 //#include "MYO_lib.h"
 #include "stand_dev.h"
@@ -42,7 +45,7 @@ QVector<QVector <QVector<float>>> dataEMG, featureEMG1, featureEMG2, featureEMG3
 int ind_c[2];
 
 
-
+#ifdef SERIAL
 serial_obj::serial_obj(QString qstr)
 {
     std::string str1=qstr.toUtf8().constData();;
@@ -132,7 +135,7 @@ void serial_obj::doWork()
         }
     }
 }
-
+#endif
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -149,7 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
         //________________________
         //    setCentralWidget(d_plot);
         drawingInit(d_plot[i_pl]);
-            d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);
 
         curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG_1",Qt::black,Qt::black,ind_c[i_pl]);
 
@@ -178,15 +181,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
     timer->start(40);
 
+
+
+#ifdef SERIAL
     QThread* thread = new QThread( );
     SO=new serial_obj("COM5");
     SO->moveToThread(thread);
-
-    //    connect(this,SIGNAL(featureOutSignal(QVector<float>)),this,SLOT(getFeature(QVector<float>)));
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
-
+#endif
 }
+
 
 
 
