@@ -47,6 +47,7 @@ HEADERS  += mainwindow.h \
     drawing.h \
     layer_koh.h \
     kohonenwidget.h \
-    stand_dev.h
+    stand_dev.h \
+    serialqobj.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui

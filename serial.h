@@ -8,8 +8,8 @@ class Serial
 {
 public:
     HANDLE hSerial;
-void  InitCOM(LPCTSTR );
+void  InitCOM(const wchar_t* );
 char  ReadCOM(bool& );
-
+void close();
 };
 #endif // SERIAL_H

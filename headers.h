@@ -1,7 +1,7 @@
 #ifndef HEADERS_H
 #define HEADERS_H
-
-
+#include <QLineEdit>
+#include <QString>
 #include <iostream>
 #include <QDebug>
 #include <QVBoxLayout>
