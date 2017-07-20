@@ -36,7 +36,7 @@ WillisonAmp WA[2];
 int bufShowSize=1500;
 QTimer *timer;
 QPainter *painter;
-myCurve *curveTest, *curveFeature1, *curveFeature2, *curveFeature3, *curveFeature4;
+myCurve *curveTest[2], *curveFeature1, *curveFeature2, *curveFeature3, *curveFeature4;
 QVector <QVector<float>> dataEMG1, dataEMG2,featureEMG11, featureEMG12, featureEMG13, featureEMG14;
 int ind_c[2];
 
@@ -86,7 +86,7 @@ void serial_obj::doWork()
 
                     featureOut[0]=featureEMG11[1][ind_c[0]]=FE1[0](EMG1)/20;
                     featureOut[1]=featureEMG12[1][ind_c[0]]=2.5*LPF[0](STD[0](EMG1));
-                    featureOut[2]=featureEMG13[1][ind_c[0]]=LPF[1](WA[0](EMG1));
+                    featureOut[2]=featureEMG13[1][ind_c[0]]=2*LPF[1](WA[0](EMG1));
                     featureOut[3]=featureEMG14[1][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
 //emit(learnSig())
                 }
@@ -100,15 +100,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     d_plot = new QwtPlot(this);
-
+  QwtPlot* d_plot2 = new QwtPlot(this);
     //________________________
-    setCentralWidget(d_plot);
+//    setCentralWidget(d_plot);
     drawingInit(d_plot);
 
-    d_plot->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);
+        drawingInit(d_plot2);
+
+//    d_plot->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);
 
 
-    curveTest=new myCurve(bufShowSize, dataEMG1,d_plot,"EMG_1",Qt::black,Qt::black,ind_c[0]);
+    curveTest[0]=new myCurve(bufShowSize, dataEMG1,d_plot,"EMG_1",Qt::black,Qt::black,ind_c[0]);
 
     curveFeature1=new myCurve(bufShowSize,featureEMG11,d_plot,"bipolar feature1",Qt::red,Qt::black,ind_c[0]);
 
@@ -117,6 +119,19 @@ MainWindow::MainWindow(QWidget *parent) :
     curveFeature3=new myCurve(bufShowSize, featureEMG13,d_plot,"Willison's feature2",Qt::blue,Qt::black,ind_c[0]);
 
     curveFeature4=new myCurve(bufShowSize, featureEMG14,d_plot,"bipolar feature2",Qt::red,Qt::black,ind_c[0]);
+
+
+
+    QGridLayout* GL=new QGridLayout();
+    QWidget *centralWidget1=new QWidget();
+    centralWidget1->setLayout(GL);
+
+    GL->addWidget(d_plot,1,1);
+    GL->addWidget(d_plot2,2,1);
+
+    setCentralWidget(centralWidget1);
+
+
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
@@ -138,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::drawing()
 {
-    curveTest->signalDrawing();
+    curveTest[0]->signalDrawing();
     curveFeature1->signalDrawing();
     curveFeature2->signalDrawing();
     curveFeature3->signalDrawing();

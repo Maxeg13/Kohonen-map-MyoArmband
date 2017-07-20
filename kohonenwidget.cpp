@@ -89,7 +89,6 @@ void KohonenWidget::refresh(QVector<float> inp)
 KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
 {
 
-
     learnB1=new QPushButton("learn weak");
     learnB2=new QPushButton("learn 1");
     learnB3=new QPushButton("learn 2");

@@ -170,7 +170,7 @@ void layer_koh::learnW(const QVector<float>& inp)
     {
         h1=dist2[i][ind];
         float exp_val=exp(-0.001*t);
-        float h_func=exp(-h1/(1200000*exp_val*exp_val+0.00001));//.0000001
+        float h_func=exp(-h1/(1300000*exp_val*exp_val+0.00001));//.0000001
 
         for(int j=0;j<SR[i].size_in;j++)
         {
