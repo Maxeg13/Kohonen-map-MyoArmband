@@ -3,7 +3,10 @@
 //#define SERIAL
 #ifdef SERIAL
 #include "serialqobj.h"
+#else
+#include "datacollector.h"
 #endif
+
 
 #include "drawing.h"
 #include "headers.h"
@@ -13,14 +16,19 @@
 #include "layer_koh.h"
 
 #include <QThread>
-//#include "MYO_lib.h"
 #include "stand_dev.h"
 
 using namespace std;
 
 
 QThread* thread;
+
+#ifdef SERIAL
 Serial hSerial;
+#else
+DataCollector collector;
+#endif
+
 
 int axisScale=10000;
 
@@ -37,6 +45,7 @@ featureExtr1 FE1[2];
 WillisonAmp WA[2];
 int bufShowSize=1500;
 QTimer *timer;
+QTimer *timerMyo;
 QPainter *painter;
 myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
 QVector<QVector <QVector<float>>> dataEMG, featureEMG1, featureEMG2, featureEMG3, featureEMG4;
@@ -190,11 +199,27 @@ MainWindow::MainWindow(QWidget *parent) :
     SO->moveToThread(thread);
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
+#else
+    timerMyo = new QTimer(this);
+    connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
+    timerMyo->start(4);
+    connect(&collector.qdc,SIGNAL(EMG(QVector<float>)),this,SLOT(getEMG(QVector<float>)));
 #endif
+
 }
 
+void MainWindow::kickMyo()
+{
+    collector.kick(10);
+}
 
-
+void MainWindow::getEMG(QVector<float> x)
+{
+    dataEMG[0][1][ind_c[0]]=x[0];
+    dataEMG[1][1][ind_c[0]]=x[1];
+    ind_c[0]=(ind_c[0]+1)%dataEMG[0][1].size();
+    ind_c[1]=(ind_c[1]+1)%dataEMG[1][1].size();
+}
 
 
 

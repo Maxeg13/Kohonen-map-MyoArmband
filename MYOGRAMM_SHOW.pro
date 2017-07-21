@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 LIBS+="$$PWD/serial.o"
 LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32
-
+LIBS     += $$OUT_PWD/release/datacollector.o
 
 TARGET = MYOGRAMM_SHOW
 TEMPLATE = app
@@ -58,7 +58,8 @@ HEADERS  += \
     myo/myo.hpp \
     kohonenwidget.h \
     layer_koh.h \
-    mainwindow.h
+    mainwindow.h \
+    datacollector.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

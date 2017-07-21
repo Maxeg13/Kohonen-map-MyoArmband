@@ -34,7 +34,8 @@ public slots:
     void drawing();
     void getFeature(QVector<float>);
     void reconnect(QString);
-
+    void getEMG(QVector<float>);
+    void kickMyo();
 signals:
     void featureOutSignal(QVector<float>);
     void sended();
