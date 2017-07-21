@@ -3,7 +3,10 @@
 //#define SERIAL
 #ifdef SERIAL
 #include "serialqobj.h"
+#else
+#include "datacollector.h"
 #endif
+
 
 #include "drawing.h"
 #include "headers.h"
@@ -13,14 +16,17 @@
 #include "layer_koh.h"
 
 #include <QThread>
-//#include "MYO_lib.h"
 #include "stand_dev.h"
 
 using namespace std;
 
 
 QThread* thread;
+
+#ifdef SERIAL
 Serial hSerial;
+#endif
+
 
 int axisScale=10000;
 
@@ -190,11 +196,14 @@ MainWindow::MainWindow(QWidget *parent) :
     SO->moveToThread(thread);
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
+#else
+    
 #endif
+
 }
 
 
-
+void MainWindow::getEMG(QVector<float>)
 
 
 

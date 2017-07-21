@@ -7,14 +7,11 @@
 QT       += core gui
 CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-#LIBS += -L"C:\Users\123\Documents\MYOGRAMM_SHOW" -lab
-#LIBS +="$$PWD/stand_dev11.dll"
-#INCLUDEPATH += "$$PWD"
-#LIBS += "$$OUT_PWD/release/stand_dev.dll"
-#LIBS+="C:\Users\123\Documents\MYOGRAMM_SHOW\serial.dll"
+
 LIBS+="$$PWD/serial.o"
 LIBS+="$$PWD/stand_dev.o"
-INCLUDEPATH += "$$PWD"
+LIBS+=-L$$OUT_PWD/release -lmyo32
+
 
 TARGET = MYOGRAMM_SHOW
 TEMPLATE = app
@@ -32,22 +29,38 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEL_FILE += "$$OUT_PWD/release/MYOGRAMM_SHOW.EXE"
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
     stdafx.cpp \
+    kohonenwidget.cpp \
     layer_koh.cpp \
-    kohonenwidget.cpp
+    mainwindow.cpp
 #    stand_dev.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     headers.h \
     serial.h \
     stdafx.h \
     targetver.h \
     stand_dev.h \
     drawing.h \
-    layer_koh.h \
-    kohonenwidget.h \
     stand_dev.h \
-    serialqobj.h
+    myo/cxx/detail/ThrowOnError.hpp \
+    myo/cxx/impl/Hub_impl.hpp \
+    myo/cxx/impl/Myo_impl.hpp \
+    myo/cxx/impl/Pose_impl.hpp \
+    myo/cxx/DeviceListener.hpp \
+    myo/cxx/Hub.hpp \
+    myo/cxx/Myo.hpp \
+    myo/cxx/Pose.hpp \
+    myo/cxx/Quaternion.hpp \
+    myo/cxx/Vector3.hpp \
+    myo/libmyo/detail/visibility.h \
+    myo/libmyo.h \
+    myo/myo.hpp \
+    kohonenwidget.h \
+    layer_koh.h \
+    mainwindow.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
+
+DISTFILES += \
+    myo/libmyo/myo32.dll

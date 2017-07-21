@@ -5,12 +5,101 @@
 #include <QtGui>
 #include <QPushButton>
 #include <QCoreApplication>
+#include <myo/myo.hpp>
+#include <windows.h>
 
 
-        int main(int argc, char *argv[])
+
+class DataCollector : public myo::DeviceListener
+{
+public:
+    DataCollector()
+        : emgSamples()
+    {
+    }
+
+    // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
+    void onUnpair(myo::Myo* myo, uint64_t timestamp)
+    {
+        // We've lost a Myo.        // Let's clean up some leftover state.
+        emgSamples.fill(0);
+    }
+
+    // onEmgData() is called whenever a paired Myo has provided new EMG data, and EMG streaming is enabled.
+    void onEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* emg)
+    {
+        //        static uint64_t timestampMin;
+        //        static uint64_t timestampRelat;
+        //        static uint64_t i=0;
+        //        if(i==0)timestampMin=timestamp;
+        //        i++;
+        //        timestampRelat=timestamp-timestampMin;
+        //        qDebug()<<i*1000000./timestampRelat;
+
+
+        for (int i = 0; i < 8; i++) {
+            emgSamples[i] = emg[i];
+            emgSamplesD[i] = (double) emg[i];
+        }
+    }
+
+    // There are other virtual functions in DeviceListener that we could override here, like onAccelerometerData().
+    // For this example, the functions overridden above are sufficient.
+    void onAccelerometerData(myo::Myo* myo, uint64_t timestamp, const myo::Vector3<float> &accel)
+    {
+        accSamplesD[0] = (double) accel.x();
+        accSamplesD[1] = (double) accel.y();
+        accSamplesD[2] = (double) accel.z();
+        accSamplesD[3] = (double) accel.magnitude();
+    }
+
+    void print()
+    {
+        qDebug() << '\r';
+        //                for (size_t i = 0; i < emgSamples.size(); i++)
+        //                {
+        //                    ostringstream oss;
+        //                    oss << static_cast<int>(emgSamples[i]);
+        //                    string emgString = oss.str();
+        //                    QString qemgString = QString::fromStdString(emgString);
+        //                    QString qbuffStr =  QString::fromStdString(std::string(4 - emgString.size(), ' '));
+        //                    qDebug() << '[' << qemgString <<  qbuffStr << ']';
+        //                }
+    }
+
+    std::array<double, 8> returnEMGDouble()
+    {
+        return  emgSamplesD;
+    }
+
+    std::array<double, 4> returnACCDouble()
+    {
+        return  accSamplesD;
+    }
+    void plot()
+    {
+
+    }
+
+    std::array<int8_t, 8> emgSamples;               // The values of this array is set by onEmgData() above.
+    std::array<double, 8> emgSamplesD;               // The values of this array is set by onEmgData() above.
+    std::array<double, 4> accSamplesD;
+};
+
+
+myo::Hub hub("com.example.emg-data-sample");
+DataCollector collector;
+int main(int argc, char *argv[])
 {
 
     QApplication a(argc, argv);
+
+    qDebug()<<"wtf2";
+
+
+
+
+    hub.run(5);
     MainWindow SignalMW;
     SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
@@ -33,7 +122,7 @@
     GL->addWidget(KW.learnB6,2,6);
     GL->addWidget(KW.rstLearningB,2,7);
     GL->addWidget(KW.L_E,2,buttons_n);
-//    L_E.setText("COM6");
+    //    L_E.setText("COM6");
 
 
     KohonenMW.setCentralWidget(centralWidget1);

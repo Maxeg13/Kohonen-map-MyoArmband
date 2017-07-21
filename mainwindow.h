@@ -1,20 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
+
 #include "kohonenwidget.h"
-#include "serialqobj.h"
 #include "headers.h"
 
-//#include "serial.h"
-//#ifdef UNICODE
-//#define SetWindowText SetWindowTextW
-//#else
-//#define SetWindowText SetWindowTextA
-//#endif
 
-
-
-
-
+#include "serialqobj.h"
 
 
 //namespace Ui {
@@ -25,8 +17,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-
+#ifdef SERIAL
     serial_obj* SO;
+#endif
     QVector<float> featureOut;
     QwtPlot *d_plot[2];
     explicit MainWindow(QWidget *parent = 0);
