@@ -16,7 +16,7 @@
 #include "layer_koh.h"
 
 #include <QThread>
-#include "stand_dev.h"
+
 
 using namespace std;
 
@@ -35,16 +35,6 @@ DataCollector collector;
 
 
 int8_t EMG1;
-standartDev STD[2];
-frBuHp2 FBH[2];
-//bandPassFr BPF[2];
-matchedFr MF[2];
-lowPassFr LPF[2];
-lowPassFr2 LPF2[2];
-matchedFrV MFV[2];
-integrator INTEGR[2];
-featureExtr1 FE1[2];
-WillisonAmp WA[2];
 int bufShowSize=1500;
 QTimer *timer;
 QTimer *timerMyo;
@@ -54,7 +44,7 @@ myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], 
 #else
 myCurve *curveTest[8], *curveFeature1[8];
 #endif
-QVector<QVector <QVector<float>>> dataEMG, featureEMG1, featureEMG2, featureEMG3, featureEMG4;
+QVector <QVector<float>> dataEMG, featureEMG1, featureEMG2, featureEMG3, featureEMG4;
 int ind_c[8];
 
 
@@ -115,34 +105,34 @@ void serial_obj::doWork()
             {
                 if((ptr==1)&&(gottenVar[1]==1))
                 {
-                    ind_c[0]=(ind_c[0]+1)%dataEMG[0][1].size();
+                    ind_c[0]=(ind_c[0]+1)%dataEMG[0].size();
 
                     EMG1=readVar;
 
-                    dataEMG[0][1][ind_c[0]]=
+                    dataEMG[0][ind_c[0]]=
                             // FBH[0](
                             8*readVar;//);
 
-                    featureOut[0]=featureEMG1[0][1][ind_c[0]]=FE1[0](EMG1)/20;
-                    featureOut[1]=featureEMG2[0][1][ind_c[0]]=LPF[0](STD[0](EMG1));
-                    featureOut[2]=featureEMG3[0][1][ind_c[0]]=LPF[1](WA[0](EMG1));
-                    featureOut[3]=featureEMG4[0][1][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
+                    featureOut[0]=featureEMG1[0][ind_c[0]]=FE1[0](EMG1)/20;
+                    featureOut[1]=featureEMG2[0][ind_c[0]]=LPF[0](STD[0](EMG1));
+                    featureOut[2]=featureEMG3[0][ind_c[0]]=LPF[1](WA[0](EMG1));
+                    featureOut[3]=featureEMG4[0][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
                     //emit(learnSig())
                 }
                 if((ptr==1)&&(gottenVar[1]==2))
                 {
-                    ind_c[1]=(ind_c[1]+1)%dataEMG[1][1].size();
+                    ind_c[1]=(ind_c[1]+1)%dataEMG[1].size();
 
                     EMG1=readVar;
 
-                    dataEMG[1][1][ind_c[1]]=
+                    dataEMG[1][ind_c[1]]=
                             // FBH[0](
                             8*readVar;//);
 
-                    featureOut[4]=featureEMG1[1][1][ind_c[1]]=FE1[1](EMG1)/20;
-                    featureOut[5]=featureEMG2[1][1][ind_c[1]]=LPF[2](STD[1](EMG1));
-                    featureOut[6]=featureEMG3[1][1][ind_c[1]]=LPF[3](WA[1](EMG1));
-                    featureOut[7]=featureEMG4[1][1][ind_c[1]]=(400*LPF2[1]((killRange(MFV[1](EMG1),30))));;
+                    featureOut[4]=featureEMG1[1][ind_c[1]]=FE1[1](EMG1)/20;
+                    featureOut[5]=featureEMG2[1][ind_c[1]]=LPF[2](STD[1](EMG1));
+                    featureOut[6]=featureEMG3[1][ind_c[1]]=LPF[3](WA[1](EMG1));
+                    featureOut[7]=featureEMG4[1][ind_c[1]]=(400*LPF2[1]((killRange(MFV[1](EMG1),30))));;
                     //emit(learnSig())
                 }
 
@@ -245,9 +235,9 @@ void MainWindow::getEMG(QVector<float> x)
 {
     for (int i=0;i<8;i++)
     {
-    dataEMG[i][1][ind_c[i]]=x[i];
+    dataEMG[i][ind_c[i]]=x[i];
 
-    ind_c[i]=(ind_c[i]+1)%dataEMG[i][1].size();
+    ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
 
     }
 }

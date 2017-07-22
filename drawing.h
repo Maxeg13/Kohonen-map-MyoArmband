@@ -7,12 +7,12 @@ class myCurve:public QwtPlotCurve
 {
 public:
 
-    QVector<QVector<float>> &data;
+    QVector<float> &data;
     QwtPlot* d_plot;
     QwtSymbol *symbol;
     int& ind_c;
 
-    myCurve(int bufShowSize, QVector<QVector<float>> &dataH,QwtPlot* d_plotH,const QString &title,
+    myCurve(int bufShowSize, QVector<float> &dataH,QwtPlot* d_plotH,const QString &title,
             const QColor &color, const QColor &colorSymbol,int& ind_ch ):
         data(dataH),ind_c(ind_ch)
     {
@@ -20,13 +20,11 @@ public:
         setTitle(title);
         setPen(color,2);
 
-        dataH.resize(2);
-        dataH[0].resize(bufShowSize);
-        dataH[1].resize(bufShowSize);
-        for(int i=0;i<dataH[0].size();i++)
+
+        dataH.resize(bufShowSize);
+        for(int i=0;i<dataH.size();i++)
         {
-            dataH[0][i]=(i*1000);
-            dataH[1][i]=cos(i/4.);
+            dataH[i]=cos(i/4.);
         }
     }
 
@@ -35,10 +33,10 @@ public:
         // Добавить точки на ранее созданную кривую
         QPolygonF points;
 
-        for (int i=0;i<data[1].size();i++)
+        for (int i=0;i<data.size();i++)
         {
 
-            points<<QPointF(data[0][i],data[1][(ind_c+i+1)%data[1].size()]);
+            points<<QPointF(i*1000,data[(ind_c+i+1)%data.size()]);
         }
         setSamples( points ); // ассоциировать набор точек с кривой
         attach( d_plot ); // отобразить кривую на графике
