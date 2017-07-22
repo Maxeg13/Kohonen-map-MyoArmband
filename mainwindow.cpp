@@ -44,7 +44,8 @@ myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], 
 #else
 myCurve *curveTest[8], *curveFeature1[8];
 #endif
-QVector <QVector<float>> dataEMG, featureEMG1, featureEMG2, featureEMG3, featureEMG4;
+QVector <QVector<float>> dataEMG;
+QVector <QVector <QVector<float>>> featureEMG;
 int ind_c[8];
 
 
@@ -113,10 +114,10 @@ void serial_obj::doWork()
                             // FBH[0](
                             8*readVar;//);
 
-                    featureOut[0]=featureEMG1[0][ind_c[0]]=FE1[0](EMG1)/20;
-                    featureOut[1]=featureEMG2[0][ind_c[0]]=LPF[0](STD[0](EMG1));
-                    featureOut[2]=featureEMG3[0][ind_c[0]]=LPF[1](WA[0](EMG1));
-                    featureOut[3]=featureEMG4[0][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
+                    featureOut[0]=featureEMG[0][0][ind_c[0]]=FE1[0](EMG1)/20;
+                    featureOut[1]=featureEMG[0][1][ind_c[0]]=LPF[0](STD[0](EMG1));
+                    featureOut[2]=featureEMG[0][2][ind_c[0]]=LPF[1](WA[0](EMG1));
+                    featureOut[3]=featureEMG[0][3][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
                     //emit(learnSig())
                 }
                 if((ptr==1)&&(gottenVar[1]==2))
@@ -129,10 +130,10 @@ void serial_obj::doWork()
                             // FBH[0](
                             8*readVar;//);
 
-                    featureOut[4]=featureEMG1[1][ind_c[1]]=FE1[1](EMG1)/20;
-                    featureOut[5]=featureEMG2[1][ind_c[1]]=LPF[2](STD[1](EMG1));
-                    featureOut[6]=featureEMG3[1][ind_c[1]]=LPF[3](WA[1](EMG1));
-                    featureOut[7]=featureEMG4[1][ind_c[1]]=(400*LPF2[1]((killRange(MFV[1](EMG1),30))));;
+                    featureOut[4]=featureEMG[1][0][ind_c[1]]=FE1[1](EMG1)/20;
+                    featureOut[5]=featureEMG[1][1][ind_c[1]]=LPF[2](STD[1](EMG1));
+                    featureOut[6]=featureEMG[1][2][ind_c[1]]=LPF[3](WA[1](EMG1));
+                    featureOut[7]=featureEMG[1][3][ind_c[1]]=(400*LPF2[1]((killRange(MFV[1](EMG1),30))));;
                     //emit(learnSig())
                 }
 
@@ -155,10 +156,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #ifdef SERIAL
     dataEMG.resize(2);
-    featureEMG1.resize(2);
-    featureEMG2.resize(2);
-    featureEMG3.resize(2);
-    featureEMG4.resize(2);
+    featureEMG.resize(2);
+    featureEMG.resize(2);
+    featureEMG.resize(2);
+    featureEMG.resize(2);
+    featureEMG[0].resize(4);
+    featureEMG[1].resize(4);
 
     for(int i_pl=0;i_pl<2;i_pl++)
     {
@@ -170,23 +173,25 @@ MainWindow::MainWindow(QWidget *parent) :
 
         curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG_1",Qt::black,Qt::black,ind_c[i_pl]);
 
-        curveFeature1[i_pl]=new myCurve(bufShowSize,featureEMG1[i_pl],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
+        curveFeature1[i_pl]=new myCurve(bufShowSize,featureEMG[i_pl][0],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
 
-        curveFeature2[i_pl]=new myCurve(bufShowSize, featureEMG2[i_pl],d_plot[i_pl],"force feature",Qt::green,Qt::black,ind_c[i_pl]);
+        curveFeature2[i_pl]=new myCurve(bufShowSize, featureEMG[i_pl][1],d_plot[i_pl],"force feature",Qt::green,Qt::black,ind_c[i_pl]);
 
-        curveFeature3[i_pl]=new myCurve(bufShowSize, featureEMG3[i_pl],d_plot[i_pl],"Willison's feature2",Qt::blue,Qt::black,ind_c[i_pl]);
+        curveFeature3[i_pl]=new myCurve(bufShowSize, featureEMG[i_pl][2],d_plot[i_pl],"Willison's feature2",Qt::blue,Qt::black,ind_c[i_pl]);
 
-        curveFeature4[i_pl]=new myCurve(bufShowSize, featureEMG4[i_pl],d_plot[i_pl],"bipolar feature2",Qt::red,Qt::black,ind_c[i_pl]);
+        curveFeature4[i_pl]=new myCurve(bufShowSize, featureEMG[i_pl][3],d_plot[i_pl],"bipolar feature2",Qt::red,Qt::black,ind_c[i_pl]);
     }
 
     GL->addWidget(d_plot[0],1,1);
     GL->addWidget(d_plot[1],2,1);
 #else
     dataEMG.resize(8);
-    featureEMG1.resize(8);
+    featureEMG.resize(8);
 
     for( int i_pl=0;i_pl<8;i_pl++)
     {
+        featureEMG[i_pl].resize(1);
+
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl]);
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);

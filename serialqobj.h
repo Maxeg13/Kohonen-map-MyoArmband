@@ -10,9 +10,9 @@ public:
     standartDev STD[2];
     frBuHp2 FBH[2];
     //bandPassFr BPF[2];
-    matchedFr MF[2];
-    lowPassFr LPF[2];
-    lowPassFr2 LPF2[2];
+    matchedFr MF[4];
+    lowPassFr LPF[4];
+    lowPassFr2 LPF2[4];
     matchedFrV MFV[2];
     integrator INTEGR[2];
     featureExtr1 FE1[2];
