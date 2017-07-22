@@ -1,6 +1,8 @@
 #ifndef SERIALQOBJ_H
 #define SERIALQOBJ_H
 #include "headers.h"
+#include "stand_dev.h"
+
 class serial_obj : public QObject
 {
     Q_OBJECT

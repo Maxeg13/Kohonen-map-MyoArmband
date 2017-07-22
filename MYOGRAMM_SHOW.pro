@@ -59,7 +59,8 @@ HEADERS  += \
     kohonenwidget.h \
     layer_koh.h \
     mainwindow.h \
-    datacollector.h
+    datacollector.h \
+    serialqobj.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 
