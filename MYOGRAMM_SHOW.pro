@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     stdafx.cpp \
     kohonenwidget.cpp \
     layer_koh.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    serialqobj.cpp
 #    stand_dev.cpp
 
 HEADERS  += \

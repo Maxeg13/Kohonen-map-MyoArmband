@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-
+//SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
 #else
@@ -24,124 +24,27 @@ using namespace std;
 QThread* thread;
 
 #ifdef SERIAL
-Serial hSerial;
+
 int axisScale=10000;
 #else
 int axisScale=1000;
 DataCollector collector;
 #endif
 
-
-
-
-int8_t EMG1;
 int bufShowSize=1500;
 QTimer *timer;
 QTimer *timerMyo;
 QPainter *painter;
+
 #ifdef SERIAL
 myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
 #else
 myCurve *curveTest[8], *curveFeature1[8];
 #endif
+
 QVector <QVector<float>> dataEMG;
 QVector <QVector <QVector<float>>> featureEMG;
 int ind_c[8];
-
-
-
-
-#ifdef SERIAL
-serial_obj::serial_obj(QString qstr)
-{
-    std::string str1=qstr.toUtf8().constData();;
-    std::wstring str(str1.begin(),str1.end());
-
-    hSerial.InitCOM(str.c_str());//was L"COM5"
-    //    featureOut.resize(3);
-    featureOut.resize(8);
-    for(int i=0;i<featureOut.size();i++)
-        featureOut[i]=1;
-
-}
-
-void serial_obj::init(QString qstr)
-{
-    std::string str1=qstr.toUtf8().constData();;
-    std::wstring str(str1.begin(),str1.end());
-
-    hSerial.InitCOM(str.c_str());//was L"COM5"
-    //    featureOut.resize(3);
-}
-
-void serial_obj::close()
-{
-    hSerial.close();
-}
-serial_obj::~serial_obj()
-{};
-void serial_obj::doWork()
-{
-
-    while(1)
-    {
-
-        bool readVarON;
-        readVar=(int8_t)hSerial.ReadCOM(readVarON);
-
-        if(readVarON)
-        {
-            int presc=3;
-            gottenVar[1]=gottenVar[0];
-            gottenVar[0]=readVar;
-            ptr++;
-            ptr%=presc;
-            if(((gottenVar[0]!=2)&&(gottenVar[0]!=1))&&(ptr==0))
-            {
-                //alert!!!
-                ptr++;
-                ptr%=presc;
-            }
-            else
-            {
-                if((ptr==1)&&(gottenVar[1]==1))
-                {
-                    ind_c[0]=(ind_c[0]+1)%dataEMG[0].size();
-
-                    EMG1=readVar;
-
-                    dataEMG[0][ind_c[0]]=
-                            // FBH[0](
-                            8*readVar;//);
-
-                    featureOut[0]=featureEMG[0][0][ind_c[0]]=FE1[0](EMG1)/20;
-                    featureOut[1]=featureEMG[0][1][ind_c[0]]=LPF[0](STD[0](EMG1));
-                    featureOut[2]=featureEMG[0][2][ind_c[0]]=LPF[1](WA[0](EMG1));
-                    featureOut[3]=featureEMG[0][3][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG1),30))));;
-                    //emit(learnSig())
-                }
-                if((ptr==1)&&(gottenVar[1]==2))
-                {
-                    ind_c[1]=(ind_c[1]+1)%dataEMG[1].size();
-
-                    EMG1=readVar;
-
-                    dataEMG[1][ind_c[1]]=
-                            // FBH[0](
-                            8*readVar;//);
-
-                    featureOut[4]=featureEMG[1][0][ind_c[1]]=FE1[1](EMG1)/20;
-                    featureOut[5]=featureEMG[1][1][ind_c[1]]=LPF[2](STD[1](EMG1));
-                    featureOut[6]=featureEMG[1][2][ind_c[1]]=LPF[3](WA[1](EMG1));
-                    featureOut[7]=featureEMG[1][3][ind_c[1]]=(400*LPF2[1]((killRange(MFV[1](EMG1),30))));;
-                    //emit(learnSig())
-                }
-
-            }
-        }
-    }
-}
-#endif
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -216,7 +119,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #ifdef SERIAL
     QThread* thread = new QThread( );
-    SO=new serial_obj("COM5");
+    SO=new serial_obj("COM5",dataEMG,featureEMG,ind_c);
     SO->moveToThread(thread);
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
