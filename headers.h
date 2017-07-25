@@ -6,6 +6,7 @@
 #include <iostream>
 #include <QDebug>
 #include <QVBoxLayout>
+#include <vector>
 #include <QVector>
 #include <QMainWindow>
 #include <QTimer>

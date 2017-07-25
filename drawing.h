@@ -7,12 +7,12 @@ class myCurve:public QwtPlotCurve
 {
 public:
 
-    QVector<float> &data;
+    std::vector<float> &data;
     QwtPlot* d_plot;
     QwtSymbol *symbol;
     int& ind_c;
 
-    myCurve(int bufShowSize, QVector<float> &dataH,QwtPlot* d_plotH,const QString &title,
+    myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,const QString &title,
             const QColor &color, const QColor &colorSymbol,int& ind_ch ):
         data(dataH),ind_c(ind_ch)
     {

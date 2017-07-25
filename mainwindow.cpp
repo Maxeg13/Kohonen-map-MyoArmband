@@ -43,8 +43,8 @@ QTimer *timerMyo;
 QPainter *painter;
 
 
-QVector <QVector<float>> dataEMG;
-QVector <QVector <QVector<float>>> featureEMG;
+std::vector <std::vector<float>> dataEMG;
+std::vector <std::vector <std::vector<float>>> featureEMG;
 int ind_c[8];
 
 
@@ -126,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timerMyo = new QTimer(this);
     connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
     timerMyo->start(4);
-    connect(&collector.qdc,SIGNAL(EMG(QVector<float>)),this,SLOT(getEMG(QVector<float>)));
+    connect(&collector.qdc,SIGNAL(EMG(std::vector<float>)),this,SLOT(getEMG(std::vector<float>)));
 #endif
 }
 
@@ -138,7 +138,7 @@ void MainWindow::kickMyo()
 #endif
 }
 
-void MainWindow::getEMG(QVector<float> x)
+void MainWindow::getEMG(std::vector<float> x)
 {
     for (int i=0;i<8;i++)
     {
@@ -175,7 +175,7 @@ void MainWindow::drawing()
     emit featureOutSignal(featureOut);
 }
 
-void MainWindow::getFeature(QVector<float> x)
+void MainWindow::getFeature(std::vector<float> x)
 {
     qDebug()<<x[0];
 }

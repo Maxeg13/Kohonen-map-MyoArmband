@@ -2,7 +2,7 @@
 #include"headers.h"
 #include"layer_koh.h"
 
-void norm(QVector<float>& x)
+void norm(std::vector<float>& x)
 {
     float energy=0;
     for(int i=0;i<x.size();i++)
@@ -92,7 +92,7 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
 }
 
 
-void KohonenWidget::refresh(QVector<float> inp)
+void KohonenWidget::refresh(std::vector<float> inp)
 {
     featureInp=inp;
     LK->refresh(inp);

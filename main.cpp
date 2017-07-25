@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
 
     KohonenMW.setCentralWidget(centralWidget1);
-    QObject::connect(&SignalMW,SIGNAL(featureOutSignal(QVector<float>)),&KW,SLOT(refresh(QVector<float>)));
+    QObject::connect(&SignalMW,SIGNAL(featureOutSignal(std::vector<float>)),&KW,SLOT(refresh(std::vector<float>)));
     //QObject::connect(&KW.learnB1,SIGNAL(released()),&KW,SLOT(learning_1()));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
     QObject::connect(&KW,SIGNAL(pushStringS(QString)),&SignalMW,SLOT(reconnect(QString)));

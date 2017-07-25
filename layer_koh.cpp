@@ -1,6 +1,6 @@
 #include "layer_koh.h"
 #include "headers.h"
-//QVector<float> nullVect_m;
+//std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
 
 sector::sector()
@@ -14,7 +14,7 @@ void sector::rst()
         w[i]=((rand()%10)/10.-0.5)*1;//2000
 }
 
-sector::sector(QVector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
+sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
     QPolygon(QPT),centre(c)
 {
     size_in=inp.size();
@@ -23,7 +23,7 @@ sector::sector(QVector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
 }
 
 
-float sector::getState(QVector<float>& inp)
+float sector::getState(std::vector<float>& inp)
 {
     state=0;
     for(int i=0;i<size_in;i++)
@@ -31,7 +31,7 @@ float sector::getState(QVector<float>& inp)
 }
 
 
-float sector::getDiff(QVector<float>& inp)
+float sector::getDiff(std::vector<float>& inp)
 {
     diff=0;
     float h;
@@ -77,7 +77,7 @@ void layer_koh::reform()
         }
     }
 }
-layer_koh::layer_koh(QVector<float>& inp_m,int N_m)
+layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
     t=0;
         s=0.7,gap=30;
@@ -128,7 +128,7 @@ layer_koh::layer_koh(QVector<float>& inp_m,int N_m)
 }
 
 
-int layer_koh::indOfMin(const QVector<float>& inp)
+int layer_koh::indOfMin(const std::vector<float>& inp)
 {
 int ind_h;
     float h1;
@@ -156,7 +156,7 @@ void layer_koh::learnBegin()
     t=0;
 }
 
-void layer_koh::learnW(const QVector<float>& inp)
+void layer_koh::learnW(const std::vector<float>& inp)
 {
     t++;
     int ind=0;
@@ -179,7 +179,7 @@ void layer_koh::learnW(const QVector<float>& inp)
         }
     }
 }
-float** layer_koh::refresh(QVector<float>& inp)
+float** layer_koh::refresh(std::vector<float>& inp)
 {
     ind=indOfMin(inp);
     for(int k=0;k<N;k++)

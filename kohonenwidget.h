@@ -9,7 +9,7 @@ class KohonenWidget : public QWidget
     Q_OBJECT
 public:
 QLineEdit *L_E;
-    QVector<float> featureInp;
+    std::vector<float> featureInp;
     QPushButton *learnB1;
     QPushButton *learnB2;
     QPushButton *learnB3;
@@ -19,14 +19,14 @@ QLineEdit *L_E;
     QPushButton *rstLearningB;
     layer_koh *LK;
     QTimer *timer;
-    QVector<QVector<float>> data_learn;
+    std::vector<std::vector<float>> data_learn;
     KohonenWidget(QWidget *parent = 0);
 
     signals:
     pushStringS(QString);
 public slots:
     void drawing();
-    void refresh(QVector<float>);
+    void refresh(std::vector<float>);
     void learning_1();
     void learning_2();
     void rst();

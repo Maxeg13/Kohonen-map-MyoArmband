@@ -11,8 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 LIBS+="$$PWD/serial.o"
 LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32
-LIBS     += $$OUT_PWD/release/datacollector.o
-LIBS     += $$OUT_PWD/release/serialqobj.o
+#LIBS     += $$OUT_PWD/release/datacollector.o
+#LIBS     += $$OUT_PWD/release/serialqobj.o
 
 TARGET = MYOGRAMM_SHOW
 TEMPLATE = app
@@ -33,7 +33,9 @@ SOURCES += main.cpp\
     stdafx.cpp \
     kohonenwidget.cpp \
     layer_koh.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    datacollector.cpp \
+    serialqobj.cpp
 #    stand_dev.cpp
 
 HEADERS  += \

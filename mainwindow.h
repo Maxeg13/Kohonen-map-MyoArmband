@@ -23,7 +23,7 @@ public:
 #else
     QwtPlot *d_plot[8];
 #endif
-    QVector<float> featureOut;
+    std::vector<float> featureOut;
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -35,12 +35,12 @@ private:
     void paintEvent(QPaintEvent *e);
 public slots:
     void drawing();
-    void getFeature(QVector<float>);
+    void getFeature(std::vector<float>);
     void reconnect(QString);
-    void getEMG(QVector<float>);
+    void getEMG(std::vector<float>);
     void kickMyo();
 signals:
-    void featureOutSignal(QVector<float>);
+    void featureOutSignal(std::vector<float>);
     void sended();
 };
 

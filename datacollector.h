@@ -7,7 +7,7 @@ class QDataCollector: public QObject
 {
     Q_OBJECT
 signals:
-    EMG( QVector<float>);
+    EMG( std::vector<float>);
 };
 
 class DataCollector : public myo::DeviceListener
@@ -19,7 +19,7 @@ QDataCollector qdc;
 
     void kick(int x);
     // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
-    void onUnpair(myo::Myo* , uint64_t );
+//    void onUnpair(myo::Myo* , uint64_t );
 
     // onEmgData() is called whenever a paired Myo has provided new EMG data, and EMG streaming is enabled.
     void onEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* emg);
@@ -33,9 +33,9 @@ QDataCollector qdc;
 
     myo::Myo* myo;
     myo::Hub hub;
-    QVector<float> emgSamples;               // The values of this array is set by onEmgData() above.
-    QVector<float> emgSamplesD;               // The values of this array is set by onEmgData() above.
-    QVector<float> accSamplesD;
+    std::vector<float> emgSamples;               // The values of this array is set by onEmgData() above.
+    std::vector<float> emgSamplesD;               // The values of this array is set by onEmgData() above.
+    std::vector<float> accSamplesD;
 
 };
 
