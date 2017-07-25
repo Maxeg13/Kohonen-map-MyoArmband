@@ -1,15 +1,17 @@
 #include "mainwindow.h"
-
-//SERIAL may be defined in mainwindow.h
+#include "headers.h"
+#include "stand_dev.h"
+//SERIAL may be defined in headers.h
 #ifdef SERIAL
 #include "serialqobj.h"
 #else
 #include "datacollector.h"
+#include "stand_dev.h"
 #endif
 
 
 #include "drawing.h"
-#include "headers.h"
+
 #include "stdafx.h"
 #include "targetver.h"
 #include <Windows.h>
@@ -24,23 +26,22 @@ using namespace std;
 QThread* thread;
 
 #ifdef SERIAL
-
+myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
+int bufShowSize=1500;
 int axisScale=10000;
 #else
 int axisScale=1000;
+int bufShowSize=300;
 DataCollector collector;
+myCurve *curveTest[8], *curveFeature1[8];
+standartDevMyo STD[8];
 #endif
 
-int bufShowSize=1500;
+
 QTimer *timer;
 QTimer *timerMyo;
 QPainter *painter;
 
-#ifdef SERIAL
-myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
-#else
-myCurve *curveTest[8], *curveFeature1[8];
-#endif
 
 QVector <QVector<float>> dataEMG;
 QVector <QVector <QVector<float>>> featureEMG;
@@ -50,9 +51,6 @@ int ind_c[8];
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-
-
-
     QGridLayout* GL=new QGridLayout();
     QWidget *centralWidget1=new QWidget();
     centralWidget1->setLayout(GL);
@@ -87,7 +85,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     GL->addWidget(d_plot[0],1,1);
     GL->addWidget(d_plot[1],2,1);
+
+
 #else
+
+
     dataEMG.resize(8);
     featureEMG.resize(8);
 
@@ -97,25 +99,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl]);
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);
-        GL->addWidget(d_plot[i_pl],1+i_pl,1);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-100,100);
+        d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+        GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
+
+        curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG",Qt::black,Qt::black,ind_c[i_pl]);
+        curveFeature1[i_pl]=
+                new myCurve(bufShowSize,featureEMG[i_pl][0],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
     }
 #endif
 
 
-
-
-
-
     setCentralWidget(centralWidget1);
-
-
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
     timer->start(40);
-
-
 
 #ifdef SERIAL
     QThread* thread = new QThread( );
@@ -143,10 +142,11 @@ void MainWindow::getEMG(QVector<float> x)
 {
     for (int i=0;i<8;i++)
     {
-    dataEMG[i][ind_c[i]]=x[i];
-
-    ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
-
+        ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
+        dataEMG[i][ind_c[i]]=x[i];
+        featureOut.resize(8);
+        featureOut[i]=featureEMG[i][0][ind_c[i]]=(.02*STD[i](x[i]));
+//        featureEMG[i][0][ind_c[i]];
     }
 }
 
@@ -172,7 +172,6 @@ void MainWindow::drawing()
         curveFeature1[p_ind]->signalDrawing();
     }
 #endif
-    //    qDebug()<<SO->featureOut[0];
     emit featureOutSignal(featureOut);
 }
 
@@ -192,9 +191,11 @@ void MainWindow::reconnect(QString s)
 
 void MainWindow::drawingInit(QwtPlot* d_plot)
 {
+
     //        setCentralWidget(MW);
 
-
+    //canvas().resize(925,342)
+    //    d_plot->canvas()->resize(100,150);
     //d_plot->autoRefresh();
     d_plot->setAutoReplot();
     //_______232
@@ -231,18 +232,24 @@ void MainWindow::drawingInit(QwtPlot* d_plot)
     //    d_plot->setTitle( "My perceptron demonstration" ); // заголовок
     d_plot->setCanvasBackground( Qt::white ); // цвет фона
 
-    // Параметры осей координат
-    d_plot->setAxisTitle(QwtPlot::yLeft, "EMG, mkV");
-    d_plot->setAxisTitle(QwtPlot::xBottom, "time");
-    d_plot->insertLegend( new QwtLegend() );
+
 
 
     // Включить сетку
     // #include <qwt_plot_grid.h>
-    QwtPlotGrid *grid = new QwtPlotGrid(); //
+    //    QwtPlotGrid *grid = new QwtPlotGrid(); //
 
-    grid->setMajorPen(QPen( Qt::gray, 2 )); // цвет линий и толщина
-    grid->attach( d_plot ); // добавить сетку к полю графика
+    //    grid->setMajorPen(QPen( Qt::gray, 2 )); // цвет линий и толщина
+    //    grid->attach( d_plot ); // добавить сетку к полю графика
+
+#ifdef SERIAL
+    // Параметры осей координат
+    d_plot->setAxisTitle(QwtPlot::yLeft, "EMG, mkV");
+    d_plot->setAxisTitle(QwtPlot::xBottom, "time");
+    d_plot->insertLegend( new QwtLegend() );
+#else
+    d_plot->setMinimumSize(90,30);
+#endif
 }
 
 MainWindow::~MainWindow()

@@ -2,10 +2,9 @@
 #ifndef STANDART_DEV
 #define STANDART_DEV
 
-
-
 int threshB(int ,int );
 int killRange(int , int  );
+
 
 class standartDev
 {
@@ -19,7 +18,12 @@ public:
     float operator()(int);
 };
 
+class standartDevMyo:public standartDev
+{
+public:
+    standartDevMyo();
 
+};
 
 class  frBuHp2
 {

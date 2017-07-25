@@ -45,6 +45,14 @@ float frBuHp2::operator()(float x) //class II
             - 2 * v[1];
 }
 
+standartDevMyo::standartDevMyo()
+{
+    N=50;
+    accumD=0;
+    xPr=new int8_t[N];
+    for(int i=0;i<N;i++)
+        xPr[i]=0;
+}
 
 standartDev::standartDev()
 {

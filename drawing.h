@@ -36,7 +36,7 @@ public:
         for (int i=0;i<data.size();i++)
         {
 
-            points<<QPointF(i*1000,data[(ind_c+i+1)%data.size()]);
+            points<<QPointF(i,data[(ind_c+i+1)%data.size()]);
         }
         setSamples( points ); // ассоциировать набор точек с кривой
         attach( d_plot ); // отобразить кривую на графике
