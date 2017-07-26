@@ -11,8 +11,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 LIBS+="$$PWD/serial.o"
 LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32
-#LIBS     += $$OUT_PWD/release/datacollector.o
-#LIBS     += $$OUT_PWD/release/serialqobj.o
+LIBS     += $$OUT_PWD/release/datacollector.o
+LIBS     += $$OUT_PWD/release/serialqobj.o
+LIBS     += $$OUT_PWD/release/stdafx.o
+LIBS     += $$OUT_PWD/release/kohonenwidget.o
 
 TARGET = MYOGRAMM_SHOW
 TEMPLATE = app
@@ -30,19 +32,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEL_FILE += "$$OUT_PWD/release/MYOGRAMM_SHOW.EXE"
 
 SOURCES += main.cpp\
-    stdafx.cpp \
-    kohonenwidget.cpp \
-    layer_koh.cpp \
     mainwindow.cpp \
-    datacollector.cpp \
-    serialqobj.cpp
+    layer_koh.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
     headers.h \
-    serial.h \
-    stdafx.h \
-    targetver.h \
     stand_dev.h \
     drawing.h \
     stand_dev.h \
@@ -60,10 +55,10 @@ HEADERS  += \
     myo/libmyo.h \
     myo/myo.hpp \
     kohonenwidget.h \
-    layer_koh.h \
     mainwindow.h \
     datacollector.h \
-    serialqobj.h
+    serialqobj.h \
+    layer_koh.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

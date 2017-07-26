@@ -5,7 +5,7 @@
 #include <QtGui>
 #include <QPushButton>
 #include <QCoreApplication>
-#include <windows.h>
+//#include <windows.h>
 
 
 

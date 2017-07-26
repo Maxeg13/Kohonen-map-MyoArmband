@@ -6,6 +6,7 @@ DataCollector::DataCollector()
     emgSamples.resize(8);               // The values of this array is set by onEmgData() above.
     emgSamplesD.resize(8);               // The values of this array is set by onEmgData() above.
     accSamplesD.resize(4);
+    while(!myo)
     myo = hub.waitForMyo(1000);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 

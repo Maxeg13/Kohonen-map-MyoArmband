@@ -11,12 +11,7 @@
 
 
 #include "drawing.h"
-
-#include "stdafx.h"
-#include "targetver.h"
-#include <Windows.h>
 #include "layer_koh.h"
-
 #include <QThread>
 
 
@@ -51,6 +46,10 @@ int ind_c[8];
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    featureOut.resize(8);
+    for (int i=0;i<featureOut.size();i++)
+        featureOut[i]=0;
+
     QGridLayout* GL=new QGridLayout();
     QWidget *centralWidget1=new QWidget();
     centralWidget1->setLayout(GL);
