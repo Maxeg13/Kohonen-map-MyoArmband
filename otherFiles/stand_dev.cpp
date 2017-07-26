@@ -24,6 +24,10 @@ int killRange(int x, int thr )
     return (0);
 }
 
+void getFeatures(std::vector<float> x)
+{
+
+}
 
 int8_t thresh1(int x,int a,int b)
 {

@@ -1,10 +1,11 @@
 #include<stdint.h>
 #ifndef STANDART_DEV
 #define STANDART_DEV
-
+#include <vector>
 int threshB(int ,int );
 int killRange(int , int  );
 
+void getFeatures(std::vector<float>);
 
 class standartDev
 {

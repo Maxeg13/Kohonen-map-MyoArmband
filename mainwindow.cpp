@@ -144,6 +144,7 @@ void MainWindow::getEMG(std::vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
         featureOut.resize(8);
+        getFeatures(x);
         featureOut[i]=featureEMG[i][0][ind_c[i]]=(.02*STD[i](x[i]));
 //        featureEMG[i][0][ind_c[i]];
     }
