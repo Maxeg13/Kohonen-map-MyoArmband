@@ -156,7 +156,7 @@ void layer_koh::learnBegin()
     t=0;
 }
 
-void layer_koh::learnW(const std::vector<float>& inp)
+void layer_koh::learnW(const std::vector<float>& inp,float rad)
 {
     t++;
     int ind=0;
@@ -170,7 +170,7 @@ void layer_koh::learnW(const std::vector<float>& inp)
     {
         h1=dist2[i][ind];
         float exp_val=exp(-0.001*t);
-        float h_func=exp(-h1/(6400000*exp_val*exp_val+0.00001));//.0000001
+        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
 //////////////////////////////2400000
         for(int j=0;j<SR[i].size_in;j++)
         {

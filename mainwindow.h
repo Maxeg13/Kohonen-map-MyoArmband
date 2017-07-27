@@ -23,7 +23,7 @@ public:
 #else
     QwtPlot *d_plot[8];
 #endif
-    std::vector<float> featureOut;
+    std::vector<float> featureOut, featurePreOut;
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -39,6 +39,7 @@ public slots:
     void reconnect(QString);
     void getEMG(std::vector<float>);
     void kickMyo();
+    void getCor();
 signals:
     void featureOutSignal(std::vector<float>);
     void sended();

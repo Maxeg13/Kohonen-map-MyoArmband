@@ -46,7 +46,7 @@ public:
 
     int indOfMin(const std::vector<float>& inp);
     void learnBegin();
-    void learnW(const std::vector<float>& inp);
+    void learnW(const std::vector<float>& inp,float rad);
     float** refresh(std::vector<float>& inp);
     void draw(QPainter& painter);
     void rst();

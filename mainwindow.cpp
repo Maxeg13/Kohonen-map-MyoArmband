@@ -7,11 +7,12 @@
 #else
 #include "datacollector.h"
 #include "stand_dev.h"
+#include "pca.h"
 #endif
 
 
 #include "drawing.h"
-#include "layer_koh.h"
+//#include "layer_koh.h"
 #include <QThread>
 
 
@@ -25,6 +26,9 @@ myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], 
 int bufShowSize=1500;
 int axisScale=10000;
 #else
+PCA myPCA(1000,8);
+int pca_on=0;
+
 int axisScale=1000;
 int bufShowSize=300;
 DataCollector collector;
@@ -46,9 +50,10 @@ int ind_c[8];
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    featureOut.resize(8);
-    for (int i=0;i<featureOut.size();i++)
-        featureOut[i]=0;
+    featurePreOut.resize(8);
+    for (int i=0;i<featurePreOut.size();i++)
+        featurePreOut[i]=0;
+    featureOut=featurePreOut;
 
     QGridLayout* GL=new QGridLayout();
     QWidget *centralWidget1=new QWidget();
@@ -89,6 +94,8 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
 
 
+
+
     dataEMG.resize(8);
     featureEMG.resize(8);
 
@@ -98,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl]);
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-100,100);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
 
@@ -143,9 +150,14 @@ void MainWindow::getEMG(std::vector<float> x)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
-        featureOut.resize(8);
+        featurePreOut.resize(8);
         getFeatures(x);
-        featureOut[i]=featureEMG[i][0][ind_c[i]]=(.02*STD[i](x[i]));
+        featurePreOut[i]=featureEMG[i][0][ind_c[i]]=(.02*STD[i](x[i]));
+        myPCA.updateBuf(featurePreOut);
+//        if(pca_on)
+            myPCA.proect(4,featurePreOut);
+            featureOut=featurePreOut;
+            qDebug()<<featureOut.size();
 //        featureEMG[i][0][ind_c[i]];
     }
 }
@@ -174,6 +186,16 @@ void MainWindow::drawing()
 #endif
     emit featureOutSignal(featureOut);
 }
+void MainWindow::getCor()
+{
+    qDebug()<<"hello";
+    pca_on=1;
+    myPCA.centr();
+    myPCA.getCor();
+    myPCA.algorithm();
+    myPCA.sort();
+//    myPCA.proect(8,v);
+}
 
 void MainWindow::getFeature(std::vector<float> x)
 {
@@ -185,6 +207,8 @@ void MainWindow::reconnect(QString s)
 #ifdef SERIAL
     SO->close();
     SO->init(s);
+#else
+    kickMyo();
 #endif
 }
 

@@ -14,7 +14,9 @@ LIBS+=-L$$OUT_PWD/release -lmyo32
 LIBS     += $$OUT_PWD/release/datacollector.o
 LIBS     += $$OUT_PWD/release/serialqobj.o
 LIBS     += $$OUT_PWD/release/stdafx.o
-LIBS     += $$OUT_PWD/release/kohonenwidget.o
+#LIBS     += $$OUT_PWD/release/kohonenwidget.o
+LIBS     += $$OUT_PWD/release/pca.o
+LIBS     += $$OUT_PWD/release/eig.o
 
 TARGET = MYOGRAMM_SHOW
 TEMPLATE = app
@@ -33,7 +35,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    layer_koh.cpp
+    layer_koh.cpp \
+    kohonenwidget.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -58,7 +61,9 @@ HEADERS  += \
     mainwindow.h \
     datacollector.h \
     serialqobj.h \
-    layer_koh.h
+    layer_koh.h \
+    eig.h \
+    pca.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

@@ -1,6 +1,7 @@
 #include"kohonenwidget.h"
 #include"headers.h"
 #include"layer_koh.h"
+float rad=1.;
 
 void norm(std::vector<float>& x)
 {
@@ -60,10 +61,16 @@ void KohonenWidget::rst()
     LK->rst();
     for(int i=0;i<(10000-10000%data_learn.size());i++)
     {
-        LK->learnW(data_learn[i%data_learn.size()]);
+
+        LK->learnW(data_learn[i%data_learn.size()],rad);
     }
 }
 
+void KohonenWidget::getCor()
+{
+
+    emit(corSignal());
+}
 
 void KohonenWidget::drawing()
 {
@@ -90,7 +97,10 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     delete painter;
 
 }
-
+void KohonenWidget::getRad()
+{
+    rad=L_E_F->text().toFloat();
+}
 
 void KohonenWidget::refresh(std::vector<float> inp)
 {
@@ -101,6 +111,7 @@ void KohonenWidget::refresh(std::vector<float> inp)
 KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
 {
     L_E=new QLineEdit("COM5");
+    L_E_F=new QLineEdit("1");
 
     learnB1=new QPushButton("learn weak");
     learnB2=new QPushButton("learn 1");
@@ -108,19 +119,20 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
     learnB4=new QPushButton("learn 3");
     learnB5=new QPushButton("learn 4");
     learnB6=new QPushButton("learn 5");
+    corB=new QPushButton("correlation");
     rstLearningB=new QPushButton("rst learning");
 
     data_learn.resize(6);
     for(int i=0;i<data_learn.size();i++)
-        data_learn[i].resize(8);
+        data_learn[i].resize(4);
     data_learn[0][0]=1;
     data_learn[0][1]=1;
     data_learn[0][2]=1;
     data_learn[0][3]=1;
-    data_learn[0][4]=2;
-    data_learn[0][5]=1;
-    data_learn[0][6]=1;
-    data_learn[0][7]=1;
+//    data_learn[0][4]=2;
+//    data_learn[0][5]=1;
+//    data_learn[0][6]=1;
+//    data_learn[0][7]=1;
     data_learn[1]=data_learn[0];
     data_learn[2]=data_learn[0];
     data_learn[3]=data_learn[0];
@@ -144,6 +156,9 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
     connect(learnB5,SIGNAL(released()),this,SLOT(learning_5()));
     connect(learnB6,SIGNAL(released()),this,SLOT(learning_6()));
     connect(rstLearningB,SIGNAL(released()),this,SLOT(rst()));
+    connect(corB,SIGNAL(released()),this,SLOT(getCor()));
+    connect(L_E_F,SIGNAL(editingFinished()),this,SLOT(getRad()));
+
     timer->start(40);
     update();
 }
