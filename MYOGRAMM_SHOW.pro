@@ -12,9 +12,9 @@ LIBS+="$$PWD/serial.o"
 LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32
 LIBS     += $$OUT_PWD/release/datacollector.o
-LIBS     += $$OUT_PWD/release/serialqobj.o
+#LIBS     += $$OUT_PWD/release/serialqobj.o
 LIBS     += $$OUT_PWD/release/stdafx.o
-#LIBS     += $$OUT_PWD/release/kohonenwidget.o
+LIBS     += $$OUT_PWD/release/kohonenwidget.o
 LIBS     += $$OUT_PWD/release/pca.o
 LIBS     += $$OUT_PWD/release/eig.o
 
@@ -36,7 +36,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
     mainwindow.cpp \
     layer_koh.cpp \
-    kohonenwidget.cpp
+    serialqobj.cpp
 #    stand_dev.cpp
 
 HEADERS  += \

@@ -4,6 +4,7 @@
 //SERIAL may be defined in headers.h
 #ifdef SERIAL
 #include "serialqobj.h"
+#include <QThread>
 #else
 #include "datacollector.h"
 #include "stand_dev.h"
@@ -13,27 +14,26 @@
 
 #include "drawing.h"
 //#include "layer_koh.h"
-#include <QThread>
+
 
 
 using namespace std;
 
 
-QThread* thread;
+
 
 #ifdef SERIAL
+QThread* thread;
 myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
 int bufShowSize=1500;
 int axisScale=10000;
 #else
 PCA myPCA(1000,8);
-int pca_on=0;
-
 int axisScale=1000;
 int bufShowSize=300;
-DataCollector collector;
+DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8];
-standartDevMyo STD[8];
+
 #endif
 
 
@@ -50,6 +50,7 @@ int ind_c[8];
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    collector=new DataCollector();
     featurePreOut.resize(8);
     for (int i=0;i<featurePreOut.size();i++)
         featurePreOut[i]=0;
@@ -132,34 +133,33 @@ MainWindow::MainWindow(QWidget *parent) :
     timerMyo = new QTimer(this);
     connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
     timerMyo->start(4);
-    connect(&collector.qdc,SIGNAL(EMG(std::vector<float>)),this,SLOT(getEMG(std::vector<float>)));
+    connect(&(collector->qdc),SIGNAL(EMG(std::vector<float>)),this,SLOT(getEMG(std::vector<float>)));
 #endif
 }
 
 
 void MainWindow::kickMyo()
 {
-#ifndef SERIAL
-    collector.kick(10);
+#ifdef SERIAL
+
+#else
+    collector->kick(10);
 #endif
 }
 
 void MainWindow::getEMG(std::vector<float> x)
 {
+    getFeaturesMyo(x,featurePreOut);
     for (int i=0;i<8;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
-        featurePreOut.resize(8);
-        getFeatures(x);
-        featurePreOut[i]=featureEMG[i][0][ind_c[i]]=(.02*STD[i](x[i]));
-        myPCA.updateBuf(featurePreOut);
-//        if(pca_on)
-            myPCA.proect(4,featurePreOut);
-            featureOut=featurePreOut;
-            qDebug()<<featureOut.size();
-//        featureEMG[i][0][ind_c[i]];
+        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
     }
+    myPCA.updateBuf(featurePreOut);
+
+        myPCA.proect(5,featurePreOut);
+        featureOut=featurePreOut;
 }
 
 
@@ -188,8 +188,6 @@ void MainWindow::drawing()
 }
 void MainWindow::getCor()
 {
-    qDebug()<<"hello";
-    pca_on=1;
     myPCA.centr();
     myPCA.getCor();
     myPCA.algorithm();
@@ -208,7 +206,9 @@ void MainWindow::reconnect(QString s)
     SO->close();
     SO->init(s);
 #else
-    kickMyo();
+//    delete collector;
+
+//    collector=new DataCollector();
 #endif
 }
 

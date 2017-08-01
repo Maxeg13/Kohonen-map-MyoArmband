@@ -1,6 +1,6 @@
 all:	stand_dev.o
-stand_dev.o:	stand_dev.h otherFiles/stand_dev.cpp
-	g++ -c ./otherFiles/stand_dev.cpp 
+stand_dev.o:	stand_dev.h stand_dev.cpp
+	g++ -c stand_dev.cpp 
 	
 clean:
 	rm -f stand_dev.o

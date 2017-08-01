@@ -124,12 +124,12 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
 
     data_learn.resize(6);
     for(int i=0;i<data_learn.size();i++)
-        data_learn[i].resize(4);
+        data_learn[i].resize(5);
     data_learn[0][0]=1;
     data_learn[0][1]=1;
     data_learn[0][2]=1;
     data_learn[0][3]=1;
-//    data_learn[0][4]=2;
+    data_learn[0][4]=1;
 //    data_learn[0][5]=1;
 //    data_learn[0][6]=1;
 //    data_learn[0][7]=1;
