@@ -1,6 +1,7 @@
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#define SERIAL
 
 #include "kohonenwidget.h"
 #include "headers.h"
@@ -8,10 +9,6 @@
 
 #include "serialqobj.h"
 
-
-//namespace Ui {
-//class MainWindow; class KohonenQWidget;
-//}
 
 class MainWindow : public QMainWindow
 {

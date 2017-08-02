@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "headers.h"
 #include "stand_dev.h"
-//SERIAL may be defined in headers.h
+//SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
 #include <QThread>
@@ -50,7 +50,7 @@ int ind_c[8];
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    collector=new DataCollector();
+
     featurePreOut.resize(8);
     for (int i=0;i<featurePreOut.size();i++)
         featurePreOut[i]=0;
@@ -75,7 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
         //________________________
         //    setCentralWidget(d_plot);
         drawingInit(d_plot[i_pl]);
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-axisScale,axisScale);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
+        d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0.8*bufShowSize,bufShowSize);
 
         curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG_1",Qt::black,Qt::black,ind_c[i_pl]);
 
@@ -94,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #else
 
-
+    collector=new DataCollector();
 
 
     dataEMG.resize(8);
@@ -149,6 +150,7 @@ void MainWindow::kickMyo()
 
 void MainWindow::getEMG(std::vector<float> x)
 {
+#ifndef SERIAL
     getFeaturesMyo(x,featurePreOut);
     for (int i=0;i<8;i++)
     {
@@ -160,6 +162,7 @@ void MainWindow::getEMG(std::vector<float> x)
 
         myPCA.proect(5,featurePreOut);
         featureOut=featurePreOut;
+#endif
 }
 
 
@@ -188,10 +191,12 @@ void MainWindow::drawing()
 }
 void MainWindow::getCor()
 {
+ #ifndef SERIAL
     myPCA.centr();
     myPCA.getCor();
     myPCA.algorithm();
     myPCA.sort();
+#endif
 //    myPCA.proect(8,v);
 }
 
@@ -286,4 +291,3 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
 
 }
-
