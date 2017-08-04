@@ -8,6 +8,7 @@ class KohonenWidget : public QWidget
 {
     Q_OBJECT
 public:
+    int dimension;
     QLineEdit *L_E;
     QLineEdit *L_E_F;
     std::vector<float> featureInp;
@@ -17,14 +18,17 @@ public:
     QPushButton *learnB4;
     QPushButton *learnB5;
     QPushButton *learnB6;
+    QPushButton *learnB7;
+    QPushButton *learnB8;
     QPushButton *corB;
     QPushButton *rstLearningB;
     layer_koh *LK;
     QTimer *timer;
     std::vector<std::vector<float>> data_learn;
-    KohonenWidget(QWidget *parent = 0);
+    KohonenWidget(std::vector<float>,QWidget *parent = 0);
 
-    signals:
+
+signals:
     pushStringS(QString);
     corSignal();
 public slots:
@@ -37,7 +41,9 @@ public slots:
     void learning_4();
     void learning_5();
     void learning_6();
-//    void pushString(QString);
+    void learning_7();
+    void learning_8();
+    //    void pushString(QString);
     void pushString();
     void getCor();
     void getRad();

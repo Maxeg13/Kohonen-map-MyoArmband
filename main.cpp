@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
     KohonenMW.resize(QSize(590,550));
-    KohonenWidget KW;
+    qDebug()<< SignalMW.featureOut;
+    KohonenWidget KW(SignalMW.featureOut);
 
 
 
@@ -35,10 +36,12 @@ int main(int argc, char *argv[])
     GL->addWidget(KW.learnB4,2,4);
     GL->addWidget(KW.learnB5,2,5);
     GL->addWidget(KW.learnB6,2,6);
-    GL->addWidget(KW.rstLearningB,2,7);
-    GL->addWidget(KW.corB,3,1);
-    GL->addWidget(KW.L_E,3,2);
-    GL->addWidget(KW.L_E_F,3,3);
+    GL->addWidget(KW.learnB7,2,7);
+    GL->addWidget(KW.learnB8,3,1);
+    GL->addWidget(KW.rstLearningB,3,2);
+    GL->addWidget(KW.corB,3,3);
+    GL->addWidget(KW.L_E,3,4);
+    GL->addWidget(KW.L_E_F,3,5);
     //    L_E.setText("COM6");
 
 

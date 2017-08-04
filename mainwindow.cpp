@@ -28,11 +28,11 @@ myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], 
 int bufShowSize=1500;
 int axisScale=10000;
 #else
-PCA myPCA(1000,8);
+PCA myPCA(1000,16);
 int axisScale=1000;
 int bufShowSize=300;
 DataCollector* collector;
-myCurve *curveTest[8], *curveFeature1[8];
+myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8];
 
 #endif
 
@@ -45,16 +45,18 @@ QPainter *painter;
 std::vector <std::vector<float>> dataEMG;
 std::vector <std::vector <std::vector<float>>> featureEMG;
 int ind_c[8];
-
+int dim_in=16,dim_out=8;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-    featurePreOut.resize(8);
+    featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
-        featurePreOut[i]=0;
+        featurePreOut[i]=1;
     featureOut=featurePreOut;
+    featureOut.resize(dim_out);
+    qDebug()<<featureOut[0];
 
     QGridLayout* GL=new QGridLayout();
     QWidget *centralWidget1=new QWidget();
@@ -103,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for( int i_pl=0;i_pl<8;i_pl++)
     {
-        featureEMG[i_pl].resize(1);
+        featureEMG[i_pl].resize(2);
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl]);
@@ -113,7 +115,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
         curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG",Qt::black,Qt::black,ind_c[i_pl]);
         curveFeature1[i_pl]=
-                new myCurve(bufShowSize,featureEMG[i_pl][0],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
+                new myCurve(bufShowSize,featureEMG[i_pl][0],d_plot[i_pl],"bipolar feature1",Qt::green,Qt::black,ind_c[i_pl]);
+        curveFeature2[i_pl]=
+                new myCurve(bufShowSize,featureEMG[i_pl][1],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
+
     }
 #endif
 
@@ -157,11 +162,12 @@ void MainWindow::getEMG(std::vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
     myPCA.updateBuf(featurePreOut);
+//qDebug()<<featureOut.size();
+        myPCA.proect(featureOut);
 
-        myPCA.proect(5,featurePreOut);
-        featureOut=featurePreOut;
 #endif
 }
 
@@ -185,6 +191,7 @@ void MainWindow::drawing()
     {
         curveTest[p_ind]->signalDrawing();
         curveFeature1[p_ind]->signalDrawing();
+        curveFeature2[p_ind]->signalDrawing();
     }
 #endif
     emit featureOutSignal(featureOut);

@@ -1,7 +1,7 @@
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#define SERIAL
+//#define SERIAL
 
 #include "kohonenwidget.h"
 #include "headers.h"

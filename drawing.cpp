@@ -16,7 +16,7 @@
         dataH.resize(bufShowSize);
         for(int i=0;i<dataH.size();i++)
         {
-            dataH[i]=cos(i/4.);
+            dataH[i ]=cos(i/4.);
         }
     }
 
@@ -27,7 +27,6 @@
 
         for (int i=0;i<data.size();i++)
         {
-
             points<<QPointF(i,data[(ind_c+i+1)%data.size()]);
         }
         setSamples( points ); // ассоциировать набор точек с кривой

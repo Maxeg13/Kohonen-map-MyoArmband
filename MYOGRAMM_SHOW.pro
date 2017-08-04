@@ -9,14 +9,15 @@ CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 LIBS+="$$PWD/serial.o"
-LIBS+="$$PWD/stand_dev.o"
+#LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32
 #LIBS     += $$OUT_PWD/release/datacollector.o
 #LIBS     += $$OUT_PWD/release/serialqobj.o
 LIBS     += $$OUT_PWD/release/stdafx.o
 #LIBS     += $$OUT_PWD/release/kohonenwidget.o
-#LIBS     += $$OUT_PWD/release/pca.o
+LIBS     += $$OUT_PWD/release/pca.o
 #LIBS     += $$OUT_PWD/release/eig.o
+LIBS     += -L$$OUT_PWD/release -leig
 
 TARGET = MYOGRAMM_SHOW
 TEMPLATE = app
@@ -39,7 +40,8 @@ SOURCES += main.cpp\
     datacollector.cpp \
     kohonenwidget.cpp \
     serialqobj.cpp \
-    drawing.cpp
+    drawing.cpp \
+    stand_dev.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -47,19 +49,17 @@ HEADERS  += \
     stand_dev.h \
     drawing.h \
     stand_dev.h \
-    myo/cxx/detail/ThrowOnError.hpp \
-    myo/cxx/impl/Hub_impl.hpp \
-    myo/cxx/impl/Myo_impl.hpp \
-    myo/cxx/impl/Pose_impl.hpp \
-    myo/cxx/DeviceListener.hpp \
-    myo/cxx/Hub.hpp \
-    myo/cxx/Myo.hpp \
-    myo/cxx/Pose.hpp \
-    myo/cxx/Quaternion.hpp \
-    myo/cxx/Vector3.hpp \
-    myo/libmyo/detail/visibility.h \
-    myo/libmyo.h \
-    myo/myo.hpp \
+#    myo/cxx/detail/ThrowOnError.hpp \
+#    myo/cxx/impl/Hub_impl.hpp \
+#    myo/cxx/impl/Myo_impl.hpp \
+#    myo/cxx/impl/Pose_impl.hpp \
+#    myo/cxx/DeviceListener.hpp \
+#    myo/cxx/Hub.hpp \
+#    myo/cxx/Myo.hpp \
+#    myo/cxx/Pose.hpp \
+#    myo/cxx/Quaternion.hpp \
+#    myo/cxx/Vector3.hpp \
+#    myo/libmyo/detail/visibility.h \
     kohonenwidget.h \
     mainwindow.h \
     datacollector.h \

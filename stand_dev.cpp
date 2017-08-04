@@ -174,6 +174,35 @@ public:
 };
 
 
+class matchedFrHAAR1:public matchedFr//  matched filter
+{
+public:
+    matchedFrHAAR1(){
+        weight=7;
+        MFN=2;
+        a=new float[MFN];
+        x=new float[MFN];
+
+        a[0]=-1;
+        a[1]=1;
+    }
+};
+
+class matchedFrHAAR2:public matchedFr//  matched filter
+{
+public:
+    matchedFrHAAR2(){
+        weight=7;
+        MFN=4;
+        a=new float[MFN];
+        x=new float[MFN];
+
+        a[0]=-1;
+        a[1]=-1;
+        a[2]=1;
+        a[3]=1;
+    }
+};
 
 class integrator
 {
@@ -300,24 +329,28 @@ public:
 
 
 standartDevMyo STDM[8];
-lowPassFrMyo LPFM[8];
+lowPassFrMyo LPFM[16];
 
 standartDev STD[2];
 frBuHp2 FBH[2];
 //bandPassFr BPF[2];
 matchedFr MF[4];
-lowPassFr LPF[4];
-lowPassFr2 LPF2[4];
+lowPassFr LPF[8];
+lowPassFr2 LPF2[8];
 matchedFrV MFV[2];
+matchedFrHAAR1 HAAR1[8];
 integrator INTEGR[2];
 featureExtr1 FE1[2];
 WillisonAmp WA[2];
 
 void getFeaturesMyo(std::vector<float> x, std::vector<float>& y)
 {
-    y=x;
+//    y=x;
     for(int i=0;i<x.size();i++)
         y[i]=LPFM[i](.02*STDM[i](x[i]));
+    for(int i=0;i<x.size();i++)
+        y[i+x.size()]=30000*LPF2[i](HAAR1[i](x[i]));
+
 }
 
 void getFeatures_gearbox1(int8_t x, std::vector<float>& y)
@@ -327,7 +360,6 @@ void getFeatures_gearbox1(int8_t x, std::vector<float>& y)
     y[1]=LPF[0](STD[0](x));
     y[2]=LPF[1](WA[0](x));
     y[3]=(400*LPF2[0]((killRange(MFV[0](x),30))));
-
 }
 
 void getFeatures_gearbox2(int8_t x, std::vector<float>& y)

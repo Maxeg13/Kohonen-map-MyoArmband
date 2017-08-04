@@ -9,8 +9,8 @@ void norm(std::vector<float>& x)
     for(int i=0;i<x.size();i++)
         energy+=x[i]*x[i];
 
-//    for(int i=0;i<x.size();i++)
-//        x[i]=x[i]*200/energy;
+    //    for(int i=0;i<x.size();i++)
+    //        x[i]=x[i]*200/energy;
 }
 
 void KohonenWidget::learning_1()
@@ -56,6 +56,23 @@ void KohonenWidget::learning_6()
     norm( data_learn[i]);
 }
 
+
+
+void KohonenWidget::learning_7()
+{
+    int i=6;
+    data_learn[i]=featureInp;
+    norm( data_learn[i]);
+}
+
+
+void KohonenWidget::learning_8()
+{
+    int i=7;
+    data_learn[i]=featureInp;
+    norm( data_learn[i]);
+}
+
 void KohonenWidget::rst()
 {
     LK->rst();
@@ -81,7 +98,7 @@ void KohonenWidget::drawing()
 
 void KohonenWidget::pushString()
 {
-   emit(pushStringS(L_E->text()));
+    emit(pushStringS(L_E->text()));
 }
 
 void KohonenWidget::paintEvent(QPaintEvent *e)
@@ -91,7 +108,7 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     QPen pen(Qt::black, 8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter->setPen(pen);
     painter->scale(0.2,0.2);
-//    LK->indOfMin(featureInp);
+    //    LK->indOfMin(featureInp);
     LK->reform();
     LK->draw(*painter);
     delete painter;
@@ -108,8 +125,9 @@ void KohonenWidget::refresh(std::vector<float> inp)
     LK->refresh(inp);
 }
 
-KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
+KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(parent)
 {
+    dimension=inp.size();
     L_E=new QLineEdit("COM5");
     L_E_F=new QLineEdit("1");
 
@@ -119,25 +137,19 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
     learnB4=new QPushButton("learn 3");
     learnB5=new QPushButton("learn 4");
     learnB6=new QPushButton("learn 5");
+    learnB7=new QPushButton("learn 6");
+    learnB8=new QPushButton("learn 7");
     corB=new QPushButton("correlation");
     rstLearningB=new QPushButton("rst learning");
 
-    data_learn.resize(6);
+    data_learn.resize(8);
     for(int i=0;i<data_learn.size();i++)
-        data_learn[i].resize(5);
-    data_learn[0][0]=1;
-    data_learn[0][1]=1;
-    data_learn[0][2]=1;
-    data_learn[0][3]=1;
-    data_learn[0][4]=1;
-//    data_learn[0][5]=1;
-//    data_learn[0][6]=1;
-//    data_learn[0][7]=1;
-    data_learn[1]=data_learn[0];
-    data_learn[2]=data_learn[0];
-    data_learn[3]=data_learn[0];
-    data_learn[4]=data_learn[0];
-    data_learn[5]=data_learn[0];
+        data_learn[i].resize(dimension);
+    for(int i=0;i<dimension;i++)
+        data_learn[0][i]=1;
+    for(int i=1;i<8;i++)
+        data_learn[i]=data_learn[0];
+
 
     featureInp.resize(data_learn[0].size());
     for(int i=0;i<featureInp.size();i++)
@@ -155,6 +167,8 @@ KohonenWidget::KohonenWidget(QWidget *parent):QWidget(parent)
     connect(learnB4,SIGNAL(released()),this,SLOT(learning_4()));
     connect(learnB5,SIGNAL(released()),this,SLOT(learning_5()));
     connect(learnB6,SIGNAL(released()),this,SLOT(learning_6()));
+       connect(learnB7,SIGNAL(released()),this,SLOT(learning_7()));
+          connect(learnB8,SIGNAL(released()),this,SLOT(learning_8()));
     connect(rstLearningB,SIGNAL(released()),this,SLOT(rst()));
     connect(corB,SIGNAL(released()),this,SLOT(getCor()));
     connect(L_E_F,SIGNAL(editingFinished()),this,SLOT(getRad()));

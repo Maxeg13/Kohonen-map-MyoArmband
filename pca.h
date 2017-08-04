@@ -14,7 +14,7 @@ public:
     int ind;
     int size,width;
     void algorithm();
-    void proect(int, std::vector<float>&);
+    void proect( std::vector<float>&);
     void sort();
     void getCor();
     void updateBuf(std::vector<float>);
