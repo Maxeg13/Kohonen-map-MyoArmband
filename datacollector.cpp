@@ -8,6 +8,7 @@ DataCollector::DataCollector()
     accSamplesD.resize(4);
     while(!myo)
     myo = hub.waitForMyo(1000);
+    myo->unlock(myo->unlockHold);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 
     hub.addListener(this);
@@ -16,6 +17,7 @@ DataCollector::DataCollector()
 
 void DataCollector::kick(int x)
 {
+    myo->unlock(myo->unlockHold);
     hub.run(10);
 }
 // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
