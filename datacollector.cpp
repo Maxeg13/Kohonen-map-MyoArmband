@@ -9,6 +9,7 @@ DataCollector::DataCollector()
     while(!myo)
     myo = hub.waitForMyo(1000);
     myo->unlock(myo->unlockHold);
+    myo->vibrate(myo->vibrationShort);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 
     hub.addListener(this);
@@ -17,6 +18,7 @@ DataCollector::DataCollector()
 
 void DataCollector::kick(int x)
 {
+//    hub.
     myo->unlock(myo->unlockHold);
     hub.run(10);
 }

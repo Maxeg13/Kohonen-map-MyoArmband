@@ -32,25 +32,26 @@ PCA myPCA(1000,16);
 int axisScale=1000;
 int bufShowSize=300;
 DataCollector* collector;
-myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8];
-
+myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8], *percCurve;
 #endif
 
 
 QTimer *timer;
 QTimer *timerMyo;
 QPainter *painter;
+QwtPlot* perc_pl;
 
 
 std::vector <std::vector<float>> dataEMG;
+std::vector<float> percBuf;
 std::vector <std::vector <std::vector<float>>> featureEMG;
-int ind_c[8];
+int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-
+//    perc_pl = new QwtPlot(this);
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
         featurePreOut[i]=1;
@@ -108,7 +109,7 @@ MainWindow::MainWindow(QWidget *parent) :
         featureEMG[i_pl].resize(2);
 
         d_plot[i_pl] = new QwtPlot(this);
-        drawingInit(d_plot[i_pl]);
+        drawingInit(d_plot[i_pl],QString("myo"));
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
@@ -120,6 +121,15 @@ MainWindow::MainWindow(QWidget *parent) :
                 new myCurve(bufShowSize,featureEMG[i_pl][1],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
 
     }
+
+    perc_pl=new QwtPlot(this);
+    drawingInit(perc_pl,QString("perc out"));
+    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
+    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+    percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
+    GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
+    perc_pl->setMinimumWidth(390);
+
 #endif
 
 
@@ -160,9 +170,15 @@ void MainWindow::getEMG(std::vector<float> x)
     for (int i=0;i<8;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
+        ind_p=ind_c[0];
         dataEMG[i][ind_c[i]]=x[i];
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+
+        static int k=0;
+        percBuf[ind_p]=k;
+
+        k++;
     }
     myPCA.updateBuf(featurePreOut);
 //qDebug()<<featureOut.size();
@@ -193,6 +209,7 @@ void MainWindow::drawing()
         curveFeature1[p_ind]->signalDrawing();
         curveFeature2[p_ind]->signalDrawing();
     }
+    percCurve->signalDrawing();
 #endif
     emit featureOutSignal(featureOut);
 }
@@ -225,7 +242,7 @@ void MainWindow::reconnect(QString s)
 }
 
 
-void MainWindow::drawingInit(QwtPlot* d_plot)
+void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
 {
 
     //        setCentralWidget(MW);
@@ -265,7 +282,7 @@ void MainWindow::drawingInit(QwtPlot* d_plot)
     // Включить отображение координат курсора и двух перпендикулярных
     // линий в месте его отображения
     // #include <qwt_plot_picker.h>
-    //    d_plot->setTitle( "My perceptron demonstration" ); // заголовок
+    d_plot->setTitle( title ); // заголовок
     d_plot->setCanvasBackground( Qt::white ); // цвет фона
 
 
@@ -284,7 +301,7 @@ void MainWindow::drawingInit(QwtPlot* d_plot)
     d_plot->setAxisTitle(QwtPlot::xBottom, "time");
     d_plot->insertLegend( new QwtLegend() );
 #else
-    d_plot->setMinimumSize(90,30);
+    d_plot->setMinimumSize(150,40);
 #endif
 }
 

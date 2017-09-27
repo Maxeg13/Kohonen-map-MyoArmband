@@ -25,7 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void drawingInit(QwtPlot *d_plot);
+    void drawingInit(QwtPlot *d_plot, QString);
 private:
     //    Ui::MainWindow *ui;
 
