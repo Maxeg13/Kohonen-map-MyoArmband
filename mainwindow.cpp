@@ -48,10 +48,11 @@ vector<float> percBuf;
 vector <vector <vector<float>>> featureEMG;
 int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
+int perc_dim=8;
 
 void convertFromVec(vector<float>& x,float* y)
 {
-    for(int j=0;j<16;j++)
+    for(int j=0;j<perc_dim;j++)
     {
         y[j]=x[j]/800;
     }
@@ -136,11 +137,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //__________________machine learning
-    perc_inp=new float[16];
+    perc_inp=new float[perc_dim];
 
     data_l_inp.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
-        data_l_inp[i].resize(16);
+        data_l_inp[i].resize(perc_dim);
 
     for (int j=0;j<gestures_N;j++)
         for(int i=0;i<data_l_inp[0].size();i++)
@@ -150,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     vector<int> constr;
-    constr.push_back(16);
+    constr.push_back(perc_dim);
     constr.push_back(5);
     constr.push_back(5);
     constr.push_back(1);//output
