@@ -43,9 +43,9 @@ vector<vector<float>> dataTest;
 vector<vector<float>> data_l_inp;
 vector<float> data_l_out;
 
-std::vector <std::vector<float>> dataEMG;
-std::vector<float> percBuf;
-std::vector <std::vector <std::vector<float>>> featureEMG;
+vector <vector<float>> dataEMG;
+vector<float> percBuf;
+vector <vector <vector<float>>> featureEMG;
 int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 
@@ -252,7 +252,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timerMyo = new QTimer(this);
     connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
     timerMyo->start(4);
-    connect(&(collector->qdc),SIGNAL(EMG(std::vector<float>)),this,SLOT(getEMG(std::vector<float>)));
+    connect(&(collector->qdc),SIGNAL(EMG(vector<float>)),this,SLOT(getEMG(vector<float>)));
 #endif
 }
 
@@ -266,7 +266,7 @@ void MainWindow::kickMyo()
 #endif
 }
 
-void MainWindow::getEMG(std::vector<float> x)
+void MainWindow::getEMG(vector<float> x)
 {
 #ifndef SERIAL
     getFeaturesMyo(x,featurePreOut);
@@ -327,7 +327,7 @@ void MainWindow::getCor()
     //    myPCA.proect(8,v);
 }
 
-void MainWindow::getFeature(std::vector<float> x)
+void MainWindow::getFeature(vector<float> x)
 {
     qDebug()<<x[0];
 }

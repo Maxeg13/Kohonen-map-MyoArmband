@@ -1,5 +1,6 @@
 #include "datacollector.h"
-
+#include <vector>
+using namespace std;
 DataCollector::DataCollector()
     : emgSamples(), hub("com.example.emg-data-sample")
 {
@@ -70,7 +71,7 @@ void DataCollector::print()
     //                    oss << static_cast<int>(emgSamples[i]);
     //                    string emgString = oss.str();
     //                    QString qemgString = QString::fromStdString(emgString);
-    //                    QString qbuffStr =  QString::fromStdString(std::string(4 - emgString.size(), ' '));
+    //                    QString qbuffStr =  QString::fromStdString(string(4 - emgString.size(), ' '));
     //                    qDebug() << '[' << qemgString <<  qbuffStr << ']';
     //                }
 }
