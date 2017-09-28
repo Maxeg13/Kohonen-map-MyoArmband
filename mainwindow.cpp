@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "headers.h"
 #include "stand_dev.h"
+#include "QSignalMapper"
 //SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
@@ -40,6 +41,7 @@ QTimer *timer;
 QTimer *timerMyo;
 QPainter *painter;
 QwtPlot* perc_pl;
+QPushButton *button_learn1;
 
 
 std::vector <std::vector<float>> dataEMG;
@@ -48,10 +50,16 @@ std::vector <std::vector <std::vector<float>>> featureEMG;
 int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 
+void MainWindow::buttonClicked(const QString& text)
+{
+    qDebug()<<text;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-//    perc_pl = new QwtPlot(this);
+
+    //    perc_pl = new QwtPlot(this);
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
         featurePreOut[i]=1;
@@ -109,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
         featureEMG[i_pl].resize(2);
 
         d_plot[i_pl] = new QwtPlot(this);
-        drawingInit(d_plot[i_pl],QString("myo"));
+        drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl));
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
@@ -131,6 +139,21 @@ MainWindow::MainWindow(QWidget *parent) :
     perc_pl->setMinimumWidth(390);
 
 #endif
+
+    button_learn1=new QPushButton("learn left");
+    GL->addWidget(button_learn1,2,4);
+    QSignalMapper* signalMapper = new QSignalMapper(this);
+
+        connect(button_learn1, SIGNAL(clicked()),
+                signalMapper,         SLOT(map()));
+
+        signalMapper->setMapping(button_learn1, QString::number(1));
+
+        connect(signalMapper, SIGNAL(mapped(const QString &)),
+                    this, SLOT(buttonClicked(const QString &)));
+
+        GL->addWidget(button_learn1,2,0);
+
 
 
     setCentralWidget(centralWidget1);
@@ -181,8 +204,8 @@ void MainWindow::getEMG(std::vector<float> x)
         k++;
     }
     myPCA.updateBuf(featurePreOut);
-//qDebug()<<featureOut.size();
-        myPCA.proect(featureOut);
+    //qDebug()<<featureOut.size();
+    myPCA.proect(featureOut);
 
 #endif
 }
@@ -215,13 +238,13 @@ void MainWindow::drawing()
 }
 void MainWindow::getCor()
 {
- #ifndef SERIAL
+#ifndef SERIAL
     myPCA.centr();
     myPCA.getCor();
     myPCA.algorithm();
     myPCA.sort();
 #endif
-//    myPCA.proect(8,v);
+    //    myPCA.proect(8,v);
 }
 
 void MainWindow::getFeature(std::vector<float> x)
@@ -235,9 +258,9 @@ void MainWindow::reconnect(QString s)
     SO->close();
     SO->init(s);
 #else
-//    delete collector;
+    //    delete collector;
 
-//    collector=new DataCollector();
+    //    collector=new DataCollector();
 #endif
 }
 
@@ -282,7 +305,14 @@ void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
     // Включить отображение координат курсора и двух перпендикулярных
     // линий в месте его отображения
     // #include <qwt_plot_picker.h>
-    d_plot->setTitle( title ); // заголовок
+
+//    QFont* qf=new QFont(fontInfo().family(), 10);
+//    d_plot->setFont(*qf);
+QwtText* qwtt=new QwtText(title);
+    qwtt->setFont(QFont("Helvetica", 11));
+//    title.size(12);
+//    title.
+    d_plot->setTitle( *qwtt ); // заголовок
     d_plot->setCanvasBackground( Qt::white ); // цвет фона
 
 

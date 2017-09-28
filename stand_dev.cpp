@@ -279,12 +279,12 @@ public:
     {
         v[0] = v[1];
         v[1] = v[2];
-        v[2] = (1.576334488051500671e-6 * x)
-                + (-0.99645200271929113001 * v[0])
-                + (1.99644569738133892400 * v[1]);
+        v[2] = (7.064861907934981963e-6 * x)
+             + (-0.99081368715113193879 * v[0])
+             + (1.99078542770350019886 * v[1]);
         return
-                (v[0] + v[2])
-                +2 * v[1];
+             (v[0] + v[2])
+            +2 * v[1];
     }
 
 };
@@ -346,7 +346,7 @@ public:
 
 
 standartDevMyo STDM[8];
-lowPassFrMyo LPFM[16];
+lowPassFrMyo LPFM[16], LPFM2[8];
 
 standartDev STD[2];
 frBuHp2 FBH[2];
@@ -354,7 +354,7 @@ frBuHp2 FBH[2];
 matchedFr MF[4];
 lowPassFr LPF[8];
 veryLowPassFr VLPF[8];
-veryLowPassFrMyo VLPFM[8];
+veryLowPassFrMyo VLPFM[8], VLPFM2[8];
 matchedFrV MFV[2];
 matchedFrHAAR1 HAAR1[8];
 integrator INTEGR[2];
@@ -367,7 +367,8 @@ void getFeaturesMyo(std::vector<float> x, std::vector<float>& y)
     for(int i=0;i<x.size();i++)
         y[i]=LPFM[i](.02*STDM[i](x[i]));
     for(int i=0;i<x.size();i++)
-        y[i+x.size()]=30000*VLPF[i](HAAR1[i](x[i]));
+        y[i+x.size()]=9000*LPFM2[i](VLPFM[i](HAAR1[i](x[i])));
+//        y[i+x.size()]=((HAAR1[i](x[i])));
 
 }
 

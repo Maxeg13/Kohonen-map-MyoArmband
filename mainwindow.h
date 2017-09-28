@@ -31,12 +31,14 @@ private:
 
     void paintEvent(QPaintEvent *e);
 public slots:
+//   void clicked(int buttonId);
     void drawing();
     void getFeature(std::vector<float>);
     void reconnect(QString);
     void getEMG(std::vector<float>);
     void kickMyo();
     void getCor();
+    void buttonClicked(const QString & text);
 signals:
     void featureOutSignal(std::vector<float>);
     void sended();
