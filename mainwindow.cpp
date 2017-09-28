@@ -35,6 +35,7 @@ QTimer *timerMyo;
 QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
+int gestures_N=7;
 
 float* perc_inp;
 perceptron* perc;
@@ -58,24 +59,35 @@ void convertFromVec(vector<float>& x,float* y)
 
 void MainWindow::buttonClicked(int j)
 {
+    float gest[gestures_N];
+    gest[0]=0;
+    gest[1]=-.2;
+    gest[2]=.2;
+    gest[3]=-.7;
+    gest[4]=.7;
+    gest[5]=0;
+    gest[6]=0;
+
     switch(j)
     {
     case 0:
     case 1:
     case 2:
-        qDebug()<<data_l_inp[j].size();
-        qDebug()<<featurePreOut.size();
-        data_l_inp[j]=featurePreOut;
-        data_l_out[j]=j-1;
-        break;
-
     case 3:
-        for( int k=0;k<10000;k++)
-            for(int i=0;i<3;i++)
+    case 4:
+    case 5:
+    case 6:
+
+        data_l_inp[j]=featurePreOut;
+        data_l_out[j]=gest[j];
+        break;
+    case 7:
+        for( int k=0;k<50000;k++)
+            for(int i=0;i<gestures_N;i++)
             {
-                float* x;
-                convertFromVec(data_l_inp[j],x);
-                perc->learn1(x,data_l_out[i]);
+                convertFromVec(data_l_inp[i],perc_inp);
+                //                qDebug()<<perc_inp[2];
+                perc->learn1(perc_inp,data_l_out[i]);
             }
         qDebug()<<"bye";break;
     }
@@ -92,7 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapper, SIGNAL(mapped(int)),
             this, SLOT(buttonClicked(int)));
 
-    for(int i=0;i<4;i++)
+    for(int i=0;i<(gestures_N+1);i++)
     {
         switch(i)
         {
@@ -103,30 +115,38 @@ MainWindow::MainWindow(QWidget *parent) :
         case 2:
             button_learn=new QPushButton("save right");break;
         case 3:
+            button_learn=new QPushButton("save strong left");break;
+        case 4:
+            button_learn=new QPushButton("save strong right");break;
+        case 5:
+            button_learn=new QPushButton("nope");break;
+        case 6:
+            button_learn=new QPushButton("nope");break;
+        case 7:
             button_learn=new QPushButton("learn");break;
-
         }
 
         connect(button_learn, SIGNAL(clicked()),
                 signalMapper,         SLOT(map()));
         signalMapper->setMapping(button_learn, i);
 
-        GL->addWidget(button_learn,2,i);
+        int frame_width=4;
+        GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
     }
 
 
     //__________________machine learning
     perc_inp=new float[16];
 
-    data_l_inp.resize(3);
-    for (int i=0;i<3;i++)
+    data_l_inp.resize(gestures_N);
+    for (int i=0;i<gestures_N;i++)
         data_l_inp[i].resize(16);
 
-    for (int j=0;j<3;j++)
+    for (int j=0;j<gestures_N;j++)
         for(int i=0;i<data_l_inp[0].size();i++)
             data_l_inp[j][i]=0;
 
-    data_l_out.resize(3,0);
+    data_l_out.resize(gestures_N,0);
 
 
     vector<int> constr;
@@ -263,7 +283,7 @@ void MainWindow::getEMG(std::vector<float> x)
     //qDebug()<<featureOut.size();
     myPCA.proect(featureOut);
 
-
+    convertFromVec(featurePreOut,perc_inp);
     perc->refresh(perc_inp);
     percBuf[ind_p]=*perc->out[0]*1000;
 
