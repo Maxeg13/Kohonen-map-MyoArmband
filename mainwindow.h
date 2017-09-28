@@ -38,7 +38,7 @@ public slots:
     void getEMG(std::vector<float>);
     void kickMyo();
     void getCor();
-    void buttonClicked(const QString & text);
+    void buttonClicked(int);
 signals:
     void featureOutSignal(std::vector<float>);
     void sended();

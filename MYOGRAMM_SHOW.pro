@@ -70,7 +70,8 @@ HEADERS  += \
     eig.h \
     pca.h \
     layer.h \
-    drawing_perc.h
+    drawing_perc.h \
+    perceptron.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

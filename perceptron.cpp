@@ -1,4 +1,5 @@
 #include "perceptron.h"
+
 perceptron::perceptron(vector<int>& constr)
 {
 
@@ -19,6 +20,8 @@ perceptron::perceptron(vector<int>& constr)
 
 
 }
+
+
 
 float perceptron::reset_w()
 {
@@ -47,5 +50,19 @@ void perceptron::learn1(float* x,float* t)
     for(int i=1;i<N;i++)
         lr[i]->refreshW();
 }
+
+
+void perceptron::learn1(float* x,float t)
+{
+    refresh(x);
+    lr[N-1]->getErr(&t);
+    for(int i=(N-1);i>1;i--)
+    {
+        lr[i]->pushErr();
+    }
+    for(int i=1;i<N;i++)
+        lr[i]->refreshW();
+}
+
 void perceptron::learnFunc()
 {}

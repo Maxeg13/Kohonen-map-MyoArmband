@@ -12,17 +12,10 @@
 #include "pca.h"
 #endif
 
-
 #include "drawing.h"
-//#include "layer_koh.h"
-
-
+#include "perceptron.h"
 
 using namespace std;
-
-
-
-
 #ifdef SERIAL
 QThread* thread;
 myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
@@ -43,6 +36,11 @@ QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
 
+float* perc_inp;
+perceptron* perc;
+vector<vector<float>> dataTest;
+vector<vector<float>> data_l_inp;
+vector<float> data_l_out;
 
 std::vector <std::vector<float>> dataEMG;
 std::vector<float> percBuf;
@@ -50,26 +48,104 @@ std::vector <std::vector <std::vector<float>>> featureEMG;
 int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 
-void MainWindow::buttonClicked(const QString& text)
+void convertFromVec(vector<float>& x,float* y)
 {
-    qDebug()<<text;
+    for(int j=0;j<16;j++)
+    {
+        y[j]=x[j]/800;
+    }
+}
+
+void MainWindow::buttonClicked(int j)
+{
+    switch(j)
+    {
+    case 0:
+    case 1:
+    case 2:
+        data_l_inp[j]=featureOut;
+        data_l_out[j]=j-1;
+        break;
+
+    case 3:
+        for( int k=0;k<10000;k++)
+        for(int i=0;i<3;i++)
+        {
+            float* x;
+            convertFromVec(data_l_inp[j],x);
+            perc->learn1(x,data_l_out[i]);
+        }
+        qDebug()<<"bye";break;
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    //____________________BUTTONS
+    QGridLayout* GL=new QGridLayout();
+    QWidget *centralWidget1=new QWidget();
+    centralWidget1->setLayout(GL);
+    QSignalMapper* signalMapper = new QSignalMapper(this);
+    connect(signalMapper, SIGNAL(mapped(int)),
+            this, SLOT(buttonClicked(int)));
 
-    //    perc_pl = new QwtPlot(this);
+    for(int i=0;i<3;i++)
+    {
+        switch(i)
+        {
+        case 0:
+            button_learn=new QPushButton("learn weak");break;
+        case 1:
+            button_learn=new QPushButton("learn left");break;
+        case 2:
+            button_learn=new QPushButton("learn right");break;
+        case 3:
+            button_learn=new QPushButton("learn right");break;
+
+        }
+
+        connect(button_learn, SIGNAL(clicked()),
+                signalMapper,         SLOT(map()));
+        signalMapper->setMapping(button_learn, i);
+
+        GL->addWidget(button_learn,2,i);
+    }
+
+
+
+
+
+    //__________________machine learning
+    perc_inp=new float[8];
+
+    data_l_inp.resize(3);
+    for (int i=0;i<3;i++)
+        data_l_inp[i].resize(16);
+
+    for (int j=0;j<3;j++)
+        for(int i=0;i<data_l_inp[0].size();i++)
+        {
+            data_l_inp[j][i]=0;
+        }
+    //    curveLearn=new myCurve(data_l_inp,d_plot,"Target",QColor(0,0,0,0),Qt::red);
+    //    curveLearn->drawing();
+
+    vector<int> constr;
+    constr.push_back(8);
+    constr.push_back(5);
+    constr.push_back(5);
+    constr.push_back(1);//output
+    perc=new perceptron(constr);
+
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
         featurePreOut[i]=1;
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
-    qDebug()<<featureOut[0];
+    //    qDebug()<<featureOut[0];
 
-    QGridLayout* GL=new QGridLayout();
-    QWidget *centralWidget1=new QWidget();
-    centralWidget1->setLayout(GL);
+
 
 #ifdef SERIAL
     dataEMG.resize(2);
@@ -140,29 +216,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #endif
 
-    //____________________BUTTONS
-    QSignalMapper* signalMapper = new QSignalMapper(this);
-    connect(signalMapper, SIGNAL(mapped(const QString &)),
-            this, SLOT(buttonClicked(const QString &)));
-
-    for(int i=0;i<2;i++)
-    {
-        switch(i)
-        {
-        case 0:
-            button_learn=new QPushButton("learn left");break;
-        case 1:
-            button_learn=new QPushButton("learn right");
-        }
-
-        connect(button_learn, SIGNAL(clicked()),
-                signalMapper,         SLOT(map()));
-        signalMapper->setMapping(button_learn, QString::number(i));
-
-        GL->addWidget(button_learn,2,i);
-    }
-
-
 
 
     setCentralWidget(centralWidget1);
@@ -206,15 +259,15 @@ void MainWindow::getEMG(std::vector<float> x)
         dataEMG[i][ind_c[i]]=x[i];
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
-
-        static int k=0;
-        percBuf[ind_p]=k;
-
-        k++;
     }
+
     myPCA.updateBuf(featurePreOut);
     //qDebug()<<featureOut.size();
     myPCA.proect(featureOut);
+
+
+    perc->refresh(perc_inp);
+    percBuf[ind_p]=*perc->out[0]*1000;
 
 #endif
 }

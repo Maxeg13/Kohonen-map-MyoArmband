@@ -20,6 +20,7 @@ public:
     float** refresh(float* x);
 
     void learn1(float* x,float* t);
+    void learn1(float* x,float t);
     void learnFunc();
 };
 #endif // NET_H
