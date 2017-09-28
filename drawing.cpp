@@ -32,3 +32,15 @@
         setSamples( points ); // ассоциировать набор точек с кривой
         attach( d_plot); // отобразить кривую на графике
     }
+
+    void myCurve::pointDrawing(float x,float y)
+    {
+        // Добавить точки на ранее созданную кривую
+        QPolygonF points;
+
+
+            points<<QPointF(x,y);
+
+        setSamples( points ); // ассоциировать набор точек с кривой
+        attach( d_plot); // отобразить кривую на графике
+    }

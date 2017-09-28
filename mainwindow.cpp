@@ -38,10 +38,11 @@ QPushButton *button_learn;
 int gestures_N=7;
 
 float* perc_inp;
+float* perc_out;
 perceptron* perc;
 vector<vector<float>> dataTest;
 vector<vector<float>> data_l_inp;
-vector<float> data_l_out;
+vector<vector<float>> data_l_out;
 
 vector <vector<float>> dataEMG;
 vector<float> percBuf;
@@ -60,14 +61,27 @@ void convertFromVec(vector<float>& x,float* y)
 
 void MainWindow::buttonClicked(int j)
 {
-    float gest[gestures_N];
-    gest[0]=0;
-    gest[1]=-.2;
-    gest[2]=.2;
-    gest[3]=-.7;
-    gest[4]=.7;
-    gest[5]=0;
-    gest[6]=0;
+
+    data_l_out[0][0]=0;
+    data_l_out[0][1]=0;
+
+    data_l_out[1][0]=-.2;
+    data_l_out[1][1]=0;
+
+    data_l_out[2][0]=.2;
+    data_l_out[2][1]=0;
+
+    data_l_out[3][0]=-.7;
+    data_l_out[3][1]=0;
+
+    data_l_out[4][0]=.7;
+    data_l_out[4][1]=0;
+
+    data_l_out[5][0]=0;
+    data_l_out[5][1]=-.2;
+
+    data_l_out[6][0]=0;
+    data_l_out[6][1]=.2;
 
     switch(j)
     {
@@ -80,17 +94,16 @@ void MainWindow::buttonClicked(int j)
     case 6:
 
         data_l_inp[j]=featurePreOut;
-        data_l_out[j]=gest[j];
         break;
     case 7:
         for( int k=0;k<50000;k++)
             for(int i=0;i<gestures_N;i++)
             {
                 convertFromVec(data_l_inp[i],perc_inp);
-                //                qDebug()<<perc_inp[2];
-                perc->learn1(perc_inp,data_l_out[i]);
+                convertFromVec(data_l_out[i],perc_out);
+
+                perc->learn1(perc_inp,perc_out);
             }
-        qDebug()<<"bye";break;
     }
 }
 
@@ -120,9 +133,9 @@ MainWindow::MainWindow(QWidget *parent) :
         case 4:
             button_learn=new QPushButton("save strong right");break;
         case 5:
-            button_learn=new QPushButton("nope");break;
+            button_learn=new QPushButton("save up");break;
         case 6:
-            button_learn=new QPushButton("nope");break;
+            button_learn=new QPushButton("save down");break;
         case 7:
             button_learn=new QPushButton("learn");break;
         }
@@ -138,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //__________________machine learning
     perc_inp=new float[perc_dim];
+    perc_out=new float [2];
 
     data_l_inp.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
@@ -147,14 +161,16 @@ MainWindow::MainWindow(QWidget *parent) :
         for(int i=0;i<data_l_inp[0].size();i++)
             data_l_inp[j][i]=0;
 
-    data_l_out.resize(gestures_N,0);
+    data_l_out.resize(gestures_N);
+    for (int i=0;i<gestures_N;i++)
+        data_l_out[i].resize(2);
 
 
     vector<int> constr;
     constr.push_back(perc_dim);
     constr.push_back(5);
     constr.push_back(5);
-    constr.push_back(1);//output
+    constr.push_back(2);//output
     perc=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
@@ -230,8 +246,13 @@ MainWindow::MainWindow(QWidget *parent) :
     perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
     perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
     percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
+    QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
+                            QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
+    percCurve->setSymbol( symbol );
     GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
     perc_pl->setMinimumWidth(390);
+    perc_pl->setAxisScale(QwtPlot::yLeft,-1.5,1.5);
+    perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
 
 #endif
 
@@ -313,7 +334,9 @@ void MainWindow::drawing()
         curveFeature1[p_ind]->signalDrawing();
         curveFeature2[p_ind]->signalDrawing();
     }
+//    percCurve->pointDrawing(*perc->out[0],*perc->out[1]);
     percCurve->signalDrawing();
+
 #endif
     emit featureOutSignal(featureOut);
 }
