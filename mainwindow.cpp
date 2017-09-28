@@ -63,18 +63,20 @@ void MainWindow::buttonClicked(int j)
     case 0:
     case 1:
     case 2:
-        data_l_inp[j]=featureOut;
+        qDebug()<<data_l_inp[j].size();
+        qDebug()<<featurePreOut.size();
+        data_l_inp[j]=featurePreOut;
         data_l_out[j]=j-1;
         break;
 
     case 3:
         for( int k=0;k<10000;k++)
-        for(int i=0;i<3;i++)
-        {
-            float* x;
-            convertFromVec(data_l_inp[j],x);
-            perc->learn1(x,data_l_out[i]);
-        }
+            for(int i=0;i<3;i++)
+            {
+                float* x;
+                convertFromVec(data_l_inp[j],x);
+                perc->learn1(x,data_l_out[i]);
+            }
         qDebug()<<"bye";break;
     }
 }
@@ -90,18 +92,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapper, SIGNAL(mapped(int)),
             this, SLOT(buttonClicked(int)));
 
-    for(int i=0;i<3;i++)
+    for(int i=0;i<4;i++)
     {
         switch(i)
         {
         case 0:
-            button_learn=new QPushButton("learn weak");break;
+            button_learn=new QPushButton("save weak");break;
         case 1:
-            button_learn=new QPushButton("learn left");break;
+            button_learn=new QPushButton("save left");break;
         case 2:
-            button_learn=new QPushButton("learn right");break;
+            button_learn=new QPushButton("save right");break;
         case 3:
-            button_learn=new QPushButton("learn right");break;
+            button_learn=new QPushButton("learn");break;
 
         }
 
@@ -113,11 +115,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
 
-
-
-
     //__________________machine learning
-    perc_inp=new float[8];
+    perc_inp=new float[16];
 
     data_l_inp.resize(3);
     for (int i=0;i<3;i++)
@@ -125,14 +124,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for (int j=0;j<3;j++)
         for(int i=0;i<data_l_inp[0].size();i++)
-        {
             data_l_inp[j][i]=0;
-        }
-    //    curveLearn=new myCurve(data_l_inp,d_plot,"Target",QColor(0,0,0,0),Qt::red);
-    //    curveLearn->drawing();
+
+    data_l_out.resize(3,0);
+
 
     vector<int> constr;
-    constr.push_back(8);
+    constr.push_back(16);
     constr.push_back(5);
     constr.push_back(5);
     constr.push_back(1);//output
