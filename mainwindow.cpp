@@ -60,14 +60,14 @@ void convertFromVec(vector<float>& x,float* y)
 
 void MainWindow::buttonClicked(int j)
 {
-    float gest[gestures_N];
-    gest[0]=0;
-    gest[1]=-.2;
-    gest[2]=.2;
-    gest[3]=-.7;
-    gest[4]=.7;
-    gest[5]=0;
-    gest[6]=0;
+//    float gest[gestures_N];
+    data_l_out[0]=0;
+    data_l_out[1]=-.2;
+    data_l_out[2]=.2;
+    data_l_out[3]=-.7;
+    data_l_out[4]=.7;
+    data_l_out[5]=0;
+    data_l_out[6]=0;
 
     switch(j)
     {
@@ -80,7 +80,7 @@ void MainWindow::buttonClicked(int j)
     case 6:
 
         data_l_inp[j]=featurePreOut;
-        data_l_out[j]=gest[j];
+//        data_l_out[j]=gest[j];
         break;
     case 7:
         for( int k=0;k<50000;k++)
