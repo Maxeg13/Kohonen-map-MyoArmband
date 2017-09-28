@@ -63,25 +63,25 @@ void MainWindow::buttonClicked(int j)
 {
 
     data_l_out[0][0]=0;
-    data_l_out[0][1]=0;
+//    data_l_out[0][1]=0;
 
     data_l_out[1][0]=-.2;
-    data_l_out[1][1]=0;
+//    data_l_out[1][1]=0;
 
     data_l_out[2][0]=.2;
-    data_l_out[2][1]=0;
+//    data_l_out[2][1]=0;
 
     data_l_out[3][0]=-.7;
-    data_l_out[3][1]=0;
+//    data_l_out[3][1]=0;
 
     data_l_out[4][0]=.7;
-    data_l_out[4][1]=0;
+//    data_l_out[4][1]=0;
 
     data_l_out[5][0]=0;
-    data_l_out[5][1]=-.2;
+//    data_l_out[5][1]=-.2;
 
     data_l_out[6][0]=0;
-    data_l_out[6][1]=.2;
+//    data_l_out[6][1]=.2;
 
     switch(j)
     {
@@ -151,7 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //__________________machine learning
     perc_inp=new float[perc_dim];
-    perc_out=new float [2];
+    perc_out=new float [1];
 
     data_l_inp.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
@@ -163,14 +163,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     data_l_out.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
-        data_l_out[i].resize(2);
+        data_l_out[i].resize(1);
 
 
     vector<int> constr;
     constr.push_back(perc_dim);
     constr.push_back(5);
     constr.push_back(5);
-    constr.push_back(2);//output
+    constr.push_back(1);//output
     perc=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
@@ -307,7 +307,7 @@ void MainWindow::getEMG(vector<float> x)
 
     convertFromVec(featurePreOut,perc_inp);
     perc->refresh(perc_inp);
-    percBuf[ind_p]=*perc->out[0]*1000;
+    percBuf[ind_p]=*perc->out[0]*10000;
 
 #endif
 }
