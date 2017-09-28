@@ -41,7 +41,7 @@ QTimer *timer;
 QTimer *timerMyo;
 QPainter *painter;
 QwtPlot* perc_pl;
-QPushButton *button_learn1;
+QPushButton *button_learn;
 
 
 std::vector <std::vector<float>> dataEMG;
@@ -140,19 +140,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #endif
 
-    button_learn1=new QPushButton("learn left");
-    GL->addWidget(button_learn1,2,4);
+    //____________________BUTTONS
     QSignalMapper* signalMapper = new QSignalMapper(this);
+    connect(signalMapper, SIGNAL(mapped(const QString &)),
+            this, SLOT(buttonClicked(const QString &)));
 
-        connect(button_learn1, SIGNAL(clicked()),
+    for(int i=0;i<2;i++)
+    {
+        switch(i)
+        {
+        case 0:
+            button_learn=new QPushButton("learn left");break;
+        case 1:
+            button_learn=new QPushButton("learn right");
+        }
+
+        connect(button_learn, SIGNAL(clicked()),
                 signalMapper,         SLOT(map()));
+        signalMapper->setMapping(button_learn, QString::number(i));
 
-        signalMapper->setMapping(button_learn1, QString::number(1));
+        GL->addWidget(button_learn,2,i);
+    }
 
-        connect(signalMapper, SIGNAL(mapped(const QString &)),
-                    this, SLOT(buttonClicked(const QString &)));
-
-        GL->addWidget(button_learn1,2,0);
 
 
 
@@ -304,18 +313,13 @@ void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
     d_panner->setMouseButton( Qt::RightButton );
     // Включить отображение координат курсора и двух перпендикулярных
     // линий в месте его отображения
-    // #include <qwt_plot_picker.h>
 
-//    QFont* qf=new QFont(fontInfo().family(), 10);
-//    d_plot->setFont(*qf);
-QwtText* qwtt=new QwtText(title);
-    qwtt->setFont(QFont("Helvetica", 11));
-//    title.size(12);
-//    title.
+    QwtText* qwtt=new QwtText(title);
+    qwtt->setFont(QFont("Helvetica", 11,QFont::Normal));
+
+    d_plot->setAxisScale(1,-500,500,200);
     d_plot->setTitle( *qwtt ); // заголовок
     d_plot->setCanvasBackground( Qt::white ); // цвет фона
-
-
 
 
     // Включить сетку
