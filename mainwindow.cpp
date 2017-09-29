@@ -35,11 +35,12 @@ QTimer *timerMyo;
 QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
-int gestures_N=7;
+int gestures_N=9;
 
 float* perc_inp;
 float* perc_out;
-perceptron* perc;
+perceptron* perc_X;
+perceptron* perc_Y;
 vector<vector<float>> dataTest;
 vector<vector<float>> data_l_inp;
 vector<vector<float>> data_l_out;
@@ -51,11 +52,11 @@ int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 int perc_dim=8;
 
-void convertFromVec(vector<float>& x,float* y)
+void convertFromVec(vector<float>& x,float* y, float scale)
 {
     for(int j=0;j<perc_dim;j++)
     {
-        y[j]=x[j]/800;
+        y[j]=x[j]*scale;
     }
 }
 
@@ -63,25 +64,31 @@ void MainWindow::buttonClicked(int j)
 {
 
     data_l_out[0][0]=0;
-//    data_l_out[0][1]=0;
+    data_l_out[0][1]=0;
 
     data_l_out[1][0]=-.2;
-//    data_l_out[1][1]=0;
+    data_l_out[1][1]=0;
 
     data_l_out[2][0]=.2;
-//    data_l_out[2][1]=0;
+    data_l_out[2][1]=0;
 
     data_l_out[3][0]=-.7;
-//    data_l_out[3][1]=0;
+    data_l_out[3][1]=0;
 
     data_l_out[4][0]=.7;
-//    data_l_out[4][1]=0;
+    data_l_out[4][1]=0;
 
     data_l_out[5][0]=0;
-//    data_l_out[5][1]=-.2;
+    data_l_out[5][1]=.2;
 
     data_l_out[6][0]=0;
-//    data_l_out[6][1]=.2;
+    data_l_out[6][1]=-.2;
+
+    data_l_out[7][0]=0;
+    data_l_out[7][1]=.7;
+
+    data_l_out[8][0]=0;
+    data_l_out[8][1]=-.7;
 
     switch(j)
     {
@@ -92,18 +99,24 @@ void MainWindow::buttonClicked(int j)
     case 4:
     case 5:
     case 6:
-
+    case 7:
+    case 8:
         data_l_inp[j]=featurePreOut;
         break;
-    case 7:
+    case 9:
         for( int k=0;k<50000;k++)
             for(int i=0;i<gestures_N;i++)
             {
-                convertFromVec(data_l_inp[i],perc_inp);
-                convertFromVec(data_l_out[i],perc_out);
+                convertFromVec(data_l_inp[i],perc_inp, 1/800.);
+//                convertFromVec(data_l_out[i],perc_out, 1);
 
-                perc->learn1(perc_inp,perc_out);
+                perc_X->learn1(perc_inp,data_l_out[i][0]);
+                perc_Y->learn1(perc_inp,data_l_out[i][1]);
             }
+        break;
+    case 10:
+        perc_X->reset_w();
+        perc_Y->reset_w();
     }
 }
 
@@ -118,7 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapper, SIGNAL(mapped(int)),
             this, SLOT(buttonClicked(int)));
 
-    for(int i=0;i<(gestures_N+1);i++)
+    for(int i=0;i<(gestures_N+2);i++)
     {
         switch(i)
         {
@@ -137,7 +150,14 @@ MainWindow::MainWindow(QWidget *parent) :
         case 6:
             button_learn=new QPushButton("save down");break;
         case 7:
+            button_learn=new QPushButton("save strong up");break;
+        case 8:
+            button_learn=new QPushButton("save strong down");break;
+        case 9:
             button_learn=new QPushButton("learn");break;
+        case 10:
+            button_learn=new QPushButton("reset perc");break;
+
         }
 
         connect(button_learn, SIGNAL(clicked()),
@@ -163,7 +183,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     data_l_out.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
-        data_l_out[i].resize(1);
+        data_l_out[i].resize(2);
 
 
     vector<int> constr;
@@ -171,7 +191,8 @@ MainWindow::MainWindow(QWidget *parent) :
     constr.push_back(5);
     constr.push_back(5);
     constr.push_back(1);//output
-    perc=new perceptron(constr);
+    perc_X=new perceptron(constr);
+    perc_Y=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
@@ -243,8 +264,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     perc_pl=new QwtPlot(this);
     drawingInit(perc_pl,QString("perc out"));
-    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
-    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+//    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
+//    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
     percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
     QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
@@ -305,9 +326,10 @@ void MainWindow::getEMG(vector<float> x)
     //qDebug()<<featureOut.size();
     myPCA.proect(featureOut);
 
-    convertFromVec(featurePreOut,perc_inp);
-    perc->refresh(perc_inp);
-    percBuf[ind_p]=*perc->out[0]*10000;
+    convertFromVec(featurePreOut,perc_inp,1/800.);
+    perc_X->refresh(perc_inp);
+    perc_Y->refresh(perc_inp);
+    percBuf[ind_p]=*perc_X->out[0]*500;
 
 #endif
 }
@@ -334,8 +356,8 @@ void MainWindow::drawing()
         curveFeature1[p_ind]->signalDrawing();
         curveFeature2[p_ind]->signalDrawing();
     }
-//    percCurve->pointDrawing(*perc->out[0],*perc->out[1]);
-    percCurve->signalDrawing();
+    percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
+//    percCurve->signalDrawing();
 
 #endif
     emit featureOutSignal(featureOut);
