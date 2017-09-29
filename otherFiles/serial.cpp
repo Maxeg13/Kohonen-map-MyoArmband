@@ -2,6 +2,10 @@
 #include "stdafx.h"
 #include <Windows.h>
 #include "targetver.h"
+DWORD dwSize = 1;
+DWORD dwBytesWritten;
+LPOVERLAPPED ov;
+
 void Serial::InitCOM(LPCTSTR sPortName)
 {
 
@@ -22,12 +26,18 @@ void Serial::InitCOM(LPCTSTR sPortName)
     {
         //    cout << "error setting serial port state\n";
     }
-    char data[] = "Hello from C++";
-    DWORD dwSize = sizeof(data);
-    DWORD dwBytesWritten;
-    LPOVERLAPPED ov;
+    char data[] = "H";
+     dwSize = sizeof(data);
+     dwBytesWritten;
+     ov;
 
-    BOOL iRet = WriteFile (hSerial,data,dwSize,&dwBytesWritten ,NULL);
+    BOOL iRet = WriteFile (hSerial,TEXT("H"),dwSize,&dwBytesWritten ,NULL);
+}
+
+void Serial::write(char c)
+{
+     dwSize = 1;
+     WriteFile (hSerial,&c,dwSize,&dwBytesWritten ,NULL);
 }
 
 char Serial::ReadCOM(bool& ON)
@@ -44,3 +54,7 @@ char Serial::ReadCOM(bool& ON)
         return sReceivedChar;
 }
 
+void Serial::close()
+{
+    FindClose(hSerial);
+}

@@ -8,7 +8,7 @@ QT       += core gui
 CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-LIBS+="$$PWD/serial.o"
+#LIBS+="$$PWD/serial.o"
 #LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32
 #LIBS     += $$OUT_PWD/release/datacollector.o
@@ -43,7 +43,8 @@ SOURCES += main.cpp\
     drawing.cpp \
     stand_dev.cpp \
     layer.cpp \
-    perceptron.cpp
+    perceptron.cpp \
+    otherFiles/serial.cpp
 #    stand_dev.cpp
 
 HEADERS  += \

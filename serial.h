@@ -11,5 +11,6 @@ public:
 void  InitCOM(const wchar_t* );
 char  ReadCOM(bool& );
 void close();
+void write(char c);
 };
 #endif // SERIAL_H

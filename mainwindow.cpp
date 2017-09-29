@@ -12,8 +12,14 @@
 #include "pca.h"
 #endif
 
+#define IDLE
 #include "drawing.h"
 #include "perceptron.h"
+
+#include "serial.h"
+Serial hSerial;
+bool ON1;
+char c1;
 
 using namespace std;
 #ifdef SERIAL
@@ -123,6 +129,11 @@ void MainWindow::buttonClicked(int j)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+   QString qstr=QString("COM4");
+    string str1=qstr.toUtf8().constData();;
+    wstring str(str1.begin(),str1.end());
+    hSerial.InitCOM(str.c_str());
+
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
     QWidget *centralWidget1=new QWidget();
@@ -238,7 +249,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #else
 
+#ifndef IDLE
     collector=new DataCollector();
+#endif
+
 
 
     dataEMG.resize(8);
@@ -295,7 +309,12 @@ MainWindow::MainWindow(QWidget *parent) :
     timerMyo = new QTimer(this);
     connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
     timerMyo->start(4);
-    connect(&(collector->qdc),SIGNAL(EMG(vector<float>)),this,SLOT(getEMG(vector<float>)));
+
+
+#ifndef IDLE
+    connect(&(collector->qdc),SIGNAL(EMG(vector<float>)),this,SLOT(getEMG(vector<float>)));    
+#endif
+
 #endif
 }
 
@@ -305,7 +324,19 @@ void MainWindow::kickMyo()
 #ifdef SERIAL
 
 #else
+
+
+
+c1=hSerial.ReadCOM(ON1);
+    if(ON1)
+        qDebug()<<c1;
+
+    hSerial.write('H');
+
+#ifndef IDLE
     collector->kick(10);
+#endif
+
 #endif
 }
 
