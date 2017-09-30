@@ -1,0 +1,40 @@
+char c;
+int ser_width = 3;
+int ptr;
+void setup() {
+
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(6, OUTPUT);
+  Serial.begin(115200);
+}
+
+
+
+void loop() {
+  if (Serial.available())
+  {
+    c = Serial.read();
+    if(ptr==1)  
+    analogWrite(3, c);
+        if(ptr==2)  
+    analogWrite(6, c);
+    if ((ptr == 0) && (c != 1))
+    {}
+    else
+    {
+      ptr++;
+      ptr %= ser_width;
+    }
+    
+
+  }
+  //      Serial.print(c);
+  //  if (c == 'H')
+  //  {
+  //    delay(1000);
+  //    digitalWrite(13, HIGH);
+  //    delay(1000);
+  //    digitalWrite(13, LOW);
+  //  }
+}

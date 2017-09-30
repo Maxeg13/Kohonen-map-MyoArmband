@@ -2,6 +2,7 @@
 #include "headers.h"
 #include "stand_dev.h"
 #include "QSignalMapper"
+#include "QSlider"
 //SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
@@ -18,6 +19,9 @@
 
 #include "serial.h"
 Serial hSerial;
+QSlider *slider_x;
+QSlider *slider_y;
+int slider_x_val;
 bool ON1;
 char c1;
 
@@ -126,11 +130,22 @@ void MainWindow::buttonClicked(int j)
     }
 }
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    slider_x=new QSlider;
+    slider_x->setRange(0,255);
+    slider_x->setValue(128);
+    slider_x->setOrientation(Qt::Horizontal);
+
+    slider_y=new QSlider;
+    slider_y->setRange(0,255);
+    slider_y->setValue(128);
+    slider_y->setOrientation(Qt::Horizontal);
+
    QString qstr=QString("COM4");
-    string str1=qstr.toUtf8().constData();;
+    string str1=qstr.toUtf8().constData();
     wstring str(str1.begin(),str1.end());
     hSerial.InitCOM(str.c_str());
 
@@ -175,9 +190,17 @@ MainWindow::MainWindow(QWidget *parent) :
                 signalMapper,         SLOT(map()));
         signalMapper->setMapping(button_learn, i);
 
+
         int frame_width=4;
         GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
+
     }
+
+    int frame_width=4;
+    GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
+    GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
+
+
 
 
     //__________________machine learning
@@ -325,14 +348,6 @@ void MainWindow::kickMyo()
 
 #else
 
-
-
-c1=hSerial.ReadCOM(ON1);
-    if(ON1)
-        qDebug()<<c1;
-
-    hSerial.write('H');
-
 #ifndef IDLE
     collector->kick(10);
 #endif
@@ -343,6 +358,10 @@ c1=hSerial.ReadCOM(ON1);
 void MainWindow::getEMG(vector<float> x)
 {
 #ifndef SERIAL
+
+
+
+
     getFeaturesMyo(x,featurePreOut);
     for (int i=0;i<8;i++)
     {
@@ -369,7 +388,16 @@ void MainWindow::getEMG(vector<float> x)
 
 void MainWindow::drawing()
 {
+    //c1=hSerial.ReadCOM(ON1);
+    //    if(ON1)
+    //        qDebug()<<c1;
 
+    static byte bb;
+    bb++;
+
+        hSerial.write((char)1);
+    hSerial.write((char)slider_x->value());
+    hSerial.write((char)slider_y->value());
 #ifdef SERIAL
     for(int p_ind=0;p_ind<2;p_ind++)
     {
