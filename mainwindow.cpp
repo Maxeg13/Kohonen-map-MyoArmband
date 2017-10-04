@@ -13,7 +13,7 @@
 #include "pca.h"
 #endif
 
-#define IDLE
+//#define IDLE
 #include "drawing.h"
 #include "perceptron.h"
 
@@ -21,6 +21,8 @@
 Serial hSerial;
 QSlider *slider_x;
 QSlider *slider_y;
+int thresh(float);
+
 int slider_x_val;
 bool ON1;
 char c1;
@@ -118,7 +120,7 @@ void MainWindow::buttonClicked(int j)
             for(int i=0;i<gestures_N;i++)
             {
                 convertFromVec(data_l_inp[i],perc_inp, 1/800.);
-//                convertFromVec(data_l_out[i],perc_out, 1);
+                //                convertFromVec(data_l_out[i],perc_out, 1);
 
                 perc_X->learn1(perc_inp,data_l_out[i][0]);
                 perc_Y->learn1(perc_inp,data_l_out[i][1]);
@@ -135,8 +137,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     slider_x=new QSlider;
-    slider_x->setRange(0,255);
-    slider_x->setValue(128);
+    int setV=255;
+    slider_x->setRange(0,setV);
+    slider_x->setValue(setV/2);
     slider_x->setOrientation(Qt::Horizontal);
 
     slider_y=new QSlider;
@@ -144,7 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
     slider_y->setValue(128);
     slider_y->setOrientation(Qt::Horizontal);
 
-   QString qstr=QString("COM4");
+    QString qstr=QString("COM4");
     string str1=qstr.toUtf8().constData();
     wstring str(str1.begin(),str1.end());
     hSerial.InitCOM(str.c_str());
@@ -301,11 +304,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     perc_pl=new QwtPlot(this);
     drawingInit(perc_pl,QString("perc out"));
-//    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
-//    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+    //    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
+    //    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
     percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
     QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
-                            QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
+                                       QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
     percCurve->setSymbol( symbol );
     GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
     perc_pl->setMinimumWidth(390);
@@ -335,7 +338,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 #ifndef IDLE
-    connect(&(collector->qdc),SIGNAL(EMG(vector<float>)),this,SLOT(getEMG(vector<float>)));    
+    connect(&(collector->qdc),SIGNAL(EMG(vector<float>)),this,SLOT(getEMG(vector<float>)));
 #endif
 
 #endif
@@ -387,17 +390,17 @@ void MainWindow::getEMG(vector<float> x)
 
 
 void MainWindow::drawing()
-{
-    //c1=hSerial.ReadCOM(ON1);
-    //    if(ON1)
-    //        qDebug()<<c1;
+{    
+    int x;
+    int y;
+    hSerial.write((char)1);
+    hSerial.write((char)(thresh((0.5+*perc_Y->out[0])*255)));
+    hSerial.write((char)(thresh((0.7-*perc_X->out[0])*255)));
+//    qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
+//    hSerial.write((char)((slider_y->value())));
+//    hSerial.write((char)((int)(255-slider_x->value())));
 
-    static byte bb;
-    bb++;
-
-        hSerial.write((char)1);
-    hSerial.write((char)slider_x->value());
-    hSerial.write((char)slider_y->value());
+//    hSerial.write((char)(((int)sqrt(slider_y->value()/255.))*255));
 #ifdef SERIAL
     for(int p_ind=0;p_ind<2;p_ind++)
     {
@@ -416,7 +419,7 @@ void MainWindow::drawing()
         curveFeature2[p_ind]->signalDrawing();
     }
     percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
-//    percCurve->signalDrawing();
+    //    percCurve->signalDrawing();
 
 #endif
     emit featureOutSignal(featureOut);
@@ -524,4 +527,13 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *e)
 {
 
+}
+
+int thresh(float x)
+{
+    if(x>255)
+        return 255;
+    if(x<0)
+        return 0;
+    return x;
 }
