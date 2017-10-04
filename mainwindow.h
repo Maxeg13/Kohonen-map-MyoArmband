@@ -39,6 +39,7 @@ public slots:
     void kickMyo();
     void getCor();
     void buttonClicked(int);
+    void serialChoose();
 signals:
     void featureOutSignal(vector<float>);
     void sended();

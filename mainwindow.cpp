@@ -3,6 +3,7 @@
 #include "stand_dev.h"
 #include "QSignalMapper"
 #include "QSlider"
+#include "QLineEdit"
 //SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
@@ -18,7 +19,9 @@
 #include "perceptron.h"
 
 #include "serial.h"
+
 Serial hSerial;
+QLineEdit* LE;
 QSlider *slider_x;
 QSlider *slider_y;
 int thresh(float);
@@ -26,6 +29,7 @@ int thresh(float);
 int slider_x_val;
 bool ON1;
 char c1;
+bool ser_on;
 
 using namespace std;
 #ifdef SERIAL
@@ -147,10 +151,14 @@ MainWindow::MainWindow(QWidget *parent) :
     slider_y->setValue(128);
     slider_y->setOrientation(Qt::Horizontal);
 
+    LE=new QLineEdit;
     QString qstr=QString("COM4");
-    string str1=qstr.toUtf8().constData();
-    wstring str(str1.begin(),str1.end());
-    hSerial.InitCOM(str.c_str());
+        LE->setText(qstr);
+        string str1=qstr.toUtf8().constData();
+        wstring str(str1.begin(),str1.end());
+
+        ser_on=1;
+        hSerial.InitCOM(str.c_str());
 
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
@@ -194,14 +202,18 @@ MainWindow::MainWindow(QWidget *parent) :
         signalMapper->setMapping(button_learn, i);
 
 
+
         int frame_width=4;
         GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
 
     }
 
+    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
+
     int frame_width=4;
     GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
     GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
+    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
 
 
 
@@ -391,16 +403,25 @@ void MainWindow::getEMG(vector<float> x)
 
 void MainWindow::drawing()
 {    
-    int x;
-    int y;
-    hSerial.write((char)1);
-    hSerial.write((char)(thresh((0.5+*perc_Y->out[0])*255)));
-    hSerial.write((char)(thresh((0.7-*perc_X->out[0])*255)));
-//    qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
-//    hSerial.write((char)((slider_y->value())));
-//    hSerial.write((char)((int)(255-slider_x->value())));
+    int x=(thresh((0.5+*perc_Y->out[0])*255));
+    int y=(thresh((0.7-*perc_X->out[0])*255));
+//    x*=slider_x->value()/125.;
+//    y*=slider_y->value()/125.;
 
-//    hSerial.write((char)(((int)sqrt(slider_y->value()/255.))*255));
+    if(ser_on)
+    {
+        hSerial.write((char)1);
+#ifndef IDLE
+
+            hSerial.write((char)x);
+            hSerial.write((char)y);
+#else
+        qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
+        hSerial.write((char)((slider_y->value())));
+        hSerial.write((char)((int)(255-slider_x->value())));
+#endif
+    }
+
 #ifdef SERIAL
     for(int p_ind=0;p_ind<2;p_ind++)
     {
@@ -452,6 +473,16 @@ void MainWindow::reconnect(QString s)
 #endif
 }
 
+void MainWindow::serialChoose()
+{
+    ser_on=1;
+    hSerial.close();
+    QString qstr=LE->text();
+    string str1=qstr.toUtf8().constData();
+    wstring str(str1.begin(),str1.end());
+    hSerial.InitCOM(str.c_str());
+
+}
 
 void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
 {
@@ -514,7 +545,7 @@ void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
     d_plot->setAxisTitle(QwtPlot::xBottom, "time");
     d_plot->insertLegend( new QwtLegend() );
 #else
-    d_plot->setMinimumSize(150,40);
+    d_plot->setMinimumSize(150,140);
 #endif
 }
 
