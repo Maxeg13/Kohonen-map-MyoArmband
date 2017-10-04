@@ -4,6 +4,7 @@
 #include "QSignalMapper"
 #include "QSlider"
 #include "QLineEdit"
+
 //SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
@@ -17,7 +18,7 @@
 //#define IDLE
 #include "drawing.h"
 #include "perceptron.h"
-
+#include "deque"
 #include "serial.h"
 
 Serial hSerial;
@@ -52,13 +53,17 @@ QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
 int gestures_N=9;
+int gest_ind;
+int resize_on;
+
+
 
 float* perc_inp;
 float* perc_out;
 perceptron* perc_X;
 perceptron* perc_Y;
 vector<vector<float>> dataTest;
-vector<vector<float>> data_l_inp;
+vector<vector<deque<float>>> data_l_inp;
 vector<vector<float>> data_l_out;
 
 vector <vector<float>> dataEMG;
@@ -76,8 +81,20 @@ void convertFromVec(vector<float>& x,float* y, float scale)
     }
 }
 
+
+void convertFromVec(vector<deque<float>>& x,float* y, float scale)
+{
+    static int l=rand()%x[0].size();
+    for(int i=0;i<x.size();i++)
+    {
+        y[i]=x[i][l]*scale;
+    }
+}
+
+
 void MainWindow::buttonClicked(int j)
 {
+
 
     data_l_out[0][0]=0;
     data_l_out[0][1]=0;
@@ -117,7 +134,19 @@ void MainWindow::buttonClicked(int j)
     case 6:
     case 7:
     case 8:
-        data_l_inp[j]=featurePreOut;
+
+        gest_ind=j;
+        resize_on=1;
+
+
+        for(int i=0;i<perc_dim;i++)
+        {
+            data_l_inp[gest_ind][i].resize(0);
+        }
+        //        data_l_inp.
+        //        data_l_inp.front()[j].push_back(featurePreOut);
+        //        data_l_inp.front()[j][0];
+        //        vector<float>::resize(0,1);
         break;
     case 9:
         for( int k=0;k<50000;k++)
@@ -140,6 +169,7 @@ void MainWindow::buttonClicked(int j)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+
     slider_x=new QSlider;
     int setV=255;
     slider_x->setRange(0,setV);
@@ -153,12 +183,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     LE=new QLineEdit;
     QString qstr=QString("COM4");
-        LE->setText(qstr);
-        string str1=qstr.toUtf8().constData();
-        wstring str(str1.begin(),str1.end());
+    LE->setText(qstr);
+    string str1=qstr.toUtf8().constData();
+    wstring str(str1.begin(),str1.end());
 
-        ser_on=1;
-        hSerial.InitCOM(str.c_str());
+    ser_on=1;
+    hSerial.InitCOM(str.c_str());
 
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
@@ -167,6 +197,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QSignalMapper* signalMapper = new QSignalMapper(this);
     connect(signalMapper, SIGNAL(mapped(int)),
             this, SLOT(buttonClicked(int)));
+
+    QSignalMapper* signalMapper2 = new QSignalMapper(this);
+    connect(signalMapper2, SIGNAL(mapped(int)),
+            this, SLOT(buttonReleased(int)));
 
     for(int i=0;i<(gestures_N+2);i++)
     {
@@ -201,7 +235,9 @@ MainWindow::MainWindow(QWidget *parent) :
                 signalMapper,         SLOT(map()));
         signalMapper->setMapping(button_learn, i);
 
-
+        connect(button_learn, SIGNAL(released()),
+                signalMapper2,         SLOT(map()));
+        signalMapper2->setMapping(button_learn, i);
 
         int frame_width=4;
         GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
@@ -223,12 +259,12 @@ MainWindow::MainWindow(QWidget *parent) :
     perc_out=new float [1];
 
     data_l_inp.resize(gestures_N);
-    for (int i=0;i<gestures_N;i++)
+    for(int i=0;i<gestures_N;i++)
         data_l_inp[i].resize(perc_dim);
 
-    for (int j=0;j<gestures_N;j++)
-        for(int i=0;i<data_l_inp[0].size();i++)
-            data_l_inp[j][i]=0;
+    //    for (int j=0;j<gestures_N;j++)
+    //        for(int i=0;i<data_l_inp[0].size();i++)
+    //            data_l_inp[j][i]=0;
 
     data_l_out.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
@@ -396,6 +432,21 @@ void MainWindow::getEMG(vector<float> x)
     perc_Y->refresh(perc_inp);
     percBuf[ind_p]=*perc_X->out[0]*500;
 
+
+    static int gg=0;
+    if(resize_on)
+    {
+        gg++;
+        if(gg%10==0)
+        {
+            gg=0;
+            for(int i=0;i<perc_dim;i++)
+            {
+                data_l_inp[gest_ind][i].push_back(featurePreOut[i]);
+            }
+        }
+    }
+
 #endif
 }
 
@@ -405,16 +456,16 @@ void MainWindow::drawing()
 {    
     int x=(thresh((0.5+*perc_Y->out[0])*255));
     int y=(thresh((0.7-*perc_X->out[0])*255));
-//    x*=slider_x->value()/125.;
-//    y*=slider_y->value()/125.;
+    //    x*=slider_x->value()/125.;
+    //    y*=slider_y->value()/125.;
 
     if(ser_on)
     {
         hSerial.write((char)1);
 #ifndef IDLE
 
-            hSerial.write((char)x);
-            hSerial.write((char)y);
+        hSerial.write((char)x);
+        hSerial.write((char)y);
 #else
         qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
         hSerial.write((char)((slider_y->value())));
@@ -445,6 +496,13 @@ void MainWindow::drawing()
 #endif
     emit featureOutSignal(featureOut);
 }
+
+void MainWindow::buttonReleased(int x)
+{
+    resize_on=0;
+}
+
+
 void MainWindow::getCor()
 {
 #ifndef SERIAL
