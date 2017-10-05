@@ -84,7 +84,9 @@ void convertFromVec(vector<float>& x,float* y, float scale)
 
 void convertFromVec(vector<deque<float>>& x,float* y, float scale)
 {
-    static int l=rand()%x[0].size();
+//    qDebug()<<x[0].size();
+    static int l;
+    l=rand()%x[0].size();
     for(int i=0;i<x.size();i++)
     {
         y[i]=x[i][l]*scale;
@@ -137,6 +139,7 @@ void MainWindow::buttonClicked(int j)
 
         gest_ind=j;
         resize_on=1;
+        qDebug()<<"hello";
 
 
         for(int i=0;i<perc_dim;i++)
@@ -153,8 +156,6 @@ void MainWindow::buttonClicked(int j)
             for(int i=0;i<gestures_N;i++)
             {
                 convertFromVec(data_l_inp[i],perc_inp, 1/800.);
-                //                convertFromVec(data_l_out[i],perc_out, 1);
-
                 perc_X->learn1(perc_inp,data_l_out[i][0]);
                 perc_Y->learn1(perc_inp,data_l_out[i][1]);
             }
@@ -231,7 +232,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         }
 
-        connect(button_learn, SIGNAL(clicked()),
+        connect(button_learn, SIGNAL(pressed()),
                 signalMapper,         SLOT(map()));
         signalMapper->setMapping(button_learn, i);
 
@@ -432,13 +433,13 @@ void MainWindow::getEMG(vector<float> x)
     perc_Y->refresh(perc_inp);
     percBuf[ind_p]=*perc_X->out[0]*500;
 
-
     static int gg=0;
     if(resize_on)
     {
         gg++;
         if(gg%10==0)
         {
+//            qDebug()<<gg;
             gg=0;
             for(int i=0;i<perc_dim;i++)
             {
@@ -500,6 +501,7 @@ void MainWindow::drawing()
 void MainWindow::buttonReleased(int x)
 {
     resize_on=0;
+    qDebug()<<data_l_inp[gest_ind][0].size();
 }
 
 
