@@ -3,14 +3,19 @@
 # Project created by QtCreator 2017-06-20T08:50:42
 #
 #-------------------------------------------------
+INCLUDEPATH += C:\eigen-eigen-332
+INCLUDEPATH += C:/QWT/include
+LIBS += -LC:/QWT/lib -lqwt
 
 QT       += core gui
 CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+
+
 #LIBS+="$$PWD/serial.o"
 #LIBS+="$$PWD/stand_dev.o"
-LIBS+=-L$$OUT_PWD/release -lmyo32
+LIBS+= -L$$OUT_PWD/release -lmyo32
 #LIBS     += $$OUT_PWD/release/datacollector.o
 #LIBS     += $$OUT_PWD/release/serialqobj.o
 LIBS     += $$OUT_PWD/release/stdafx.o
@@ -72,9 +77,38 @@ HEADERS  += \
     pca.h \
     layer.h \
     drawing_perc.h \
-    perceptron.h
+    perceptron.h \
+    myo/cxx/detail/ThrowOnError.hpp \
+    myo/cxx/impl/Hub_impl.hpp \
+    myo/cxx/impl/Myo_impl.hpp \
+    myo/cxx/impl/Pose_impl.hpp \
+    myo/cxx/DeviceListener.hpp \
+    myo/cxx/Hub.hpp \
+    myo/cxx/Myo.hpp \
+    myo/cxx/Pose.hpp \
+    myo/cxx/Quaternion.hpp \
+    myo/cxx/Vector3.hpp \
+    myo/libmyo/detail/visibility.h \
+    myo/libmyo.h \
+    myo/myo.hpp \
+    datacollector.h \
+    drawing.h \
+    drawing_perc.h \
+    eig.h \
+    headers.h \
+    kohonenwidget.h \
+    layer.h \
+    layer_koh.h \
+    mainwindow.h \
+    pca.h \
+    perceptron.h \
+    serial.h \
+    serialqobj.h \
+    stand_dev.h \
+    stdafx.h \
+    targetver.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 
-DISTFILES += \
-    myo/libmyo/myo32.dll
+#DISTFILES += \
+#    myo/libmyo/myo32.dll

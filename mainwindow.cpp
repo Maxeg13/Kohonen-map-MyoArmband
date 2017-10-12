@@ -96,34 +96,35 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale)
 
 void MainWindow::buttonClicked(int j)
 {
-
+float med=.3;
+float high=.7;
 
     data_l_out[0][0]=0;
     data_l_out[0][1]=0;
 
-    data_l_out[1][0]=-.2;
+    data_l_out[1][0]=-med;
     data_l_out[1][1]=0;
 
-    data_l_out[2][0]=.2;
+    data_l_out[2][0]=med;
     data_l_out[2][1]=0;
 
-    data_l_out[3][0]=-.7;
+    data_l_out[3][0]=-high;
     data_l_out[3][1]=0;
 
-    data_l_out[4][0]=.7;
+    data_l_out[4][0]=high;
     data_l_out[4][1]=0;
 
     data_l_out[5][0]=0;
-    data_l_out[5][1]=.2;
+    data_l_out[5][1]=med;
 
     data_l_out[6][0]=0;
-    data_l_out[6][1]=-.2;
+    data_l_out[6][1]=-med;
 
     data_l_out[7][0]=0;
-    data_l_out[7][1]=.7;
+    data_l_out[7][1]=high;
 
     data_l_out[8][0]=0;
-    data_l_out[8][1]=-.7;
+    data_l_out[8][1]=-high;
 
     switch(j)
     {
@@ -250,7 +251,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int frame_width=4;
     GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
     GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
-    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
+//    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
 
 
 
@@ -376,7 +377,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #ifdef SERIAL
     QThread* thread = new QThread( );
-    SO=new serial_obj("COM5",dataEMG,featureEMG,ind_c);
+    SO=new serial_obj("COM3",dataEMG,featureEMG,ind_c);
     SO->moveToThread(thread);
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
@@ -454,9 +455,9 @@ void MainWindow::getEMG(vector<float> x)
 
 
 void MainWindow::drawing()
-{    
-    int x=(thresh((0.5+*perc_Y->out[0])*255));
-    int y=(thresh((0.7-*perc_X->out[0])*255));
+{
+    int x=(thresh((slider_x->value()/255.-*perc_X->out[0]*1)*255));
+    int y=(thresh((slider_y->value()/255.+*perc_Y->out[0])*255));
     //    x*=slider_x->value()/125.;
     //    y*=slider_y->value()/125.;
 
@@ -465,8 +466,8 @@ void MainWindow::drawing()
         hSerial.write((char)1);
 #ifndef IDLE
 
-        hSerial.write((char)x);
         hSerial.write((char)y);
+        hSerial.write((char)x);
 #else
         qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
         hSerial.write((char)((slider_y->value())));
