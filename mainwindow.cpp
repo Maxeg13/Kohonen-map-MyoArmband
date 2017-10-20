@@ -96,35 +96,35 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale)
 
 void MainWindow::buttonClicked(int j)
 {
-float med=.3;
-float high=.7;
+float med1=.3, med2=.45;
+float high1=.7, high2=.9;
 
     data_l_out[0][0]=0;
     data_l_out[0][1]=0;
 
-    data_l_out[1][0]=-med;
+    data_l_out[1][0]=-med1;
     data_l_out[1][1]=0;
 
-    data_l_out[2][0]=med;
+    data_l_out[2][0]=med1;
     data_l_out[2][1]=0;
 
-    data_l_out[3][0]=-high;
+    data_l_out[3][0]=-high1;
     data_l_out[3][1]=0;
 
-    data_l_out[4][0]=high;
+    data_l_out[4][0]=high1;
     data_l_out[4][1]=0;
 
     data_l_out[5][0]=0;
-    data_l_out[5][1]=med;
+    data_l_out[5][1]=med2;
 
     data_l_out[6][0]=0;
-    data_l_out[6][1]=-med;
+    data_l_out[6][1]=-med2;
 
     data_l_out[7][0]=0;
-    data_l_out[7][1]=high;
+    data_l_out[7][1]=high2;
 
     data_l_out[8][0]=0;
-    data_l_out[8][1]=-high;
+    data_l_out[8][1]=-high2;
 
     switch(j)
     {

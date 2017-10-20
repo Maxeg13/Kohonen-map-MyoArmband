@@ -19,8 +19,18 @@ DataCollector::DataCollector()
 
 void DataCollector::kick(int x)
 {
-//    hub.
-    myo->unlock(myo->unlockHold);
+
+ static int cnt=0;
+ cnt++;
+ if(cnt==100)
+ {
+     cnt=0;
+//     hub.waitForMyo(1000);
+//     myo->unlock(myo->unlockHold);
+ //    myo->vibrate(myo->vibrationShort);
+     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
+ }
+//    myo->unlock(myo->unlockHold);
     hub.run(10);
 }
 // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
