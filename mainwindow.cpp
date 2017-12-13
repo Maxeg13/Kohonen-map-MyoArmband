@@ -140,7 +140,7 @@ float high1=.7, high2=.9;
 
         gest_ind=j;
         resize_on=1;
-        qDebug()<<"hello";
+//        qDebug()<<"hello";
 
 
         for(int i=0;i<perc_dim;i++)
@@ -175,12 +175,12 @@ MainWindow::MainWindow(QWidget *parent) :
     slider_x=new QSlider;
     int setV=255;
     slider_x->setRange(0,setV);
-    slider_x->setValue(setV/2);
+    slider_x->setValue(setV/2-25);
     slider_x->setOrientation(Qt::Horizontal);
 
     slider_y=new QSlider;
     slider_y->setRange(0,255);
-    slider_y->setValue(128);
+    slider_y->setValue(128-20);
     slider_y->setOrientation(Qt::Horizontal);
 
     LE=new QLineEdit;
@@ -469,7 +469,7 @@ void MainWindow::drawing()
         hSerial.write((char)y);
         hSerial.write((char)x);
 #else
-        qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
+//        qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
         hSerial.write((char)((slider_y->value())));
         hSerial.write((char)((int)(255-slider_x->value())));
 #endif
