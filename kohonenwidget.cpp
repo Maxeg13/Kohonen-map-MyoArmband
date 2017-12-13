@@ -1,7 +1,7 @@
 #include"kohonenwidget.h"
 #include"headers.h"
 #include"layer_koh.h"
-float rad=1.;
+float rad=3.;//3
 
 void norm(std::vector<float>& x)
 {
@@ -22,11 +22,9 @@ void KohonenWidget::unsaving()
 
 void KohonenWidget::saving()
 {
+        qDebug()<<data_learn.size();
     data_learn.resize(0);
     saving_on=1;
-    int i=0;
-    //    data_learn.push_back(featureInp);
-    //    norm( data_learn[i]);
 }
 
 
@@ -82,7 +80,7 @@ void KohonenWidget::refresh(std::vector<float> inp)
 
     static int cnt=0;
     cnt++;
-    if(cnt==2)
+    if(cnt==1)
     {
         cnt=0;
         if(saving_on)
@@ -102,26 +100,17 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
     corB=new QPushButton("correlation");
     rstLearningB=new QPushButton("rst learning");
 
-    data_learn.resize(8);
-    for(int i=0;i<data_learn.size();i++)
-        data_learn[i].resize(dimension);
-    for(int i=0;i<dimension;i++)
-        data_learn[0][i]=1;
-    for(int i=1;i<8;i++)
-        data_learn[i]=data_learn[0];
+
+    featureInp.resize(8,0);
 
 
-    featureInp.resize(data_learn[0].size());
-    for(int i=0;i<featureInp.size();i++)
-        featureInp[i]=0;
 
-
-    LK=new layer_koh(data_learn[0],24);
+    LK=new layer_koh(featureInp,24);
     //    LK->learnW(data_learn[0]);
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
-    connect(saveB,SIGNAL(clicked()),this,SLOT(saving()));
+    connect(saveB,SIGNAL(pressed()),this,SLOT(saving()));
     connect(saveB,SIGNAL(released()),this,SLOT(unsaving()));
 
     connect(rstLearningB,SIGNAL(released()),this,SLOT(rst()));

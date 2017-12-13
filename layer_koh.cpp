@@ -11,7 +11,8 @@ sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 void sector::rst()
 {
     for(int i=0;i<size_in;i++)
-        w[i]=((rand()%10)/10.-0.5)*1;//2000
+//        w[i]=((rand()%10)/10.-0.5)*1;//2000
+         w[i]=((rand()%10)/10.)*4;
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
