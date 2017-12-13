@@ -1,13 +1,16 @@
 #include "datacollector.h"
-
+#include <vector>
+using namespace std;
 DataCollector::DataCollector()
     : emgSamples(), hub("com.example.emg-data-sample")
 {
     emgSamples.resize(8);               // The values of this array is set by onEmgData() above.
     emgSamplesD.resize(8);               // The values of this array is set by onEmgData() above.
     accSamplesD.resize(4);
-    while(!myo)
+//    while(!myo)
     myo = hub.waitForMyo(1000);
+    myo->unlock(myo->unlockHold);
+//    myo->vibrate(myo->vibrationShort);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 
     hub.addListener(this);
@@ -16,6 +19,18 @@ DataCollector::DataCollector()
 
 void DataCollector::kick(int x)
 {
+
+ static int cnt=0;
+ cnt++;
+ if(cnt==100)
+ {
+     cnt=0;
+//     hub.waitForMyo(1000);
+//     myo->unlock(myo->unlockHold);
+ //    myo->vibrate(myo->vibrationShort);
+     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
+ }
+//    myo->unlock(myo->unlockHold);
     hub.run(10);
 }
 // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
@@ -66,8 +81,7 @@ void DataCollector::print()
     //                    oss << static_cast<int>(emgSamples[i]);
     //                    string emgString = oss.str();
     //                    QString qemgString = QString::fromStdString(emgString);
-    //                    QString qbuffStr =  QString::fromStdString(std::string(4 - emgString.size(), ' '));
+    //                    QString qbuffStr =  QString::fromStdString(string(4 - emgString.size(), ' '));
     //                    qDebug() << '[' << qemgString <<  qbuffStr << ']';
     //                }
 }
-
