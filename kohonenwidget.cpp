@@ -13,73 +13,29 @@ void norm(std::vector<float>& x)
     //        x[i]=x[i]*200/energy;
 }
 
-void KohonenWidget::learning_1()
+void KohonenWidget::unsaving()
 {
+
+    saving_on=0;
+    qDebug()<<data_learn.size();
+}
+
+void KohonenWidget::saving()
+{
+    data_learn.resize(0);
+    saving_on=1;
     int i=0;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
+    //    data_learn.push_back(featureInp);
+    //    norm( data_learn[i]);
 }
 
-void KohonenWidget::learning_2()
-{
-    int i=1;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
-
-void KohonenWidget::learning_3()
-{
-    int i=2;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
-
-
-void KohonenWidget::learning_4()
-{
-    int i=3;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
-
-void KohonenWidget::learning_5()
-{
-    int i=4;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
-
-void KohonenWidget::learning_6()
-{
-    int i=5;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
-
-
-
-void KohonenWidget::learning_7()
-{
-    int i=6;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
-
-
-void KohonenWidget::learning_8()
-{
-    int i=7;
-    data_learn[i]=featureInp;
-    norm( data_learn[i]);
-}
 
 void KohonenWidget::rst()
 {
     LK->rst();
-    for(int i=0;i<(10000-10000%data_learn.size());i++)
+    for(int i=0;i<10000;i++)
     {
-
-        LK->learnW(data_learn[i%data_learn.size()],rad);
+        LK->learnW(data_learn[rand()%data_learn.size()],rad);
     }
 }
 
@@ -120,25 +76,29 @@ void KohonenWidget::getRad()
 }
 
 void KohonenWidget::refresh(std::vector<float> inp)
-{
+{    
     featureInp=inp;
     LK->refresh(inp);
+
+    static int cnt=0;
+    cnt++;
+    if(cnt==2)
+    {
+        cnt=0;
+        if(saving_on)
+            data_learn.push_back(featureInp);
+    }
 }
 
 KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(parent)
 {
+    saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
     L_E_F=new QLineEdit("1");
 
-    learnB1=new QPushButton("learn weak");
-    learnB2=new QPushButton("learn 1");
-    learnB3=new QPushButton("learn 2");
-    learnB4=new QPushButton("learn 3");
-    learnB5=new QPushButton("learn 4");
-    learnB6=new QPushButton("learn 5");
-    learnB7=new QPushButton("learn 6");
-    learnB8=new QPushButton("learn 7");
+    saveB=new QPushButton("save patterns");
+
     corB=new QPushButton("correlation");
     rstLearningB=new QPushButton("rst learning");
 
@@ -161,14 +121,9 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
-    connect(learnB1,SIGNAL(released()),this,SLOT(learning_1()));
-    connect(learnB2,SIGNAL(released()),this,SLOT(learning_2()));
-    connect(learnB3,SIGNAL(released()),this,SLOT(learning_3()));
-    connect(learnB4,SIGNAL(released()),this,SLOT(learning_4()));
-    connect(learnB5,SIGNAL(released()),this,SLOT(learning_5()));
-    connect(learnB6,SIGNAL(released()),this,SLOT(learning_6()));
-       connect(learnB7,SIGNAL(released()),this,SLOT(learning_7()));
-          connect(learnB8,SIGNAL(released()),this,SLOT(learning_8()));
+    connect(saveB,SIGNAL(clicked()),this,SLOT(saving()));
+    connect(saveB,SIGNAL(released()),this,SLOT(unsaving()));
+
     connect(rstLearningB,SIGNAL(released()),this,SLOT(rst()));
     connect(corB,SIGNAL(released()),this,SLOT(getCor()));
     connect(L_E_F,SIGNAL(editingFinished()),this,SLOT(getRad()));

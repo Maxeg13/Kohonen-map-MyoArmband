@@ -112,7 +112,14 @@ MainWindow::MainWindow(QWidget *parent) :
         drawingInit(d_plot[i_pl]);
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+//        d_plot[i_pl]->setAxisScaleDiv(QwtPlot::xBottom,QwtScaleDiv::NoTick);
+//        d_plot[i_pl]->setAxisScaleDiv(1,QwtScaleDiv(-10000,10000));
+
+
+
+
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
+
 
         curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG",Qt::black,Qt::black,ind_c[i_pl]);
         curveFeature1[i_pl]=

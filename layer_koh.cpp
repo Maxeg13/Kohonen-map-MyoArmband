@@ -80,7 +80,7 @@ void layer_koh::reform()
 layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
     t=0;
-        s=0.7,gap=30;
+    s=0.7,gap=30;
     QPT_origin.reserve(6);
     QPT.reserve(6);
 
@@ -130,7 +130,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 
 int layer_koh::indOfMin(const std::vector<float>& inp)
 {
-int ind_h;
+    int ind_h;
     float h1;
     float sumMin=100000000000000;
     float accum;
@@ -161,7 +161,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.004;
+    speed_k=0.002;
 
 
     ind=indOfMin(inp);
@@ -171,7 +171,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
         h1=dist2[i][ind];
         float exp_val=exp(-0.001*t);
         float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
-//////////////////////////////2400000
+        //////////////////////////////2400000
         for(int j=0;j<SR[i].size_in;j++)
         {
             SR[i].w[j]+=speed_k*h_func*
