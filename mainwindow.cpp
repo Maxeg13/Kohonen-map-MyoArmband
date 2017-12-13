@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
         featurePreOut[i]=1;
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
-    qDebug()<<featureOut[0];
+
 
     QGridLayout* GL=new QGridLayout();
     QWidget *centralWidget1=new QWidget();
@@ -217,7 +217,8 @@ void MainWindow::getCor()
 
 void MainWindow::getFeature(std::vector<float> x)
 {
-    qDebug()<<x[0];
+//    qDebug()<<x[0];
+
 }
 
 void MainWindow::reconnect(QString s)

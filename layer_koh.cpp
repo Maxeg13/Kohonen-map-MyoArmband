@@ -12,7 +12,7 @@ void sector::rst()
 {
     for(int i=0;i<size_in;i++)
 //        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%10)/10.)*4;
+         w[i]=((rand()%10)/10.)*6;
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -170,8 +170,9 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     for(int i=0;i<N;i++)
     {
         h1=dist2[i][ind];
-        float exp_val=exp(-0.001*t);
-        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+        float exp_val=exp(-0.0005*t);
+//        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+        float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000
         for(int j=0;j<SR[i].size_in;j++)
         {
