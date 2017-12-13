@@ -8,6 +8,10 @@ QT       += core gui
 CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+LIBS+= -LC:/QWT/lib -lqwt
+INCLUDEPATH+= C:/QWT/include
+INCLUDEPATH+=C:\eigen-eigen-332
+
 LIBS+="$$PWD/serial.o"
 #LIBS+="$$PWD/stand_dev.o"
 LIBS+=-L$$OUT_PWD/release -lmyo32

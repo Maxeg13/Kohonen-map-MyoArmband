@@ -8,7 +8,7 @@
 #else
 #include "datacollector.h"
 #include "stand_dev.h"
-#include "pca.h"
+//#include "pca.h"
 #endif
 
 
@@ -28,7 +28,8 @@ myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], 
 int bufShowSize=1500;
 int axisScale=10000;
 #else
-PCA myPCA(1000,16);
+//PCA myPCA(1000,16);
+
 int axisScale=1000;
 int bufShowSize=300;
 DataCollector* collector;
@@ -45,7 +46,7 @@ QPainter *painter;
 std::vector <std::vector<float>> dataEMG;
 std::vector <std::vector <std::vector<float>>> featureEMG;
 int ind_c[8];
-int dim_in=16,dim_out=8;
+int dim_in=8,dim_out=8;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -162,12 +163,12 @@ void MainWindow::getEMG(std::vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+//        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
-    myPCA.updateBuf(featurePreOut);
+//    myPCA.updateBuf(featurePreOut);
 //qDebug()<<featureOut.size();
-        myPCA.proect(featureOut);
-
+//        myPCA.proect(featureOut);
+featureOut=featurePreOut;
 #endif
 }
 
@@ -199,10 +200,10 @@ void MainWindow::drawing()
 void MainWindow::getCor()
 {
  #ifndef SERIAL
-    myPCA.centr();
-    myPCA.getCor();
-    myPCA.algorithm();
-    myPCA.sort();
+//    myPCA.centr();
+//    myPCA.getCor();
+//    myPCA.algorithm();
+//    myPCA.sort();
 #endif
 //    myPCA.proect(8,v);
 }
