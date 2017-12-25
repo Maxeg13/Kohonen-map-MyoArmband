@@ -54,8 +54,10 @@ void DataCollector::onEmgData(myo::Myo* myo, uint64_t timestamp, const int8_t* e
 
     for (int i = 0; i < 8; i++) {
         emgSamples[i] = emg[i];
+//        cout<<(int8_t)emg[i]<<"  ";
         emgSamplesD[i] = (float) emg[i];
     }
+//    cout<<endl;
     emit qdc.EMG(emgSamplesD);
     //    qDebug()<<emgSamplesD[0];
 }

@@ -29,6 +29,7 @@ int thresh(float);
 
 int slider_x_val;
 bool ON1;
+bool write_on;
 char c1;
 bool ser_on;
 
@@ -84,7 +85,7 @@ void convertFromVec(vector<float>& x,float* y, float scale)
 
 void convertFromVec(vector<deque<float>>& x,float* y, float scale)
 {
-//    qDebug()<<x[0].size();
+    //    qDebug()<<x[0].size();
     static int l;
     l=rand()%x[0].size();
     for(int i=0;i<x.size();i++)
@@ -96,8 +97,8 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale)
 
 void MainWindow::buttonClicked(int j)
 {
-float med1=.3, med2=.45;
-float high1=.7, high2=.9;
+    float med1=.3, med2=.45;
+    float high1=.7, high2=.9;
 
     data_l_out[0][0]=0;
     data_l_out[0][1]=0;
@@ -140,7 +141,7 @@ float high1=.7, high2=.9;
 
         gest_ind=j;
         resize_on=1;
-//        qDebug()<<"hello";
+        //        qDebug()<<"hello";
 
 
         for(int i=0;i<perc_dim;i++)
@@ -164,7 +165,12 @@ float high1=.7, high2=.9;
     case 10:
         perc_X->reset_w();
         perc_Y->reset_w();
+        break;
+    case 11:
+        write_on=1;
+        break;
     }
+
 }
 
 
@@ -204,7 +210,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapper2, SIGNAL(mapped(int)),
             this, SLOT(buttonReleased(int)));
 
-    for(int i=0;i<(gestures_N+2);i++)
+    for(int i=0;i<(gestures_N+3);i++)
     {
         switch(i)
         {
@@ -230,6 +236,8 @@ MainWindow::MainWindow(QWidget *parent) :
             button_learn=new QPushButton("learn");break;
         case 10:
             button_learn=new QPushButton("reset perc");break;
+        case 11:
+            button_learn=new QPushButton("write to file");break;
 
         }
 
@@ -251,7 +259,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int frame_width=4;
     GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
     GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
-//    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
+    //    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
 
 
 
@@ -421,9 +429,14 @@ void MainWindow::getEMG(vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
         dataEMG[i][ind_c[i]]=x[i];
+        float h=x[i];
+        if(write_on)
+            cout<<h<<"  ";
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
+    if(write_on)
+        cout<<endl;
 
     myPCA.updateBuf(featurePreOut);
     //qDebug()<<featureOut.size();
@@ -440,7 +453,7 @@ void MainWindow::getEMG(vector<float> x)
         gg++;
         if(gg%10==0)
         {
-//            qDebug()<<gg;
+            //            qDebug()<<gg;
             gg=0;
             for(int i=0;i<perc_dim;i++)
             {
@@ -469,7 +482,7 @@ void MainWindow::drawing()
         hSerial.write((char)y);
         hSerial.write((char)x);
 #else
-//        qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
+        //        qDebug()<<thresh((0.5+*perc_Y->out[0])*255);
         hSerial.write((char)((slider_y->value())));
         hSerial.write((char)((int)(255-slider_x->value())));
 #endif
@@ -501,8 +514,12 @@ void MainWindow::drawing()
 
 void MainWindow::buttonReleased(int x)
 {
-    resize_on=0;
-    qDebug()<<data_l_inp[gest_ind][0].size();
+    if((x>-1)&&(x<gestures_N))
+        resize_on=0;
+    if(x==11)
+        write_on=0;
+
+    //    qDebug()<<data_l_inp[gest_ind][0].size();
 }
 
 
