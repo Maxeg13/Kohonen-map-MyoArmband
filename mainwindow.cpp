@@ -407,8 +407,10 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
-    set_plot->setAxisScale(QwtPlot::xBottom,-110,110);
-    set_plot->setAxisScale(QwtPlot::yLeft,-110,110);
+    set_plot->setMinimumSize(QSize(100,100));
+    int ii2=130;
+    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
+    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->show();
     drawingInit(set_plot,"EMG set");
     setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
