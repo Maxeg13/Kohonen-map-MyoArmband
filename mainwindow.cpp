@@ -21,6 +21,7 @@
 #include "deque"
 #include "serial.h"
 
+myCurve* setCurve;
 Serial hSerial;
 QLineEdit* LE;
 QSlider *slider_x;
@@ -177,6 +178,8 @@ void MainWindow::buttonClicked(int j)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+
+
 
     slider_x=new QSlider;
     int setV=255;
@@ -400,6 +403,15 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 
 #endif
+    QwtPlot* set_plot;
+    set_plot=new QwtPlot();
+    set_plot->show();
+    drawingInit(set_plot,"EMG set");
+    setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
+    setCurve->setPen(QColor(0,0,0,0));
+    QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
+                                               QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+            setCurve->setSymbol( symbol2 );
 }
 
 
@@ -506,6 +518,7 @@ void MainWindow::drawing()
         curveFeature2[p_ind]->signalDrawing();
     }
     percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
+    setCurve->set_Drawing(dataEMG[0],dataEMG[1]);
     //    percCurve->signalDrawing();
 
 #endif
