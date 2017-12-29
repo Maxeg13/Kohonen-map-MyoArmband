@@ -20,6 +20,7 @@
 #include "perceptron.h"
 #include "deque"
 #include "serial.h"
+//#include
 
 myCurve* setCurve;
 Serial hSerial;
@@ -192,14 +193,15 @@ MainWindow::MainWindow(QWidget *parent) :
     slider_y->setValue(128-20);
     slider_y->setOrientation(Qt::Horizontal);
 
-    LE=new QLineEdit;
-    QString qstr=QString("COM4");
-    LE->setText(qstr);
-    string str1=qstr.toUtf8().constData();
-    wstring str(str1.begin(),str1.end());
 
-    ser_on=1;
-    hSerial.InitCOM(str.c_str());
+    LE=new QLineEdit;
+    QString qstr=QString("0");
+    LE->setText(qstr);
+//    string str1=qstr.toUtf8().constData();
+//    wstring str(str1.begin(),str1.end());
+
+//    ser_on=1;
+//    hSerial.InitCOM(str.c_str());
 
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
@@ -257,12 +259,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     }
 
-    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
+//    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
     GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
     GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
-    //    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
+    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
 
 
 
@@ -405,13 +407,15 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
+    set_plot->setAxisScale(QwtPlot::xBottom,-110,110);
+    set_plot->setAxisScale(QwtPlot::yLeft,-110,110);
     set_plot->show();
     drawingInit(set_plot,"EMG set");
     setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
     setCurve->setPen(QColor(0,0,0,0));
     QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
-                                               QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
-            setCurve->setSymbol( symbol2 );
+                                        QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+    setCurve->setSymbol( symbol2 );
 }
 
 
@@ -518,7 +522,13 @@ void MainWindow::drawing()
         curveFeature2[p_ind]->signalDrawing();
     }
     percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
-    setCurve->set_Drawing(dataEMG[0],dataEMG[1]);
+
+    //    QString::
+
+    int ii=LE->text().toInt();
+//    int ii=0;
+    if((ii>-1)&(ii<8))
+        setCurve->set_Drawing(dataEMG[ii],dataEMG[(ii+1)%8]);
     //    percCurve->signalDrawing();
 
 #endif
