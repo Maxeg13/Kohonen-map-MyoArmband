@@ -3,7 +3,7 @@
 # Project created by QtCreator 2017-06-20T08:50:42
 #
 #-------------------------------------------------
-INCLUDEPATH += C:\eigen-eigen-332
+INCLUDEPATH += C:/eigen-eigen-332
 INCLUDEPATH += C:/QWT/include
 LIBS += -LC:/QWT/lib -lqwt
 

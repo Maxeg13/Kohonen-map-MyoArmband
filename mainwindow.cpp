@@ -24,7 +24,7 @@
 
 myCurve* setCurve;
 Serial hSerial;
-QLineEdit* LE;
+QLineEdit *LE, *LE_cor;
 QSlider *slider_x;
 QSlider *slider_y;
 int thresh(float);
@@ -180,7 +180,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
 
-
+qDebug()<<"1";
 
     slider_x=new QSlider;
     int setV=255;
@@ -195,13 +195,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     LE=new QLineEdit;
-    QString qstr=QString("0");
+    QString qstr=QString("COM5");
     LE->setText(qstr);
-//    string str1=qstr.toUtf8().constData();
-//    wstring str(str1.begin(),str1.end());
+    string str1=qstr.toUtf8().constData();
+    wstring str(str1.begin(),str1.end());
 
-//    ser_on=1;
-//    hSerial.InitCOM(str.c_str());
+    ser_on=1;
+    hSerial.InitCOM(str.c_str());
+
+    LE_cor=new QLineEdit;
+    LE_cor->setText("0");
 
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
@@ -245,6 +248,8 @@ MainWindow::MainWindow(QWidget *parent) :
             button_learn=new QPushButton("write to file");break;
 
         }
+\
+        qDebug()<<"2";
 
         connect(button_learn, SIGNAL(pressed()),
                 signalMapper,         SLOT(map()));
@@ -265,6 +270,7 @@ MainWindow::MainWindow(QWidget *parent) :
     GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
     GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
     GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
+    GL->addWidget(LE_cor,2+(gestures_N+6)/frame_width,(gestures_N+6)%frame_width);
 
 
 
@@ -301,7 +307,7 @@ MainWindow::MainWindow(QWidget *parent) :
     featureOut.resize(dim_out);
     //    qDebug()<<featureOut[0];
 
-
+qDebug()<<"3";
 
 #ifdef SERIAL
     dataEMG.resize(2);
@@ -411,7 +417,9 @@ MainWindow::MainWindow(QWidget *parent) :
     int ii2=130;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
+//    set_plot->set
     set_plot->show();
+    
     drawingInit(set_plot,"EMG set");
     setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
     setCurve->setPen(QColor(0,0,0,0));
@@ -527,7 +535,7 @@ void MainWindow::drawing()
 
     //    QString::
 
-    int ii=LE->text().toInt();
+    int ii=LE_cor->text().toInt();
 //    int ii=0;
     if((ii>-1)&(ii<8))
         setCurve->set_Drawing(dataEMG[ii],dataEMG[(ii+1)%8]);
