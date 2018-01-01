@@ -2,23 +2,30 @@
 #ifndef STANDART_DEV
 #define STANDART_DEV
 #include <vector>
+#include <iostream>
 #include <Eigen/Dense>
-using Eigen::MatrixXd;
+using namespace std;
+using namespace Eigen;
 
-void getFeaturesMyo(std::vector<float>, std::vector<float>&);
+void getFeaturesMyo(vector<float>, vector<float>&);
 
-void getFeatures_gearbox1(int8_t x, std::vector<float>&);
+void getFeatures_gearbox1(int8_t x, vector<float>&);
 
-void getFeatures_gearbox2(int8_t x, std::vector<float>&);
+void getFeatures_gearbox2(int8_t x, vector<float>&);
 
 class linearTr
 {
 public:
-    linearTr( std::vector<float>,  std::vector<float>);
+    linearTr( vector<float>,  vector<float>);
+
     MatrixXd m;
-    MatrixXd inv;
+    MatrixXd inp;
+    MatrixXd out;
+    vector<float> outv;
+    MatrixXd inv_m;
     void setM();
     void inv();
+    void proect(vector<float>&, int, int);
 
 
 };

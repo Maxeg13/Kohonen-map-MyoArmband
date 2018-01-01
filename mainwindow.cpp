@@ -42,6 +42,9 @@ myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], 
 int bufShowSize=1500;
 int axisScale=10000;
 #else
+const float hh[]={1,2};
+vector<float> ab(hh,hh+2);
+linearTr LTR=linearTr(ab, ab);
 PCA myPCA(1000,16);
 int axisScale=1000;
 int bufShowSize=300;
@@ -179,8 +182,7 @@ void MainWindow::buttonClicked(int j)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-
-qDebug()<<"1";
+    LTR.inv();
 
     slider_x=new QSlider;
     int setV=255;
@@ -248,8 +250,6 @@ qDebug()<<"1";
             button_learn=new QPushButton("write to file");break;
 
         }
-\
-        qDebug()<<"2";
 
         connect(button_learn, SIGNAL(pressed()),
                 signalMapper,         SLOT(map()));
@@ -305,9 +305,6 @@ qDebug()<<"1";
         featurePreOut[i]=1;
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
-    //    qDebug()<<featureOut[0];
-
-qDebug()<<"3";
 
 #ifdef SERIAL
     dataEMG.resize(2);
@@ -454,6 +451,9 @@ void MainWindow::getEMG(vector<float> x)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
+        int ii=LE_cor->text().toInt();
+        LTR.proect(x,ii,(ii+1)%8);
+
         dataEMG[i][ind_c[i]]=x[i];
         float h=x[i];
         if(write_on)

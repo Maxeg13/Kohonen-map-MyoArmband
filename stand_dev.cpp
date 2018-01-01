@@ -2,6 +2,46 @@
 #include<math.h>
 
 
+linearTr::linearTr(vector<float> x, vector<float> y)
+{
+    outv.resize(2);
+    inp=MatrixXd::Random(2,1);
+    out=MatrixXd::Random(2,1);
+    m=MatrixXd::Random(2,2);
+//    m(0,0)=x[0];
+//    m(1,0)=x[1];
+//    m(0,1)=y[0];
+//    m(1,1)=4;
+
+    m(1,0)=0.12;
+    m(0,0)=sqrt(1-m(1,0)*m(1,0));
+
+    m(0,1)=0.02;
+    m(1,1)=sqrt(1-m(0,1)*m(0,1));
+
+//    m(0,0)=1;
+//    m(1,0)=0;
+//    m(0,1)=0;
+//    m(1,1)=1;
+}
+
+void linearTr::inv()
+{
+    inv_m=m.inverse();
+    cout<<inv_m;
+}
+
+void linearTr::proect(vector<float>& x,int i, int j)
+{
+    inp(0,0)=x[i];
+    inp(1,0)=x[j];
+    out=inv_m*inp;
+    x[i]=out(0,0);
+    x[j]=out(1,0);
+    outv[0]=out(0,0);
+    outv[1]=out(1,0);
+}
+
 
 int threshB( int x, int a)
 {
@@ -361,7 +401,7 @@ integrator INTEGR[2];
 featureExtr1 FE1[2];
 WillisonAmp WA[2];
 
-void getFeaturesMyo(std::vector<float> x, std::vector<float>& y)
+void getFeaturesMyo(vector<float> x, vector<float>& y)
 {
 //    y=x;
     for(int i=0;i<x.size();i++)
@@ -372,7 +412,7 @@ void getFeaturesMyo(std::vector<float> x, std::vector<float>& y)
 
 }
 
-void getFeatures_gearbox1(int8_t x, std::vector<float>& y)
+void getFeatures_gearbox1(int8_t x, vector<float>& y)
 {
 
     y[0]=FE1[0](x)/20;
@@ -381,7 +421,7 @@ void getFeatures_gearbox1(int8_t x, std::vector<float>& y)
     y[3]=(400*VLPF[0]((killRange(MFV[0](x),30))));
 }
 
-void getFeatures_gearbox2(int8_t x, std::vector<float>& y)
+void getFeatures_gearbox2(int8_t x, vector<float>& y)
 {
     y[4]=FE1[1](x)/20;
     y[5]=LPF[2](STD[1](x));
