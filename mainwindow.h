@@ -2,7 +2,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 //#define SERIAL
-
+#include "QKeyEvent"
 #include "kohonenwidget.h"
 #include "headers.h"
 
@@ -29,8 +29,10 @@ public:
 private:
     //    Ui::MainWindow *ui;
 
+
     void paintEvent(QPaintEvent *e);
 public slots:
+    void keyPressEvent(QKeyEvent *event);
 //   void clicked(int buttonId);
     void drawing();
     void getFeature(vector<float>);

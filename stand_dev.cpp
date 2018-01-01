@@ -8,27 +8,34 @@ linearTr::linearTr(vector<float> x, vector<float> y)
     inp=MatrixXd::Random(2,1);
     out=MatrixXd::Random(2,1);
     m=MatrixXd::Random(2,2);
-//    m(0,0)=x[0];
-//    m(1,0)=x[1];
-//    m(0,1)=y[0];
-//    m(1,1)=4;
+    //    m(0,0)=x[0];
+    //    m(1,0)=x[1];
+    //    m(0,1)=y[0];
+    //    m(1,1)=4;
 
-    m(1,0)=0.12;
-    m(0,0)=sqrt(1-m(1,0)*m(1,0));
+    m(1,0)=23;
+    m(0,0)=121;
+    float h2=sqrt(m(1,0)*m(1,0)+m(0,0)*m(0,0));
+    m(1,0)/=h2;
+    m(0,0)/=h2;
 
-    m(0,1)=0.02;
-    m(1,1)=sqrt(1-m(0,1)*m(0,1));
-
-//    m(0,0)=1;
-//    m(1,0)=0;
-//    m(0,1)=0;
-//    m(1,1)=1;
+    m(0,1)=.7;
+    m(1,1)=103;
+    h2=sqrt(m(0,1)*m(0,1)+m(1,1)*m(1,1));
+    m(0,1)/=h2;
+    m(1,1)/=h2;
+    cout<<m<<endl;
+    //    m(0,0)=1;
+    //    m(1,0)=0;
+    //    m(0,1)=0;
+    //    m(1,1)=1;
 }
 
 void linearTr::inv()
 {
     inv_m=m.inverse();
-    cout<<inv_m;
+
+    cout<<inv_m<<endl;
 }
 
 void linearTr::proect(vector<float>& x,int i, int j)
@@ -320,11 +327,11 @@ public:
         v[0] = v[1];
         v[1] = v[2];
         v[2] = (7.064861907934981963e-6 * x)
-             + (-0.99081368715113193879 * v[0])
-             + (1.99078542770350019886 * v[1]);
+                + (-0.99081368715113193879 * v[0])
+                + (1.99078542770350019886 * v[1]);
         return
-             (v[0] + v[2])
-            +2 * v[1];
+                (v[0] + v[2])
+                +2 * v[1];
     }
 
 };
@@ -403,12 +410,12 @@ WillisonAmp WA[2];
 
 void getFeaturesMyo(vector<float> x, vector<float>& y)
 {
-//    y=x;
+    //    y=x;
     for(int i=0;i<x.size();i++)
         y[i]=LPFM[i](.02*STDM[i](x[i]));
     for(int i=0;i<x.size();i++)
         y[i+x.size()]=9000*LPFM2[i](VLPFM[i](HAAR1[i](x[i])));
-//        y[i+x.size()]=((HAAR1[i](x[i])));
+    //        y[i+x.size()]=((HAAR1[i](x[i])));
 
 }
 

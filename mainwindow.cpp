@@ -30,6 +30,7 @@ QSlider *slider_y;
 int thresh(float);
 
 int slider_x_val;
+bool test_on;
 bool ON1;
 bool write_on;
 char c1;
@@ -179,6 +180,12 @@ void MainWindow::buttonClicked(int j)
 }
 
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if(event->text()=="t")
+        test_on=!test_on;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -206,7 +213,7 @@ MainWindow::MainWindow(QWidget *parent) :
     hSerial.InitCOM(str.c_str());
 
     LE_cor=new QLineEdit;
-    LE_cor->setText("0");
+    LE_cor->setText("7");
 
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
@@ -452,6 +459,8 @@ void MainWindow::getEMG(vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
         int ii=LE_cor->text().toInt();
+
+        if(test_on)
         LTR.proect(x,ii,(ii+1)%8);
 
         dataEMG[i][ind_c[i]]=x[i];
