@@ -12,19 +12,18 @@ linearTr::linearTr(vector<float> x, vector<float> y)
     //    m(1,0)=x[1];
     //    m(0,1)=y[0];
     //    m(1,1)=4;
-
-    m(1,0)=23;
-    m(0,0)=121;
+    m(0,0)=131;
+    m(1,0)=35;
     float h2=sqrt(m(1,0)*m(1,0)+m(0,0)*m(0,0));
     m(1,0)/=h2;
     m(0,0)/=h2;
 
-    m(0,1)=.7;
-    m(1,1)=103;
+    m(0,1)=6;
+    m(1,1)=126;
     h2=sqrt(m(0,1)*m(0,1)+m(1,1)*m(1,1));
     m(0,1)/=h2;
     m(1,1)/=h2;
-    cout<<m<<endl;
+    cout<<m<<endl<<endl;
     //    m(0,0)=1;
     //    m(1,0)=0;
     //    m(0,1)=0;
@@ -34,7 +33,6 @@ linearTr::linearTr(vector<float> x, vector<float> y)
 void linearTr::inv()
 {
     inv_m=m.inverse();
-
     cout<<inv_m<<endl;
 }
 
@@ -42,7 +40,7 @@ void linearTr::proect(vector<float>& x,int i, int j)
 {
     inp(0,0)=x[i];
     inp(1,0)=x[j];
-    out=inv_m*inp;
+    out=inv_m.eval()*inp.eval();
     x[i]=out(0,0);
     x[j]=out(1,0);
     outv[0]=out(0,0);

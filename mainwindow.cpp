@@ -454,14 +454,15 @@ void MainWindow::getEMG(vector<float> x)
 
 
     getFeaturesMyo(x,featurePreOut);
+
+    int ii=LE_cor->text().toInt();
+    if(test_on)
+    LTR.proect(x,ii,(ii+1)%8);
+
     for (int i=0;i<8;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
-        int ii=LE_cor->text().toInt();
-
-        if(test_on)
-        LTR.proect(x,ii,(ii+1)%8);
 
         dataEMG[i][ind_c[i]]=x[i];
         float h=x[i];
@@ -470,6 +471,8 @@ void MainWindow::getEMG(vector<float> x)
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
+
+
     if(write_on)
         cout<<endl;
 
