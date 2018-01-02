@@ -74,6 +74,7 @@ vector<vector<deque<float>>> data_l_inp;
 vector<vector<float>> data_l_out;
 
 vector <vector<float>> dataEMG;
+vector <float> difEMG;
 vector<float> percBuf;
 vector <vector <vector<float>>> featureEMG;
 int ind_c[8], ind_p;
@@ -192,8 +193,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         e1=0;e2=0;
         for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
         {
-            e1+=abs(dataEMG[LE_cor1->text().toInt()][i]);
-            e2+=abs(dataEMG[LE_cor2->text().toInt()][i]);
+            if(dataEMG[LE_cor1->text().toInt()][i]>0)
+                e1+=(dataEMG[LE_cor1->text().toInt()][i]);
+
+            if(dataEMG[LE_cor2->text().toInt()][i]>0)
+                e2+=(dataEMG[LE_cor2->text().toInt()][i]);
         }
     }
     if(event->text()=="w")
@@ -204,8 +208,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             e3+=abs(dataEMG[LE_cor1->text().toInt()][i]);
             e4+=abs(dataEMG[LE_cor2->text().toInt()][i]);
         }
-        qDebug()<<e1;
-        qDebug()<<e2;
+
         LTR=linearTr(e1,e2,e3,e4);
         LTR.inv();
     }
@@ -214,7 +217,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    difEMG.resize(bufShowSize);
     LTR.inv();
+
 
     slider_x=new QSlider;
     int setV=255;
@@ -480,13 +485,11 @@ void MainWindow::getEMG(vector<float> x)
 #ifndef SERIAL
 
 
-
-
-    getFeaturesMyo(x,featurePreOut);
-
     int ii=LE_cor1->text().toInt();
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
+
+    getFeaturesMyo(x,featurePreOut);
 
     for (int i=0;i<8;i++)
     {
@@ -494,6 +497,7 @@ void MainWindow::getEMG(vector<float> x)
         ind_p=ind_c[0];
 
         dataEMG[i][ind_c[i]]=x[i];
+
         float h=x[i];
         if(write_on)
             cout<<h<<"  ";
@@ -502,6 +506,7 @@ void MainWindow::getEMG(vector<float> x)
     }
 
 
+    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
         cout<<endl;
 
@@ -580,7 +585,9 @@ void MainWindow::drawing()
     //    int ii=0;
     if((ii>-1)&(ii<8))
         setCurve->set_Drawing(dataEMG[ii],dataEMG[LE_cor2->text().toInt()],LE_shift->text().toInt());
-    //    percCurve->signalDrawing();
+
+//                setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
+        //    percCurve->signalDrawing();
 
 #endif
     emit featureOutSignal(featureOut);
