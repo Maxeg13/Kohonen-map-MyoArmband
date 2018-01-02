@@ -17,7 +17,7 @@ class linearTr
 {
 public:
     linearTr( vector<float>,  vector<float>);
-
+    linearTr(float, float, float, float);
     MatrixXd m;
     MatrixXd inp;
     MatrixXd out;

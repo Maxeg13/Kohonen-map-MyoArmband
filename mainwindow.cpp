@@ -24,7 +24,7 @@
 
 myCurve* setCurve;
 Serial hSerial;
-QLineEdit *LE, *LE_cor;
+QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
 int thresh(float);
@@ -182,8 +182,33 @@ void MainWindow::buttonClicked(int j)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    static float e1,e2,e3 ,e4;
     if(event->text()=="t")
+    {
         test_on=!test_on;
+    }
+    if(event->text()=="e")
+    {
+        e1=0;e2=0;
+        for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
+        {
+            e1+=abs(dataEMG[LE_cor1->text().toInt()][i]);
+            e2+=abs(dataEMG[LE_cor2->text().toInt()][i]);
+        }
+    }
+    if(event->text()=="w")
+    {
+        e3=0;e4=0;
+        for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
+        {
+            e3+=abs(dataEMG[LE_cor1->text().toInt()][i]);
+            e4+=abs(dataEMG[LE_cor2->text().toInt()][i]);
+        }
+        qDebug()<<e1;
+        qDebug()<<e2;
+        LTR=linearTr(e1,e2,e3,e4);
+        LTR.inv();
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -212,8 +237,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ser_on=1;
     hSerial.InitCOM(str.c_str());
 
-    LE_cor=new QLineEdit;
-    LE_cor->setText("7");
+    LE_cor1=new QLineEdit;
+    LE_cor1->setText("7");
+    LE_cor2=new QLineEdit;
+    LE_cor2->setText("0");
+    LE_shift=new QLineEdit;
+    LE_shift->setText("0");
 
     //____________________BUTTONS
     QGridLayout* GL=new QGridLayout();
@@ -271,15 +300,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     }
 
-//    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
+    //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
     GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
     GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
     GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
-    GL->addWidget(LE_cor,2+(gestures_N+6)/frame_width,(gestures_N+6)%frame_width);
-
-
+    GL->addWidget(LE_cor1,2+(gestures_N+6)/frame_width,(gestures_N+6)%frame_width);
+    GL->addWidget(LE_cor2,2+(gestures_N+7)/frame_width,(gestures_N+7)%frame_width);
+    GL->addWidget(LE_shift,2+(gestures_N+8)/frame_width,(gestures_N+8)%frame_width);
 
 
     //__________________machine learning
@@ -421,7 +450,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int ii2=130;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
-//    set_plot->set
+    //    set_plot->set
     set_plot->show();
     
     drawingInit(set_plot,"EMG set");
@@ -455,9 +484,9 @@ void MainWindow::getEMG(vector<float> x)
 
     getFeaturesMyo(x,featurePreOut);
 
-    int ii=LE_cor->text().toInt();
+    int ii=LE_cor1->text().toInt();
     if(test_on)
-    LTR.proect(x,ii,(ii+1)%8);
+        LTR.proect(x,ii,LE_cor2->text().toInt());
 
     for (int i=0;i<8;i++)
     {
@@ -547,10 +576,10 @@ void MainWindow::drawing()
 
     //    QString::
 
-    int ii=LE_cor->text().toInt();
-//    int ii=0;
+    int ii=LE_cor1->text().toInt();
+    //    int ii=0;
     if((ii>-1)&(ii<8))
-        setCurve->set_Drawing(dataEMG[ii],dataEMG[(ii+1)%8]);
+        setCurve->set_Drawing(dataEMG[ii],dataEMG[LE_cor2->text().toInt()],LE_shift->text().toInt());
     //    percCurve->signalDrawing();
 
 #endif

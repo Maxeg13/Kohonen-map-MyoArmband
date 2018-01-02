@@ -30,6 +30,36 @@ linearTr::linearTr(vector<float> x, vector<float> y)
     //    m(1,1)=1;
 }
 
+
+linearTr::linearTr(float x, float y, float e, float w)
+{
+    outv.resize(2);
+    inp=MatrixXd::Random(2,1);
+    out=MatrixXd::Random(2,1);
+    m=MatrixXd::Random(2,2);
+    //    m(0,0)=x[0];
+    //    m(1,0)=x[1];
+    //    m(0,1)=y[0];
+    //    m(1,1)=4;
+    m(0,0)=x;
+    m(1,0)=y;
+    float h2=sqrt(m(1,0)*m(1,0)+m(0,0)*m(0,0));
+    m(1,0)/=h2;
+    m(0,0)/=h2;
+
+    m(0,1)=e;
+    m(1,1)=w;
+    h2=sqrt(m(0,1)*m(0,1)+m(1,1)*m(1,1));
+    m(0,1)/=h2;
+    m(1,1)/=h2;
+    cout<<m<<endl<<endl;
+    //    m(0,0)=1;
+    //    m(1,0)=0;
+    //    m(0,1)=0;
+    //    m(1,1)=1;
+}
+
+
 void linearTr::inv()
 {
     inv_m=m.inverse();

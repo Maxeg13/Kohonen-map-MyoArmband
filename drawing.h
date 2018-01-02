@@ -16,7 +16,7 @@ public:
             const QColor &color, const QColor &colorSymbol,int& ind_ch );
     void signalDrawing();
     void pointDrawing(float , float);
-    void set_Drawing(std::vector<float> &x, std::vector<float> &y);
+    void set_Drawing(std::vector<float> &x, std::vector<float> &y, int);
 };
 
 

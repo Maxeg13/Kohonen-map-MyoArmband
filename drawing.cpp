@@ -45,13 +45,13 @@ void myCurve::pointDrawing(float x,float y)
     attach( d_plot); // отобразить кривую на графике
 }
 
-void myCurve::set_Drawing(std::vector<float>& x,std::vector<float>& y)
+void myCurve::set_Drawing(std::vector<float>& x,std::vector<float>& y,int ii)
 {
     // Добавить точки на ранее созданную кривую
     QPolygonF points;
 
-    for(int i=0;i<x.size();i++)
-        points<<QPointF(x[i],y[i]);
+    for(int i=abs(ii);i<(x.size()-abs(ii));i++)
+        points<<QPointF(x[i],y[i+ii]);
 
     setSamples( points ); // ассоциировать набор точек с кривой
     attach( d_plot); // отобразить кривую на графике
