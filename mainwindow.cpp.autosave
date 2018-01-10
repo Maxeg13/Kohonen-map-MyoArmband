@@ -505,8 +505,8 @@ void MainWindow::kickMyo()
 void MainWindow::getEMG(vector<float> x)
 {
 #ifndef SERIAL
-    for(int i=0;i<8;i++)
-        x[i]*=.056;
+//    for(int i=0;i<8;i++)
+//        x[i]*=.056;//0.056
 
     int ii=LE_cor1->text().toInt();
     if(test_on)
