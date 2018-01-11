@@ -14,9 +14,9 @@ public:
 
     myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,const QString &title,
             const QColor &color, const QColor &colorSymbol,int& ind_ch );
-    void signalDrawing();
+    void signalDrawing(float k);
     void pointDrawing(float , float);
-    void set_Drawing(std::vector<float> &x, std::vector<float> &y, int);
+    void set_Drawing(std::vector<float> &x, std::vector<float> &y, int,float k);
 };
 
 

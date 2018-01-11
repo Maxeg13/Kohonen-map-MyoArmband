@@ -20,14 +20,14 @@ myCurve::myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,con
     }
 }
 
-void myCurve::signalDrawing()
+void myCurve::signalDrawing(float k)
 {
     // Добавить точки на ранее созданную кривую
     QPolygonF points;
 
     for (int i=0;i<data.size();i++)
     {
-        points<<QPointF(i,data[(ind_c+i+1)%data.size()]);
+        points<<QPointF(i,data[(ind_c+i+1)%data.size()]*k);
     }
     setSamples( points ); // ассоциировать набор точек с кривой
     attach( d_plot); // отобразить кривую на графике
@@ -45,13 +45,13 @@ void myCurve::pointDrawing(float x,float y)
     attach( d_plot); // отобразить кривую на графике
 }
 
-void myCurve::set_Drawing(std::vector<float>& x,std::vector<float>& y,int ii)
+void myCurve::set_Drawing(std::vector<float>& x, std::vector<float>& y, int ii, float k)
 {
     // Добавить точки на ранее созданную кривую
     QPolygonF points;
 
     for(int i=abs(ii);i<(x.size()-abs(ii));i++)
-        points<<QPointF(x[i],y[i+ii]);
+        points<<QPointF(x[i]*k,y[i+ii]*k);
 
     setSamples( points ); // ассоциировать набор точек с кривой
     attach( d_plot); // отобразить кривую на графике

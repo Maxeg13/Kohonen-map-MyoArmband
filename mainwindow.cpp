@@ -27,6 +27,7 @@ Serial hSerial;
 QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
+float EMG_scale=0.056;
 int thresh(float);
 
 int slider_x_val;
@@ -209,6 +210,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         {
             e3+=abs(dataEMG[LE_cor1->text().toInt()][i]);
             e4+=abs(dataEMG[LE_cor2->text().toInt()][i]);
+//            e3=0;
+//            e4=1;
         }
 
         LTR=linearTr(e1,e2,e3,e4);
@@ -399,7 +402,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl));
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400*0.056,400*.056);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400*EMG_scale,400*EMG_scale);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
 
@@ -455,7 +458,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(300,300));
-    int ii2=150*.056;
+    int ii2=150*EMG_scale;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
@@ -475,8 +478,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     QwtPlot* rms_plot=new QwtPlot();
-    rms_plot->setAxisScale(QwtPlot::xBottom,0,8);
-    rms_plot->setAxisScale(QwtPlot::yLeft,0,8);
+    rms_plot->setAxisScale(QwtPlot::xBottom,0,14);
+    rms_plot->setAxisScale(QwtPlot::yLeft,0,14);
+    rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
+    rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
     rms_plot->setMinimumSize(QSize(300,300));
     drawingInit(rms_plot,"root mean square");
     rms_plot->show();
@@ -505,8 +510,8 @@ void MainWindow::kickMyo()
 void MainWindow::getEMG(vector<float> x)
 {
 #ifndef SERIAL
-    for(int i=0;i<8;i++)
-        x[i]*=.056;
+//    for(int i=0;i<8;i++)
+//        x[i]*=.056;//0.056
 
     int ii=LE_cor1->text().toInt();
     if(test_on)
@@ -596,9 +601,9 @@ void MainWindow::drawing()
 #else
     for(int p_ind=0;p_ind<8;p_ind++)
     {
-        curveTest[p_ind]->signalDrawing();
-        curveFeature1[p_ind]->signalDrawing();
-        curveFeature2[p_ind]->signalDrawing();
+        curveTest[p_ind]->signalDrawing(EMG_scale);
+        curveFeature1[p_ind]->signalDrawing(EMG_scale);
+        curveFeature2[p_ind]->signalDrawing(EMG_scale);
     }
     percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
 
@@ -609,8 +614,8 @@ void MainWindow::drawing()
     //    int ii=0;
     if((ii>-1)&(ii<8))
     {
-        setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt());
-        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt());
+        setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
+        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt(), EMG_scale);
 
     }
     //                setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
