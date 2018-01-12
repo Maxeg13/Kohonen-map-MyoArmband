@@ -27,7 +27,7 @@ Serial hSerial;
 QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
-float EMG_scale=0.056;
+float EMG_scale=0.1;
 int thresh(float);
 
 int slider_x_val;
@@ -49,7 +49,7 @@ vector<float> ab(hh,hh+2);
 linearTr LTR=linearTr(ab, ab);
 PCA myPCA(1000,16);
 int axisScale=1000;
-int bufShowSize=600;
+int bufShowSize=700;
 DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8], *percCurve;
 #endif
