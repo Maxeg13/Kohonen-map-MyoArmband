@@ -32,14 +32,14 @@ int axisScale=10000;
 
 int axisScale=1000;
 int bufShowSize=300;
-DataCollector* collector;
+//DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8];
 
 #endif
 
 
 QTimer *timer;
-QTimer *timerMyo;
+QTimer *timerHand;
 QPainter *painter;
 
 
@@ -51,6 +51,8 @@ int dim_in=8,dim_out=8;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    HW=new HandWindow();
+    HW->show();
 
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
@@ -98,7 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 #else
 
-    collector=new DataCollector();
+    //    collector=new DataCollector();
 
 
     dataEMG.resize(8);
@@ -112,8 +114,8 @@ MainWindow::MainWindow(QWidget *parent) :
         drawingInit(d_plot[i_pl]);
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
-//        d_plot[i_pl]->setAxisScaleDiv(QwtPlot::xBottom,QwtScaleDiv::NoTick);
-//        d_plot[i_pl]->setAxisScaleDiv(1,QwtScaleDiv(-10000,10000));
+        //        d_plot[i_pl]->setAxisScaleDiv(QwtPlot::xBottom,QwtScaleDiv::NoTick);
+        //        d_plot[i_pl]->setAxisScaleDiv(1,QwtScaleDiv(-10000,10000));
 
 
 
@@ -144,10 +146,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
 #else
-    timerMyo = new QTimer(this);
-    connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
-    timerMyo->start(4);
-    connect(&(collector->qdc),SIGNAL(EMG(std::vector<float>)),this,SLOT(getEMG(std::vector<float>)));
+    timerHand = new QTimer(this);
+    connect(timerHand, SIGNAL(timeout()), this, SLOT(loop()));
+    timerHand->start(42);
+    //    connect(&(collector->qdc),SIGNAL(EMG(std::vector<float>)),this,SLOT(getEMG(std::vector<float>)));
 #endif
 }
 
@@ -157,7 +159,7 @@ void MainWindow::kickMyo()
 #ifdef SERIAL
 
 #else
-    collector->kick(10);
+    //    collector->kick(10);
 #endif
 }
 
@@ -170,12 +172,12 @@ void MainWindow::getEMG(std::vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-//        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+        //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
-//    myPCA.updateBuf(featurePreOut);
-//qDebug()<<featureOut.size();
-//        myPCA.proect(featureOut);
-featureOut=featurePreOut;
+    //    myPCA.updateBuf(featurePreOut);
+    //qDebug()<<featureOut.size();
+    //        myPCA.proect(featureOut);
+    featureOut=featurePreOut;
 #endif
 }
 
@@ -206,18 +208,18 @@ void MainWindow::drawing()
 }
 void MainWindow::getCor()
 {
- #ifndef SERIAL
-//    myPCA.centr();
-//    myPCA.getCor();
-//    myPCA.algorithm();
-//    myPCA.sort();
+#ifndef SERIAL
+    //    myPCA.centr();
+    //    myPCA.getCor();
+    //    myPCA.algorithm();
+    //    myPCA.sort();
 #endif
-//    myPCA.proect(8,v);
+    //    myPCA.proect(8,v);
 }
 
 void MainWindow::getFeature(std::vector<float> x)
 {
-//    qDebug()<<x[0];
+    //    qDebug()<<x[0];
 
 }
 
@@ -227,9 +229,9 @@ void MainWindow::reconnect(QString s)
     SO->close();
     SO->init(s);
 #else
-//    delete collector;
+    //    delete collector;
 
-//    collector=new DataCollector();
+    //    collector=new DataCollector();
 #endif
 }
 
@@ -295,6 +297,27 @@ void MainWindow::drawingInit(QwtPlot* d_plot)
 #else
     d_plot->setMinimumSize(90,30);
 #endif
+}
+
+
+void HandWindow::loop()
+{
+    update();
+}
+
+HandWindow::HandWindow(QWidget *parent) :
+    QMainWindow(parent)
+{
+
+}
+
+void HandWindow::paintEvent(QPaintEvent *e)
+{
+    QPainter* painter=new QPainter(this);
+    painter->setRenderHint(QPainter::Antialiasing, 1);
+    QRect rect = QRect(290, 20, 70, 40);
+    painter->drawRect(rect);
+    delete painter;
 }
 
 MainWindow::~MainWindow()
