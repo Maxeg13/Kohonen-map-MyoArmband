@@ -4,7 +4,7 @@
 #include "QSignalMapper"
 #include "QSlider"
 #include "QLineEdit"
-
+//HELLO
 //SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
