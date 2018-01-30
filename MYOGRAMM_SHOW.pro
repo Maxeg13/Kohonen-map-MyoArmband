@@ -45,7 +45,8 @@ SOURCES += main.cpp\
     kohonenwidget.cpp \
     serialqobj.cpp \
     drawing.cpp \
-    stand_dev.cpp
+    stand_dev.cpp \
+    handwindow.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -70,7 +71,8 @@ HEADERS  += \
     serialqobj.h \
     layer_koh.h \
     eig.h \
-    pca.h
+    pca.h \
+    handwindow.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

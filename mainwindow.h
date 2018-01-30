@@ -10,22 +10,12 @@
 #include "serialqobj.h"
 
 
-class HandWindow : public QMainWindow
-{
-    Q_OBJECT
-public:
-    explicit HandWindow(QWidget *parent = 0);
-private:
-    void paintEvent(QPaintEvent *e);
-public slots:
-    void loop();
-};
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    HandWindow* HW;
+//    HandWindow* HW;
 #ifdef SERIAL
     serial_obj* SO;
     QwtPlot *d_plot[2];

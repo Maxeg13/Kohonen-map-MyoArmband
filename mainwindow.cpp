@@ -51,8 +51,8 @@ int dim_in=8,dim_out=8;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    HW=new HandWindow();
-    HW->show();
+//    HW=new HandWindow();
+//    HW->show();
 
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
@@ -300,25 +300,6 @@ void MainWindow::drawingInit(QwtPlot* d_plot)
 }
 
 
-void HandWindow::loop()
-{
-    update();
-}
-
-HandWindow::HandWindow(QWidget *parent) :
-    QMainWindow(parent)
-{
-
-}
-
-void HandWindow::paintEvent(QPaintEvent *e)
-{
-    QPainter* painter=new QPainter(this);
-    painter->setRenderHint(QPainter::Antialiasing, 1);
-    QRect rect = QRect(290, 20, 70, 40);
-    painter->drawRect(rect);
-    delete painter;
-}
 
 MainWindow::~MainWindow()
 {
