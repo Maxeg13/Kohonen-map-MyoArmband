@@ -9,7 +9,7 @@ HandWindow::HandWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     handData.resize(3);
-    emit featureOutSignal(handData);
+//    emit featureOutSignal(handData);
 }
 
 void HandWindow::paintEvent(QPaintEvent *e)

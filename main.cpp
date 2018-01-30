@@ -16,18 +16,19 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     HandWindow HW;
-    MainWindow SignalMW;
+//    MainWindow SignalMW;
     //    SignalMW.resize(QSize(600,300));
-    QMainWindow KohonenMW;
-    KohonenMW.resize(QSize(590,550));
+//    QMainWindow KohonenMW;
+//    KohonenMW.resize(QSize(590,550));
     //    qDebug()<< SignalMW.featureOut;
-    KohonenWidget KW(SignalMW.featureOut);
+    KohonenWidget KW(HW.handData);
+    KW.show();
 
 
 
-    QGridLayout* GL=new QGridLayout();
-    QWidget *centralWidget1=new QWidget();
-    centralWidget1->setLayout(GL);
+//    QGridLayout* GL=new QGridLayout();
+//    QWidget *centralWidget1=new QWidget();
+//    centralWidget1->setLayout(GL);
 
     //    int buttons_n=9;
     //    GL->addWidget(&KW,1,1,1,buttons_n);
@@ -39,18 +40,16 @@ int main(int argc, char *argv[])
     //    L_E.setText("COM6");
 
 
-    KohonenMW.setCentralWidget(centralWidget1);
-    //    QObject::connect(&SignalMW,SIGNAL(featureOutSignal(std::vector<float>)),&KW,SLOT(refresh(std::vector<float>)));
+//    KohonenMW.setCentralWidget(centralWidget1);
     QObject::connect(&HW,SIGNAL(featureOutSignal(std::vector<float>)),&KW,SLOT(refresh(std::vector<float>)));
-    //QObject::connect(&KW.learnB1,SIGNAL(released()),&KW,SLOT(learning_1()));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
-    QObject::connect(&KW,SIGNAL(pushStringS(QString)),&SignalMW,SLOT(reconnect(QString)));
-    QObject::connect(&KW,SIGNAL(corSignal()),&SignalMW,SLOT(getCor()));
 
-    KohonenMW.setWindowTitle("Kohonen hex-top Map");
-    SignalMW.setWindowTitle("Myographic signals");
 
-    KohonenMW.show();
+//    KohonenMW.setWindowTitle("Kohonen hex-top Map");
+//    SignalMW.setWindowTitle("Myographic signals");
+
+    emit HW.featureOutSignal(HW.handData);
+//    KohonenMW.show();
     //    SignalMW.show();
     //    w.kohonenWidget->show();
     return a.exec();
