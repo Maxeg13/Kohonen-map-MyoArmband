@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     HandWindow HW;
+    HW.show();
 //    MainWindow SignalMW;
     //    SignalMW.resize(QSize(600,300));
 //    QMainWindow KohonenMW;

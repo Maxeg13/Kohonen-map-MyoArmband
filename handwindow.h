@@ -1,12 +1,16 @@
 #ifndef HANDWINDOW_H
 #define HANDWINDOW_H
 #include "headers.h"
+#include <QTimer>
+#include <QMouseEvent>
 using namespace std;
 class HandWindow : public QMainWindow
 {
 
     Q_OBJECT
 public:
+    void mousePressEvent(QMouseEvent *e);
+    QTimer* timer;
     vector<float> handData;
     explicit HandWindow(QWidget *parent = 0);
 private:
