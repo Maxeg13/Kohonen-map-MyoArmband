@@ -8,13 +8,13 @@ public:
 
     float data[3];
     Robohand();
-    QPoint stat_origin[3],origin[3];
+    QPoint origin[4];
     QPoint stat_bones[3][4], bones[3][4];
     float length;
     float width;
     void get_bones();
-private:
-    float k=3.14/180;
+    void set_form(int i, float width_k, float length_k);
+    float k;
 };
 
 #endif // ROBOHAND_H

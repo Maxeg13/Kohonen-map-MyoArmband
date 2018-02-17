@@ -7,11 +7,12 @@
 using namespace std;
 class HandWindow : public QMainWindow
 {
-
     Q_OBJECT
 public:
     Robohand hand;
+    void mouseReleaseEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
     QTimer* timer;
     vector<float> handData;
     explicit HandWindow(QWidget *parent = 0);
