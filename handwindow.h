@@ -1,5 +1,6 @@
 #ifndef HANDWINDOW_H
 #define HANDWINDOW_H
+#include "robohand.h"
 #include "headers.h"
 #include <QTimer>
 #include <QMouseEvent>
@@ -9,6 +10,7 @@ class HandWindow : public QMainWindow
 
     Q_OBJECT
 public:
+    Robohand hand;
     void mousePressEvent(QMouseEvent *e);
     QTimer* timer;
     vector<float> handData;

@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     serialqobj.cpp \
     drawing.cpp \
     stand_dev.cpp \
-    handwindow.cpp
+    handwindow.cpp \
+    robohand.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -72,7 +73,8 @@ HEADERS  += \
     layer_koh.h \
     eig.h \
     pca.h \
-    handwindow.h
+    handwindow.h \
+    robohand.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 
