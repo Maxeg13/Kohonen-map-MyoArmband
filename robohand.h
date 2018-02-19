@@ -5,7 +5,7 @@
 class Robohand
 {
 public:
-
+    float min[3],max[3];
     float data[3];
     Robohand();
     QPoint origin[4];

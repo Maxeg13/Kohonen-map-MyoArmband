@@ -12,7 +12,7 @@ void sector::rst()
 {
     for(int i=0;i<size_in;i++)
 //        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%10)/10.)*6;
+         w[i]=((rand()%10)/10.)*200;
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):

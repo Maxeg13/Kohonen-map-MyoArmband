@@ -3,6 +3,11 @@
 Robohand::Robohand()
 {
     k=3.14/180;
+    min[0]=0;
+    min[1]=30;
+    max[0]=max[1]=180;
+    min[2]=130;
+    max[2]=210;
     data[0]=175;
     data[1]=90;
     data[2]=150;
@@ -15,7 +20,7 @@ Robohand::Robohand()
 
     set_form(0,1,1);
     set_form(1,.8,1);
-    set_form(2,.5,0.2);
+    set_form(2,.5,0.3);
 
 
 //    int i=1;
@@ -31,22 +36,22 @@ void Robohand::get_bones()
 
 
     int i=0;
-    if(data[i]>180)
-        data[i]=180;
-    else if(data[i]<0)
-        data[i]=0;
+    if(data[i]>max[i])
+        data[i]=max[i];
+    else if(data[i]<min[i])
+        data[i]=min[i];
 
-    origin[i]=QPoint(70,70);
+    origin[i]=QPoint(70,110);
     float phi=-180;
     for(int j=0;j<4;j++)
     bones[i][j]=QPoint(stat_bones[i][j].rx()*cos((data[i]-phi)*k)-stat_bones[i][j].ry()*sin((data[i]-phi)*k)
                        ,(stat_bones[i][j].ry()*cos((data[i]-phi)*k)+stat_bones[i][j].rx()*sin((data[i]-phi)*k)));
 
     i=1;
-    if(data[i]>180)
-        data[i]=180;
-    else if(data[i]<0)
-        data[i]=0;
+    if(data[i]>max[i])
+        data[i]=max[i];
+    else if(data[i]<min[i])
+        data[i]=min[i];
 
     origin[i]=origin[i-1]+(bones[i-1][2]+bones[i-1][3])/2.;
     phi=0+data[i-1];
@@ -55,10 +60,10 @@ void Robohand::get_bones()
                        ,(stat_bones[i][j].ry()*cos((data[i]+phi)*k)+stat_bones[i][j].rx()*sin((data[i]+phi)*k)));
 
     i=2;
-    if(data[i]>220)
-        data[i]=220;
-    else if(data[i]<140)
-        data[i]=140;
+    if(data[i]>max[i])
+        data[i]=max[i];
+    else if(data[i]<min[i])
+        data[i]=min[i];
 
     phi=180+data[i-1]+data[i-2];
     for(int j=0;j<4;j++)

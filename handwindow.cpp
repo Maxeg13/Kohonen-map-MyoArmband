@@ -60,7 +60,7 @@ void HandWindow::mouseMoveEvent(QMouseEvent *e)
                 b.setY(-b.ry());
                 hand.data[0]=((b.rx()<0)?(-1):(1))*acos(b.ry()/sqrt(QPoint::dotProduct(b,b)))/hand.k;
                 if((b.rx()<0)&&(b.ry()<0))
-                    hand.data[i]=180;
+                    hand.data[i]=hand.max[i];
                 break;
             case 1:
                 b=(e->pos()-hand.origin[1]);
@@ -68,7 +68,7 @@ void HandWindow::mouseMoveEvent(QMouseEvent *e)
                 hand.data[1]=((b.rx()<0)?(-1):(1))*
                         (acos(b.ry()/sqrt(QPoint::dotProduct(b,b))))/hand.k+180-hand.data[0];
                 if((b.rx()<0)&&(b.ry()<0))
-                    hand.data[i]=180;
+                    hand.data[i]=hand.max[i];
                 break;
             case 2:
                 b=(e->pos()-hand.origin[2]);
@@ -76,10 +76,12 @@ void HandWindow::mouseMoveEvent(QMouseEvent *e)
                 hand.data[2]=((b.rx()<0)?(-1):(1))*
                         (acos(b.ry()/sqrt(QPoint::dotProduct(b,b))))/hand.k+360-hand.data[0]-hand.data[1];
                 if((b.rx()<0)&&(b.ry()<0))
-                    hand.data[i]=220;
+                    hand.data[i]=hand.max[i];
             }
 
         }
+    vector<float> h(hand.data,hand.data+2);
+    emit  featureOutSignal(h);
 }
 
 void HandWindow::mouseReleaseEvent(QMouseEvent *e)
