@@ -30,6 +30,7 @@ void KohonenWidget::saving()
 
 void KohonenWidget::rst()
 {
+    qDebug()<<rad;
     LK->rst();
     for(int i=0;i<10000;i++)
     {
@@ -39,7 +40,6 @@ void KohonenWidget::rst()
 
 void KohonenWidget::getCor()
 {
-
     emit(corSignal());
 }
 
@@ -93,7 +93,7 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
     saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
-    L_E_F=new QLineEdit("1");
+    L_E_F=new QLineEdit("3");
 
     saveB=new QPushButton("save patterns");
 
@@ -101,7 +101,7 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
     rstLearningB=new QPushButton("rst learning");
 
 
-    featureInp.resize(8,0);
+    featureInp.resize(dimension,0);
 
 
 

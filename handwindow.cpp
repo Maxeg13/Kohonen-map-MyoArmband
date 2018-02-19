@@ -4,13 +4,14 @@ bool mouse_move_on[3];
 void HandWindow::loop()
 {
     update();
+//    qDebug()<<"hello2";
 }
 
 HandWindow::HandWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     hand=Robohand();
-    setMinimumSize(500,500);
+    setMinimumSize(600,600);
     handData.resize(3);
     timer=new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(loop()));
@@ -33,6 +34,9 @@ void HandWindow::paintEvent(QPaintEvent *e)
     //    QRect rect = QRect(290, 20, 70, 40);
     //    painter->drawRect(rect);
     delete painter;
+
+    vector<float> h(hand.data,hand.data+3);
+    emit  featureOutSignal(h);
 }
 void HandWindow::mousePressEvent(QMouseEvent *e)
 {
@@ -78,10 +82,8 @@ void HandWindow::mouseMoveEvent(QMouseEvent *e)
                 if((b.rx()<0)&&(b.ry()<0))
                     hand.data[i]=hand.max[i];
             }
-
         }
-    vector<float> h(hand.data,hand.data+2);
-    emit  featureOutSignal(h);
+
 }
 
 void HandWindow::mouseReleaseEvent(QMouseEvent *e)

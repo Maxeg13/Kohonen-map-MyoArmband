@@ -3,7 +3,9 @@
 Robohand::Robohand()
 {
     k=3.14/180;
-    min[0]=0;
+
+    origin[0]=QPoint(70,230);
+    min[0]=70;
     min[1]=30;
     max[0]=max[1]=180;
     min[2]=130;
@@ -41,7 +43,7 @@ void Robohand::get_bones()
     else if(data[i]<min[i])
         data[i]=min[i];
 
-    origin[i]=QPoint(70,110);
+
     float phi=-180;
     for(int j=0;j<4;j++)
     bones[i][j]=QPoint(stat_bones[i][j].rx()*cos((data[i]-phi)*k)-stat_bones[i][j].ry()*sin((data[i]-phi)*k)
