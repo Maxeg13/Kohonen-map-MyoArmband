@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
+    serial_obj* SO;
 #ifdef SERIAL
     serial_obj* SO;
     QwtPlot *d_plot[2];
@@ -37,12 +38,13 @@ public slots:
     void drawing();
     void getFeature(vector<float>);
     void reconnect(QString);
-    void getEMG(vector<float>);
-    void kickMyo();
+    void getEMG();
+//    void kickMyo();
     void getCor();
     void buttonClicked(int);
     void buttonReleased(int );
     void serialChoose();
+    void setCOM();
 
 signals:
     void featureOutSignal(vector<float>);

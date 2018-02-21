@@ -6,25 +6,28 @@
 #include <QPushButton>
 #include <QCoreApplication>
 #include <vector>
-
-
+#include <serialqobj.h>
+serial_obj* SO;
 using namespace std;
 int main(int argc, char *argv[])
 {
 
 
 
-
-
     QApplication a(argc, argv);
+
+//    QThread* thread;
+//    QString qstr("COM5");
+//    SO=new serial_obj(qstr);
+//    thread = new QThread( );
+//    SO->moveToThread(thread);
+////    connect(thread,SIGNAL())
+//    QObject::connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
+//    thread->start();
 
     MainWindow SignalMW;
     SignalMW.resize(QSize(600,300));
-
     SignalMW.setWindowTitle("Myographic signals");
-
-    //    KohonenMW.show();
     SignalMW.show();
-    //    w.kohonenWidget->show();
     return a.exec();
 }

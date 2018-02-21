@@ -6,14 +6,14 @@
 #include "QLineEdit"
 //HELLO
 //SERIAL may be defined in mainwindow.h
-#ifdef SERIAL
-#include "serialqobj.h"
+
+//#include "serialqobj.h"
 #include <QThread>
-#else
-#include "datacollector.h"
-#include "stand_dev.h"
+
+//#include "datacollector.h"/
+//#include "stand_dev.h"
 #include "pca.h"
-#endif
+//#endif
 
 //#define IDLE
 #include "drawing.h"
@@ -21,7 +21,7 @@
 #include "deque"
 #include "serial.h"
 //#include
-
+//serial_obj* SO;
 myCurve *setCurve, *emgCurve, *rmsCurve;
 Serial hSerial;
 QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
@@ -50,13 +50,13 @@ linearTr LTR=linearTr(ab, ab);
 PCA myPCA(1000,16);
 int axisScale=1000;
 int bufShowSize=700;
-DataCollector* collector;
+//DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8], *percCurve;
 #endif
 
 
 QTimer *timer;
-QTimer *timerMyo;
+QTimer *timerCOM;
 QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
@@ -82,6 +82,8 @@ int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 int perc_dim=8;
 
+
+
 void convertFromVec(vector<float>& x,float* y, float scale)
 {
     for(int j=0;j<perc_dim;j++)
@@ -102,6 +104,24 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale)
     }
 }
 
+void MainWindow::setCOM()
+{
+    if(SO==NULL)
+        delete SO;
+
+//    qstr=LE->text();
+    QString qstr("COM5");
+    //    LE->setText(qstr);
+//    QThread* thread;
+    SO=new serial_obj(qstr);
+//    thread = new QThread( );
+//    SO->moveToThread(thread);
+//    connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
+//    thread->start();
+
+//    LE->setDisabled(true);
+
+}
 
 void MainWindow::buttonClicked(int j)
 {
@@ -222,6 +242,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    setCOM();
+
     difEMG.resize(bufShowSize);
     LTR.inv();
 
@@ -308,6 +330,8 @@ MainWindow::MainWindow(QWidget *parent) :
         int frame_width=4;
         GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
 
+//        connect(SO,SIGNAL(dataOut(vector<float>)),this,SLOT(getEMG(vector<float>)));
+
     }
 
     //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
@@ -388,7 +412,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
 
 #ifndef IDLE
-    collector=new DataCollector();
+//    collector=new DataCollector();
 #endif
 
 
@@ -445,14 +469,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
     thread->start();
 #else
-    timerMyo = new QTimer(this);
-    connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
-    timerMyo->start(4);
+    timerCOM = new QTimer(this);
+    connect(timerCOM, SIGNAL(timeout()), this, SLOT(getEMG()));
+    timerCOM->start(1);
 
 
-#ifndef IDLE
-    connect(&(collector->qdc),SIGNAL(EMG(vector<float>)),this,SLOT(getEMG(vector<float>)));
-#endif
 
 #endif
     QwtPlot* set_plot;
@@ -491,35 +512,30 @@ MainWindow::MainWindow(QWidget *parent) :
     symbol2 = new QwtSymbol( QwtSymbol::Rect,
                                         QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
     rmsCurve->setSymbol( symbol2 );
+
+
+
+//        getEMG(SO->doWork());
+
 }
 
 
-void MainWindow::kickMyo()
-{
-#ifdef SERIAL
 
-#else
-
-#ifndef IDLE
-    collector->kick(10);
-#endif
-
-#endif
-}
-
-void MainWindow::getEMG(vector<float> x)
+void MainWindow::getEMG()
 {
 #ifndef SERIAL
 //    for(int i=0;i<8;i++)
 //        x[i]*=.056;//0.056
-
+//qDebug()<<x[0];
+    vector<float> x=SO->doWork();
+    int s=x.size();
     int ii=LE_cor1->text().toInt();
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
 
     getFeaturesMyo(x,featurePreOut);
 
-    for (int i=0;i<8;i++)
+    for (int i=0;i<s;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];

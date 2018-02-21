@@ -1,29 +1,33 @@
 #include "serialqobj.h"
+//#include "stand_dev.h"
 
-serial_obj::serial_obj(QString qstr,std::vector <std::vector<float>>& _dataEMG,
-                       std::vector <std::vector <std::vector<float>>>& _featureEMG,
-                       int* _ind_c):dataEMG(_dataEMG),featureEMG(_featureEMG)
+//#include "ftt.h"
+int stop_bit=1;
+int stop_cnt;
+bool hear=1;
+float time;
+vector<float> data;
+
+serial_obj::serial_obj(QString qstr)
 {
-    ind_c=_ind_c;
+//    for(int i=0;i<perc_out_dim;i++)
+//        cout<<perc_targ[1][i]<<endl;
+
+
     std::string str1=qstr.toUtf8().constData();
     std::wstring str(str1.begin(),str1.end());
 
     hSerial.InitCOM(str.c_str());//was L"COM5"
-    //    featureOut.resize(3);
-    featureOut.resize(8);
-    for(int i=0;i<featureOut.size();i++)
-        featureOut[i]=1;
-
+//    WT=Wavelet();
 }
 
 void serial_obj::init(QString qstr)
 {
-
-
-    std::string str1=qstr.toUtf8().constData();;
+    std::string str1=qstr.toUtf8().constData();
     std::wstring str(str1.begin(),str1.end());
 
     hSerial.InitCOM(str.c_str());//was L"COM5"
+
     //    featureOut.resize(3);
 }
 
@@ -33,66 +37,38 @@ void serial_obj::close()
 }
 serial_obj::~serial_obj()
 {};
-void serial_obj::doWork()
+vector<float> serial_obj::doWork()
 {
 
-    while(1)
+//    while(1)
     {
-
+        static int ptr=0;
         bool readVarON;
-        readVar=(int8_t)hSerial.ReadCOM(readVarON);
-
+        readVar=hSerial.ReadCOM(readVarON);
         if(readVarON)
         {
-            int presc=3;
-            gottenVar[1]=gottenVar[0];
-            gottenVar[0]=readVar;
-            ptr++;
-            ptr%=presc;
-            if(((gottenVar[0]!=2)&&(gottenVar[0]!=1))&&(ptr==0))
+            if((readVar==(255)))
             {
-                //alert!!!
-                ptr++;
-                ptr%=presc;
+                if(ptr==4)
+                {
+                    data.resize(8);
+
+//                    emit dataOut(data);
+//                    qDebug()<<data.size();
+                }
+                ptr=0;
+                data.resize(0);
             }
             else
             {
-                if((ptr==1)&&(gottenVar[1]==1))
-                {
-                    ind_c[0]=(ind_c[0]+1)%dataEMG[0].size();
-
-                    EMG_I=readVar;
-
-                    dataEMG[0][ind_c[0]]=
-                            // FBH[0](
-                            8*readVar;//);
-
-                    getFeatures_gearbox1(EMG_I,featureOut);
-//                    featureOut[0]=featureEMG[0][0][ind_c[0]]=FE1[0](EMG_I)/20;
-//                    featureOut[1]=featureEMG[0][1][ind_c[0]]=LPF[0](STD[0](EMG_I));
-//                    featureOut[2]=featureEMG[0][2][ind_c[0]]=LPF[1](WA[0](EMG_I));
-//                    featureOut[3]=featureEMG[0][3][ind_c[0]]=(400*LPF2[0]((killRange(MFV[0](EMG_I),30))));
-                    //emit(learnSig())
-                }
-                if((ptr==1)&&(gottenVar[1]==2))
-                {
-                    ind_c[1]=(ind_c[1]+1)%dataEMG[1].size();
-
-                    EMG_I=readVar;
-
-                    dataEMG[1][ind_c[1]]=
-                            // FBH[0](
-                            8*readVar;//);
-
-                    getFeatures_gearbox2(EMG_I,featureOut);
-//                    featureOut[4]=featureEMG[1][0][ind_c[1]]=FE1[1](EMG_I)/20;
-//                    featureOut[5]=featureEMG[1][1][ind_c[1]]=LPF[2](STD[1](EMG_I));
-//                    featureOut[6]=featureEMG[1][2][ind_c[1]]=LPF[3](WA[1](EMG_I));
-//                    featureOut[7]=featureEMG[1][3][ind_c[1]]=(400*LPF2[1]((killRange(MFV[1](EMG_I),30))));;
-                    //emit(learnSig())
-                }
-
+            data.push_back((float)readVar);
+            ptr++;
             }
+
         }
+        //            qDebug()<<(int8_t)readVar;
     }
+    return(data);
 }
+
+
