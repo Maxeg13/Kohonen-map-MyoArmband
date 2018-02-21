@@ -3,9 +3,11 @@
 #include "stdafx.h"
 #include <Windows.h>
 #include "targetver.h"
+#include <iostream>
 DWORD dwSize = 1;
 DWORD dwBytesWritten;
 LPOVERLAPPED ov;
+using namespace std;
 
 void Serial::InitCOM(LPCTSTR sPortName)
 {
@@ -45,8 +47,8 @@ char Serial::ReadCOM(bool& ON)
 {
     DWORD iSize;
     char sReceivedChar;
-    ReadFile(hSerial, &sReceivedChar, 1, &iSize, 0);
-
+    ReadFile(hSerial, &sReceivedChar, 6, &iSize, 0);
+    cout<<iSize<<endl;
     //      while(iSize==0)
     //           ReadFile(hSerial, &sReceivedChar, 1, &iSize, 0);
 

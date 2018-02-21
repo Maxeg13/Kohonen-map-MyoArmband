@@ -6,19 +6,21 @@ int stop_bit=1;
 int stop_cnt;
 bool hear=1;
 float time;
+vector<float> h1;
 vector<float> data;
 
 serial_obj::serial_obj(QString qstr)
 {
-//    for(int i=0;i<perc_out_dim;i++)
-//        cout<<perc_targ[1][i]<<endl;
+    h1.resize(0);
+    //    for(int i=0;i<perc_out_dim;i++)
+    //        cout<<perc_targ[1][i]<<endl;
 
 
     std::string str1=qstr.toUtf8().constData();
     std::wstring str(str1.begin(),str1.end());
 
     hSerial.InitCOM(str.c_str());//was L"COM5"
-//    WT=Wavelet();
+    //    WT=Wavelet();
 }
 
 void serial_obj::init(QString qstr)
@@ -39,8 +41,8 @@ serial_obj::~serial_obj()
 {};
 vector<float> serial_obj::doWork()
 {
-
-//    while(1)
+    static int cnt=0;
+    //    while(1)
     {
         static int ptr=0;
         bool readVarON;
@@ -51,24 +53,42 @@ vector<float> serial_obj::doWork()
             {
                 if(ptr==4)
                 {
-                    data.resize(8);
+                    //                    data.resize(8);
 
-//                    emit dataOut(data);
-//                    qDebug()<<data.size();
+                    //                    emit dataOut(data);
+                    //                    qDebug()<<data.size();
                 }
                 ptr=0;
                 data.resize(0);
             }
             else
             {
-            data.push_back((float)readVar);
-            ptr++;
+                data.push_back((float)readVar);
+                ptr++;
             }
 
         }
         //            qDebug()<<(int8_t)readVar;
     }
-    return(data);
+
+    //    cnt++;
+    if(data.size()==4)
+    {
+        cnt++;
+        if(cnt==1)
+        {
+            cnt=0;
+            data.resize(2);
+            return(data);
+        }
+        else
+            return(h1);
+
+    }
+    else
+    {
+        return(h1);
+    }
 }
 
 
