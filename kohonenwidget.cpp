@@ -22,7 +22,7 @@ void KohonenWidget::unsaving()
 
 void KohonenWidget::saving()
 {
-        qDebug()<<data_learn.size();
+    qDebug()<<data_learn.size();
     data_learn.resize(0);
     saving_on=1;
 }
@@ -90,6 +90,18 @@ void KohonenWidget::refresh(std::vector<float> inp)
 
 KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(parent)
 {
+    QwtPlot* set_plot;
+    set_plot=new QwtPlot();
+    set_plot->setMinimumSize(QSize(300,300));
+    int ii2=150*1;
+    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
+    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
+    set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
+    set_plot->setAxisTitle(QwtPlot::xBottom,"EMG1, mV");
+    //    set_plot->set
+    set_plot->show();
+    drawingInit(set_plot);
+
     saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
@@ -119,4 +131,67 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
 
     timer->start(40);
     update();
+}
+
+void KohonenWidget::drawingInit(QwtPlot* d_plot)
+{
+
+    //        setCentralWidget(MW);
+
+    //canvas().resize(925,342)
+    //    d_plot->canvas()->resize(100,150);
+    //d_plot->autoRefresh();
+    d_plot->setAutoReplot();
+    //_______232
+
+    // настройка функций
+    QwtPlotPicker *d_picker =
+            new QwtPlotPicker(
+                QwtPlot::xBottom, QwtPlot::yLeft, // ассоциация с осями
+                QwtPlotPicker::CrossRubberBand, // стиль перпендикулярных линий
+                QwtPicker::ActiveOnly, // включение/выключение
+                d_plot->canvas() ); // ассоциация с полем
+    // Цвет перпендикулярных линий
+    d_picker->setRubberBandPen( QColor( Qt::red ) );
+
+    // цвет координат положения указателя
+    d_picker->setTrackerPen( QColor( Qt::black ) );
+
+    // непосредственное включение вышеописанных функций
+    d_picker->setStateMachine( new QwtPickerDragPointMachine() );
+
+    // Включить возможность приближения/удаления графика
+    // #include <qwt_plot_magnifier.h>
+    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(d_plot->canvas());
+    // клавиша, активирующая приближение/удаление
+    magnifier->setMouseButton(Qt::MidButton);
+    // Включить возможность перемещения по графику
+    // #include <qwt_plot_panner.h>
+    QwtPlotPanner *d_panner = new QwtPlotPanner( d_plot->canvas() );
+    // клавиша, активирующая перемещение
+    d_panner->setMouseButton( Qt::RightButton );
+    // Включить отображение координат курсора и двух перпендикулярных
+    // линий в месте его отображения
+    // #include <qwt_plot_picker.h>
+    //    d_plot->setTitle( "My perceptron demonstration" ); // заголовок
+    d_plot->setCanvasBackground( Qt::white ); // цвет фона
+
+
+
+
+    // Включить сетку
+    // #include <qwt_plot_grid.h>
+    //    QwtPlotGrid *grid = new QwtPlotGrid(); //
+
+    //    grid->setMajorPen(QPen( Qt::gray, 2 )); // цвет линий и толщина
+    //    grid->attach( d_plot ); // добавить сетку к полю графика
+
+#ifdef SERIAL
+    // Параметры осей координат
+    d_plot->setAxisTitle(QwtPlot::yLeft, "EMG, mkV");
+    d_plot->setAxisTitle(QwtPlot::xBottom, "time");
+    d_plot->insertLegend( new QwtLegend() );
+#else
+    d_plot->setMinimumSize(90,30);
+#endif
 }

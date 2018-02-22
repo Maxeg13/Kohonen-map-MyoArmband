@@ -21,7 +21,7 @@ public:
     QTimer *timer;
     std::vector<std::vector<float>> data_learn;
     KohonenWidget(std::vector<float>,QWidget *parent = 0);
-
+    void drawingInit(QwtPlot* d_plot);
 
 signals:
     pushStringS(QString);
