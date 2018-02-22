@@ -1,9 +1,11 @@
 #include"kohonenwidget.h"
 #include"headers.h"
 #include"layer_koh.h"
+#include "drawing.h"
 float rad=3.;//3
+myCurve* set_curve;
 
-void norm(std::vector<float>& x)
+void norm( vector<float>& x)
 {
     float energy=0;
     for(int i=0;i<x.size();i++)
@@ -73,7 +75,7 @@ void KohonenWidget::getRad()
     rad=L_E_F->text().toFloat();
 }
 
-void KohonenWidget::refresh(std::vector<float> inp)
+void KohonenWidget::refresh( vector<float> inp)
 {    
     featureInp=inp;
     LK->refresh(inp);
@@ -88,7 +90,7 @@ void KohonenWidget::refresh(std::vector<float> inp)
     }
 }
 
-KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(parent)
+KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 {
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
@@ -96,11 +98,20 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
     int ii2=150*1;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
-    set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
-    set_plot->setAxisTitle(QwtPlot::xBottom,"EMG1, mV");
+    set_plot->setAxisTitle(QwtPlot::yLeft,"RMS1");
+    set_plot->setAxisTitle(QwtPlot::xBottom,"RMS2");
     //    set_plot->set
     set_plot->show();
     drawingInit(set_plot);
+    set_plot->setMinimumSize(400,400);
+
+    vector<float> h2;
+    int ind_p;
+    set_curve=new myCurve(h2,set_plot,"perc out", ind_p);
+        set_curve->setPen(QColor(0,0,0,0));
+        QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
+                                            QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+    set_curve->setSymbol( symbol2 );
 
     saving_on=0;
     dimension=inp.size();

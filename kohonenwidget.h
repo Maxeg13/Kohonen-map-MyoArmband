@@ -3,6 +3,7 @@
 #include"headers.h"
 #include "layer_koh.h"
 #include "QPushButton"
+using namespace std;
 
 class KohonenWidget : public QWidget
 {
@@ -12,15 +13,15 @@ public:
     int dimension;
     QLineEdit *L_E;
     QLineEdit *L_E_F;
-    std::vector<float> featureInp;
+     vector<float> featureInp;
     QPushButton *saveB;
 
     QPushButton *corB;
     QPushButton *rstLearningB;
     layer_koh *LK;
     QTimer *timer;
-    std::vector<std::vector<float>> data_learn;
-    KohonenWidget(std::vector<float>,QWidget *parent = 0);
+     vector< vector<float>> data_learn;
+    KohonenWidget( vector<float>,QWidget *parent = 0);
     void drawingInit(QwtPlot* d_plot);
 
 signals:
@@ -28,7 +29,7 @@ signals:
     corSignal();
 public slots:
     void drawing();
-    void refresh(std::vector<float>);
+    void refresh( vector<float>);
     void saving();
     void unsaving();
     void rst();

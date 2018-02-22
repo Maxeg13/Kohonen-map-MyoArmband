@@ -8,7 +8,7 @@
 
 
 #include "serialqobj.h"
-
+using namespace std;
 
 class MainWindow : public QMainWindow
 {
@@ -20,7 +20,7 @@ public:
 #else
     QwtPlot *d_plot[8];
 #endif
-    std::vector<float> featureOut, featurePreOut;
+     vector<float> featureOut, featurePreOut;
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -32,13 +32,13 @@ private:
     void paintEvent(QPaintEvent *e);
 public slots:
     void drawing();
-    void getFeature(std::vector<float>);
+    void getFeature( vector<float>);
     void reconnect(QString);
-    void getEMG(std::vector<float>);
+    void getEMG( vector<float>);
     void kickMyo();
     void getCor();
 signals:
-    void featureOutSignal(std::vector<float>);
+    void featureOutSignal( vector<float>);
     void sended();
 };
 

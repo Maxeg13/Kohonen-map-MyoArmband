@@ -1,6 +1,6 @@
 #include "datacollector.h"
 #include <vector>
-using namespace std;
+
 DataCollector::DataCollector()
     : emgSamples(), hub("com.example.emg-data-sample")
 {

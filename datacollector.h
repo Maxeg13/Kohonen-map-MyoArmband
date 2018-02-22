@@ -3,11 +3,12 @@
 #include "myo/myo.hpp"
 #include <QDebug>
 #include <QObject>
+using namespace std;
 class QDataCollector: public QObject
 {
     Q_OBJECT
 signals:
-    EMG( std::vector<float>);
+    EMG(  vector<float>);
 };
 
 class DataCollector : public myo::DeviceListener
@@ -33,9 +34,9 @@ QDataCollector qdc;
 
     myo::Myo* myo;
     myo::Hub hub;
-    std::vector<float> emgSamples;               // The values of this array is set by onEmgData() above.
-    std::vector<float> emgSamplesD;               // The values of this array is set by onEmgData() above.
-    std::vector<float> accSamplesD;
+     vector<float> emgSamples;               // The values of this array is set by onEmgData() above.
+     vector<float> emgSamplesD;               // The values of this array is set by onEmgData() above.
+     vector<float> accSamplesD;
 
 };
 
