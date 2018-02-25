@@ -112,7 +112,7 @@ void Receiver::processPendingDatagrams()
                 if(readVar==key)
                 {
 //                                qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
-//                    qDebug()<<data.size();
+                    qDebug()<<data.size();
                     emit sig_out(data);
                     data.resize(0);
                     ptr=0;

@@ -219,7 +219,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    setCOM();
 
     difEMG.resize(bufShowSize);
     LTR.inv();
@@ -376,6 +375,9 @@ MainWindow::MainWindow(QWidget *parent) :
         curveFeature2[i_pl]=
                 new myCurve(bufShowSize,featureEMG[i_pl][1],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
 
+
+        REC=new Receiver();
+        connect(REC,SIGNAL(sig_out(vector<uint8_t>)),this,SLOT(getEMG(vector<uint8_t>)));
     }
 
     perc_pl=new QwtPlot(this);
@@ -392,7 +394,7 @@ MainWindow::MainWindow(QWidget *parent) :
     perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
 
 
-#endif
+
 
 
 
@@ -449,13 +451,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-void MainWindow::getEMG()
+void MainWindow::getEMG(vector<uint8_t> ix)
 {
-#ifndef SERIAL
+vector<float> x;
+x.resize(ix.size());
+for(int i=0;i<x.size();i++)
+    x[i]=ix[i];
 //    for(int i=0;i<8;i++)
 //        x[i]*=.056;//0.056
 //qDebug()<<x[0];
-    vector<float> x=SO->doWork();
+//    vector<float> x=SO->doWork();
     int s=x.size();
     int ii=LE_cor1->text().toInt();
     if(test_on)
@@ -507,7 +512,6 @@ void MainWindow::getEMG()
         }
     }
 
-#endif
 }
 
 

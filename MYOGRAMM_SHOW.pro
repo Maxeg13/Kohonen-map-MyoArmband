@@ -8,6 +8,7 @@ INCLUDEPATH += C:/QWT/include
 LIBS += -LC:/QWT/lib -lqwt
 
 QT       += core gui
+QT += network widgets
 CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

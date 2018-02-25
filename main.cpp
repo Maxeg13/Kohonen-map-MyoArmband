@@ -6,8 +6,7 @@
 #include <QPushButton>
 #include <QCoreApplication>
 #include <vector>
-#include <serialqobj.h>
-serial_obj* SO;
+
 using namespace std;
 int main(int argc, char *argv[])
 {
