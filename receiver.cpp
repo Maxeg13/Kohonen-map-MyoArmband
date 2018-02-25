@@ -111,8 +111,8 @@ void Receiver::processPendingDatagrams()
             {
                 if(readVar==key)
                 {
-//                                qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
-                    qDebug()<<data.size();
+                    //                                qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
+//                    qDebug()<<data.size();
                     emit sig_out(data);
                     data.resize(0);
                     ptr=0;
@@ -120,41 +120,12 @@ void Receiver::processPendingDatagrams()
             }
             else
             {
-//                            qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
+                //                            qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
                 data.push_back(readVar);
                 ptr++;
             }
         }
 
-
-        //        for(int i=0;i<datagram.size();i++)
-        //        {
-        ////                        qDebug()<<"hoy!";
-        //            readVar=datagram[i];
-        //            //            qDebug()<<readVar;
-        //            static int ptr=0;
-        //            if((readVar==(key)))
-        //            {
-        //                if(ptr==S)
-        //                {
-        //                    qDebug()<<data.size();
-        //                    ptr=0;
-        //                }
-        //                else
-        //                {
-
-        //                }
-
-        //                data.resize(0);
-        //            }
-        //            else
-        //            {
-        //                data.push_back(readVar);
-        //                ptr++;
-        //            }
-
-        //        }
-        //            qDebug()<<(int8_t)readVar;
     }
 
 }

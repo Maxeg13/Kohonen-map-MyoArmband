@@ -456,7 +456,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 vector<float> x;
 x.resize(ix.size());
 for(int i=0;i<x.size();i++)
-    x[i]=ix[i];
+    x[i]=ix[i]-170;
 //    for(int i=0;i<8;i++)
 //        x[i]*=.056;//0.056
 //qDebug()<<x[0];
