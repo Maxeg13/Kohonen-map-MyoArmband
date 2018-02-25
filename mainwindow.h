@@ -5,22 +5,17 @@
 #include "QKeyEvent"
 #include "kohonenwidget.h"
 #include "headers.h"
+#include "receiver.h"
 
-
-#include "serialqobj.h"
 using namespace std;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    serial_obj* SO;
-#ifdef SERIAL
-    serial_obj* SO;
-    QwtPlot *d_plot[2];
-#else
-    QwtPlot *d_plot[8];
-#endif
+Receiver* REC;
+QwtPlot *d_plot[8];
+
     vector<float> featureOut, featurePreOut;
 
     explicit MainWindow(QWidget *parent = 0);
@@ -39,13 +34,10 @@ public slots:
     void getFeature(vector<float>);
     void reconnect(QString);
     void getEMG();
-//    void kickMyo();
     void getCor();
     void buttonClicked(int);
     void buttonReleased(int );
     void serialChoose();
-    void setCOM();
-
 signals:
     void featureOutSignal(vector<float>);
     void sended();

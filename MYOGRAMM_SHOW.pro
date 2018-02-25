@@ -43,13 +43,13 @@ SOURCES += main.cpp\
     mainwindow.cpp \
     layer_koh.cpp \
     kohonenwidget.cpp \
-    serialqobj.cpp \
     drawing.cpp \
     stand_dev.cpp \
     layer.cpp \
     perceptron.cpp \
     serial.cpp \
-    datacollector.cpp
+    datacollector.cpp \
+    receiver.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -70,7 +70,6 @@ HEADERS  += \
 #    myo/libmyo/detail/visibility.h \
     kohonenwidget.h \
     mainwindow.h \
-    serialqobj.h \
     layer_koh.h \
     eig.h \
     pca.h \
@@ -101,11 +100,11 @@ HEADERS  += \
     pca.h \
     perceptron.h \
     serial.h \
-    serialqobj.h \
     stand_dev.h \
     stdafx.h \
     targetver.h \
-    datacollector.h
+    datacollector.h \
+    receiver.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

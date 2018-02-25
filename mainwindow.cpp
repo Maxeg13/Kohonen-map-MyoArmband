@@ -38,12 +38,7 @@ char c1;
 bool ser_on;
 
 using namespace std;
-#ifdef SERIAL
-QThread* thread;
-myCurve *curveTest[2], *curveFeature1[2], *curveFeature2[2], *curveFeature3[2], *curveFeature4[2];
-int bufShowSize=1500;
-int axisScale=10000;
-#else
+
 const float hh[]={1,2};
 vector<float> ab(hh,hh+2);
 linearTr LTR=linearTr(ab, ab);
@@ -52,7 +47,6 @@ int axisScale=1000;
 int bufShowSize=700;
 //DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8], *percCurve;
-#endif
 
 
 QTimer *timer;
@@ -104,24 +98,7 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale)
     }
 }
 
-void MainWindow::setCOM()
-{
-    if(SO==NULL)
-        delete SO;
 
-//    qstr=LE->text();
-    QString qstr("COM5");
-    //    LE->setText(qstr);
-//    QThread* thread;
-    SO=new serial_obj(qstr);
-//    thread = new QThread( );
-//    SO->moveToThread(thread);
-//    connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
-//    thread->start();
-
-//    LE->setDisabled(true);
-
-}
 
 void MainWindow::buttonClicked(int j)
 {
@@ -376,44 +353,7 @@ MainWindow::MainWindow(QWidget *parent) :
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
 
-#ifdef SERIAL
-    dataEMG.resize(2);
-    featureEMG.resize(2);
-    featureEMG.resize(2);
-    featureEMG.resize(2);
-    featureEMG.resize(2);
-    featureEMG[0].resize(4);
-    featureEMG[1].resize(4);
 
-    for(int i_pl=0;i_pl<2;i_pl++)
-    {
-        d_plot[i_pl] = new QwtPlot(this);
-        //________________________
-        //    setCentralWidget(d_plot);
-        drawingInit(d_plot[i_pl]);
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
-        d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0.8*bufShowSize,bufShowSize);
-
-        curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG_1",Qt::black,Qt::black,ind_c[i_pl]);
-
-        curveFeature1[i_pl]=new myCurve(bufShowSize,featureEMG[i_pl][0],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
-
-        curveFeature2[i_pl]=new myCurve(bufShowSize, featureEMG[i_pl][1],d_plot[i_pl],"force feature",Qt::green,Qt::black,ind_c[i_pl]);
-
-        curveFeature3[i_pl]=new myCurve(bufShowSize, featureEMG[i_pl][2],d_plot[i_pl],"Willison's feature2",Qt::blue,Qt::black,ind_c[i_pl]);
-
-        curveFeature4[i_pl]=new myCurve(bufShowSize, featureEMG[i_pl][3],d_plot[i_pl],"bipolar feature2",Qt::red,Qt::black,ind_c[i_pl]);
-    }
-
-    GL->addWidget(d_plot[0],1,1);
-    GL->addWidget(d_plot[1],2,1);
-
-
-#else
-
-#ifndef IDLE
-//    collector=new DataCollector();
-#endif
 
 
 
@@ -462,20 +402,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
     timer->start(40);
 
-#ifdef SERIAL
-    QThread* thread = new QThread( );
-    SO=new serial_obj("COM3",dataEMG,featureEMG,ind_c);
-    SO->moveToThread(thread);
-    connect(thread,SIGNAL(started()),SO,SLOT(doWork()));
-    thread->start();
-#else
-    timerCOM = new QTimer(this);
-    connect(timerCOM, SIGNAL(timeout()), this, SLOT(getEMG()));
-    timerCOM->start(1);
 
 
-
-#endif
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(600,600));
@@ -605,17 +533,6 @@ void MainWindow::drawing()
 #endif
     }
 
-#ifdef SERIAL
-    for(int p_ind=0;p_ind<2;p_ind++)
-    {
-        curveTest[p_ind]->signalDrawing();
-        curveFeature1[p_ind]->signalDrawing();
-        curveFeature2[p_ind]->signalDrawing();
-        curveFeature3[p_ind]->signalDrawing();
-        curveFeature4[p_ind]->signalDrawing();
-    }
-    featureOut=SO->featureOut;
-#else
     for(int p_ind=0;p_ind<8;p_ind++)
     {
         curveTest[p_ind]->signalDrawing(EMG_scale);
@@ -638,7 +555,6 @@ void MainWindow::drawing()
     //                setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
     //    percCurve->signalDrawing();
 
-#endif
     emit featureOutSignal(featureOut);
 }
 
@@ -655,12 +571,10 @@ void MainWindow::buttonReleased(int x)
 
 void MainWindow::getCor()
 {
-#ifndef SERIAL
     myPCA.centr();
     myPCA.getCor();
     myPCA.algorithm();
     myPCA.sort();
-#endif
     //    myPCA.proect(8,v);
 }
 
@@ -671,14 +585,7 @@ void MainWindow::getFeature(vector<float> x)
 
 void MainWindow::reconnect(QString s)
 {
-#ifdef SERIAL
-    SO->close();
-    SO->init(s);
-#else
-    //    delete collector;
 
-    //    collector=new DataCollector();
-#endif
 }
 
 void MainWindow::serialChoose()
@@ -747,14 +654,9 @@ void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
     //    grid->setMajorPen(QPen( Qt::gray, 2 )); // цвет линий и толщина
     //    grid->attach( d_plot ); // добавить сетку к полю графика
 
-#ifdef SERIAL
-    // Параметры осей координат
-    d_plot->setAxisTitle(QwtPlot::yLeft, "EMG, mkV");
-    d_plot->setAxisTitle(QwtPlot::xBottom, "time");
-    d_plot->insertLegend( new QwtLegend() );
-#else
+
     d_plot->setMinimumSize(150,140);
-#endif
+
 }
 
 MainWindow::~MainWindow()
