@@ -27,7 +27,7 @@ Serial hSerial;
 QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
-float EMG_scale=0.1;
+float EMG_scale=1;
 int thresh(float);
 
 int slider_x_val;
@@ -76,7 +76,18 @@ int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 int perc_dim=8;
 
-
+int getInt(vector<uint8_t>& xi, int k)
+{
+    static int i=0;
+    static int out=0;
+    out=0;
+    for(i=(3+k);i>(-1+k);i--)
+    {
+        out=(out<<8)+xi[i];
+    }
+    qDebug()<<xi[0]<<" "<<xi[1]<<" "<<xi[2]<<" "<<xi[3];
+    return out;
+}
 
 void convertFromVec(vector<float>& x,float* y, float scale)
 {
@@ -365,7 +376,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl));
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400*EMG_scale,400*EMG_scale);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-4000,4000);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
 
@@ -454,9 +465,13 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::getEMG(vector<uint8_t> ix)
 {
 vector<float> x;
-x.resize(ix.size());
-for(int i=0;i<x.size();i++)
-    x[i]=ix[i]-170;
+//x.resize(ix.size());
+x.resize(2);
+x[0]=getInt(ix,0);
+x[1]=getInt(ix,4);
+//qDe
+//for(int i=0;i<x.size();i++)
+//    x[i]=ix[i];
 //    for(int i=0;i<8;i++)
 //        x[i]*=.056;//0.056
 //qDebug()<<x[0];
@@ -468,7 +483,7 @@ for(int i=0;i<x.size();i++)
 
 //    getFeaturesMyo(x,featurePreOut);
 
-    for (int i=0;i<s;i++)
+    for (int i=0;i<2;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
