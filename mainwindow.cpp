@@ -257,9 +257,9 @@ MainWindow::MainWindow(QWidget *parent) :
     hSerial.InitCOM(str.c_str());
 
     LE_cor1=new QLineEdit;
-    LE_cor1->setText("1");
+    LE_cor1->setText("0");
     LE_cor2=new QLineEdit;
-    LE_cor2->setText("0");
+    LE_cor2->setText("1");
     LE_shift=new QLineEdit;
     LE_shift->setText("0");
 
@@ -375,7 +375,7 @@ MainWindow::MainWindow(QWidget *parent) :
         featureEMG[i_pl].resize(2);
 
         d_plot[i_pl] = new QwtPlot(this);
-        drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl));
+        drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl+1));
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-4000,4000);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
@@ -420,7 +420,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(600,600));
-    int ii2=350*EMG_scale;
+    int ii2=800;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
