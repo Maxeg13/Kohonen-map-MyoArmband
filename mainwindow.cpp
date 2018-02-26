@@ -257,7 +257,7 @@ MainWindow::MainWindow(QWidget *parent) :
     hSerial.InitCOM(str.c_str());
 
     LE_cor1=new QLineEdit;
-    LE_cor1->setText("7");
+    LE_cor1->setText("1");
     LE_cor2=new QLineEdit;
     LE_cor2->setText("0");
     LE_shift=new QLineEdit;
