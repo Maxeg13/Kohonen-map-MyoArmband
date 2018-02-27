@@ -481,7 +481,7 @@ void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
 {
     state=1;
     static vector<float> xh;
-    int thr=130;
+    int thr=140;
     for(int i=0;i<2;i++)
     {
         x[i]=killRange(FBH[i](x[i]),0);
@@ -489,12 +489,11 @@ void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
 
     xh=x;
 
-//    if((x[0]>thr)&&(x[1]>thr))
-//    {
-//        x[0]=x[1]=0;
-//        state=0;
-
-//    }
+    if((x[0]>thr)&&(x[1]>thr))
+    {
+        x[0]=x[1]=0;
+        state=0;
+    }
 
     if(state)
     for(int i=0;i<2;i++)

@@ -43,7 +43,7 @@ vector<float> ab(hh,hh+2);
 linearTr LTR=linearTr(ab, ab);
 PCA myPCA(1000,16);
 int axisScale=1000;
-int bufShowSize=1000;
+int bufShowSize=700;
 //DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8], *percCurve;
 
@@ -198,7 +198,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
             qDebug()<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor1->text().toInt()][i]<<
-              " "<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor2->text().toInt()][i];
+                                                                                                             " "<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor2->text().toInt()][i];
     }
     if(event->text()=="t")
     {
@@ -246,7 +246,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         {
             e3=ee3;e4=ee4;
         }
-                qDebug()<<"e3 e4 = "<<e1<<" "<<e2;
+        qDebug()<<"e3 e4 = "<<e1<<" "<<e2;
         LTR=linearTr(e1,e2,e3,e4);
         LTR.inv();
     }
@@ -401,7 +401,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl+1));
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-4000,4000);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-2000,2000);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
 
@@ -465,13 +465,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     QwtPlot* rms_plot=new QwtPlot();
-    rms_plot->setAxisScale(QwtPlot::xBottom,0,14);
-    rms_plot->setAxisScale(QwtPlot::yLeft,0,14);
+    rms_plot->setAxisScale(QwtPlot::xBottom,0,140);
+    rms_plot->setAxisScale(QwtPlot::yLeft,0,140);
     rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
     rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
     rms_plot->setMinimumSize(QSize(300,300));
     drawingInit(rms_plot,"root mean square");
-    //    rms_plot->show();
+    rms_plot->show();
 
     rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
     rmsCurve->setPen(QColor(0,0,0,0));
@@ -508,6 +508,9 @@ void MainWindow::getEMG(vector<uint8_t> ix)
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
 
+    int thr=70;
+    if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
+        state=!test_on;
     if(state)
         for (int i=0;i<dim;i++)
         {
@@ -585,10 +588,10 @@ void MainWindow::drawing()
     if((ii>-1)&(ii<8))
     {
         setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
-        //        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt(), EMG_scale);
+        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt(), EMG_scale);
 
     }
-    //                setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
+    //                    setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
     //    percCurve->signalDrawing();
 
     emit featureOutSignal(featureOut);
