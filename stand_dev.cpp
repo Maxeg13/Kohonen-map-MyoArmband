@@ -43,13 +43,13 @@ linearTr::linearTr(float x, float y, float e, float w)
     //    m(1,1)=4;
     m(0,0)=x;
     m(1,0)=y;
-    float h2=sqrt(m(1,0)*m(1,0)+m(0,0)*m(0,0));
+    float h2=sqrt(x*x+y*y);
     m(1,0)/=h2;
     m(0,0)/=h2;
 
     m(0,1)=e;
     m(1,1)=w;
-    h2=sqrt(m(0,1)*m(0,1)+m(1,1)*m(1,1));
+    h2=sqrt(e*e+w*w);
     m(0,1)/=h2;
     m(1,1)/=h2;
     cout<<m<<endl<<endl;
@@ -64,6 +64,7 @@ void linearTr::inv()
 {
     inv_m=m.inverse();
     cout<<inv_m<<endl;
+//    cout<<inv_m*m<<endl;
 }
 
 void linearTr::proect(vector<float>& x,int i, int j)
@@ -101,7 +102,14 @@ int killRange(int x, int thr )
     return (0);
 }
 
-
+float killRangeF(float x, float thr )
+{
+    if (x > thr)
+        return (x - thr);
+    if (x < -thr)
+        return (x + thr);
+    return (0);
+}
 
 int8_t thresh1(int x,int a,int b)
 {
@@ -181,11 +189,11 @@ public:
         for(int i=0;i<N;i++)
             xPr[i]=0;
     }
-    float operator()(int y)
+    float operator()(float y)
     {
         j++;
         if(j==N)j=0;
-        xPr[j]=killRange(y,20);
+        xPr[j]=killRange(y,15);
         accumD+=(xPr[j])*(xPr[j]);//int16_t
         accumD-=(xPr[(j==(N-1))?0:(j+1)])*
                 ((int16_t)xPr[(j==(N-1))?0:(j+1)]);
@@ -469,25 +477,29 @@ featureExtr1 FE1[2];
 WillisonAmp WA[2];
 
 
-void getFeaturesKhor(vector<float>& x, vector<float>& y)
+void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
 {
+    state=1;
     static vector<float> xh;
-    int thr=110;
+    int thr=130;
     for(int i=0;i<2;i++)
     {
-        x[i]=fabs(FBH[i](x[i]));
+        x[i]=killRange(FBH[i](x[i]),0);
     }
 
     xh=x;
 
-    if((x[0]>thr)&&(x[1]>thr))
-    {
-        x[0]=x[1]=0;
-    }
+//    if((x[0]>thr)&&(x[1]>thr))
+//    {
+//        x[0]=x[1]=0;
+//        state=0;
 
+//    }
+
+    if(state)
     for(int i=0;i<2;i++)
     {
-        y[i]=(.02*STD[i](x[i]));
+        y[i]=(.02*LPF[i](STD[i](x[i])));
     }
 }
 

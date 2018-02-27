@@ -38,13 +38,12 @@ char c1;
 bool ser_on;
 
 using namespace std;
-
 const float hh[]={1,2};
 vector<float> ab(hh,hh+2);
 linearTr LTR=linearTr(ab, ab);
 PCA myPCA(1000,16);
 int axisScale=1000;
-int bufShowSize=700;
+int bufShowSize=1000;
 //DataCollector* collector;
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8], *percCurve;
 
@@ -85,7 +84,7 @@ int getInt(vector<uint8_t>& xi, int k)
     {
         out=(out<<8)+xi[i];
     }
-    qDebug()<<xi[0]<<" "<<xi[1]<<" "<<xi[2]<<" "<<xi[3];
+    //    qDebug()<<xi[0]<<" "<<xi[1]<<" "<<xi[2]<<" "<<xi[3];
     return out;
 }
 
@@ -192,7 +191,15 @@ void MainWindow::buttonClicked(int j)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    static float e1,e2,e3 ,e4;
+    static float e1,e2,ee1,ee2,
+            e3 ,e4, ee3 ,ee4;
+
+    if(event->text()=="l")
+    {
+        for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
+            qDebug()<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor1->text().toInt()][i]<<
+              " "<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor2->text().toInt()][i];
+    }
     if(event->text()=="t")
     {
         test_on=!test_on;
@@ -201,27 +208,45 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if(event->text()=="e")
     {
         e1=0;e2=0;
+        ee1=0;ee2=0;
         for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
         {
             //            if(dataEMG[LE_cor1->text().toInt()][i]>0)
-            e1+=fabs(dataEMG[LE_cor1->text().toInt()][i]);
+            {
+                e1+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
+                e2+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
 
-            //            if(dataEMG[LE_cor2->text().toInt()][i]>0)
-            e2+=fabs(dataEMG[LE_cor2->text().toInt()][i]);
+                ee1+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
+                ee2+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
+            }
+        }
+        if((ee1*ee1+ee2*ee2)>(e1*e1+e2*e2))
+        {
+            e1=ee1;e2=ee2;
         }
         //        float l=sqrt(e1*e1+e2*e2);
+        qDebug()<<"e1 e2 = "<<e1<<" "<<e2;
     }
     if(event->text()=="w")
     {
         e3=0;e4=0;
+        ee3=0;ee4=0;
         for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
         {
-            e3+=abs(dataEMG[LE_cor1->text().toInt()][i]);
-            e4+=abs(dataEMG[LE_cor2->text().toInt()][i]);
-            //            e3=0;
-            //            e4=1;
-        }
+            //            if(dataEMG[LE_cor1->text().toInt()][i]>0)
+            {
+                e3+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
+                e4+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
 
+                ee3+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
+                ee4+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
+            }
+        }
+        if((ee3*ee3+ee4*ee4)>(e3*e3+e4*e4))
+        {
+            e3=ee3;e4=ee4;
+        }
+                qDebug()<<"e3 e4 = "<<e1<<" "<<e2;
         LTR=linearTr(e1,e2,e3,e4);
         LTR.inv();
     }
@@ -376,7 +401,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl+1));
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,0,4000);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-4000,4000);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
 
@@ -421,8 +446,8 @@ MainWindow::MainWindow(QWidget *parent) :
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(600,600));
     int ii2=800;
-    set_plot->setAxisScale(QwtPlot::xBottom,0,ii2);
-    set_plot->setAxisScale(QwtPlot::yLeft,0,ii2);
+    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
+    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
     set_plot->setAxisTitle(QwtPlot::xBottom,"EMG1, mV");
     //    set_plot->set
@@ -466,54 +491,43 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 {
     int dim=2;
     vector<float> x;
-    //x.resize(ix.size());
+
     x.resize(dim);
     for(int i=0;i<dim;i++)
     {
         x[i]=getInt(ix,i*4);
     }
-    //qDe
-    //for(int i=0;i<x.size();i++)
-    //    x[i]=ix[i];
-    //    for(int i=0;i<8;i++)
-    //        x[i]*=.056;//0.056
-    //qDebug()<<x[0];
-    //    vector<float> x=SO->doWork();
+
     int s=x.size();
     int ii=LE_cor1->text().toInt();
+
+
+    int state=1;
+    getFeaturesKhor(x,featurePreOut, state);
+
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
 
-    getFeaturesKhor(x,featurePreOut);
+    if(state)
+        for (int i=0;i<dim;i++)
+        {
+            ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
+            ind_p=ind_c[0];
 
-    for (int i=0;i<dim;i++)
-    {
-        ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
-        ind_p=ind_c[0];
+            dataEMG[i][ind_c[i]]=x[i];
 
-        dataEMG[i][ind_c[i]]=x[i];
-
-        float h=x[i];
-        if(write_on)
-            cout<<h<<"  ";
-        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-        //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
-    }
+            float h=x[i];
+            if(write_on)
+                cout<<h<<"  ";
+            featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+            //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+        }
 
 
-    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
+    //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
         cout<<endl;
 
-
-    //    myPCA.updateBuf(featurePreOut);
-    //    //qDebug()<<featureOut.size();
-    //    myPCA.proect(featureOut);
-
-    //    convertFromVec(featurePreOut,perc_inp,1/800.);
-    //    perc_X->refresh(perc_inp);
-    //    perc_Y->refresh(perc_inp);
-    //    percBuf[ind_p]=*perc_X->out[0]*500;
 
     static int gg=0;
     if(resize_on)
