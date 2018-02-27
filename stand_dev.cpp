@@ -153,7 +153,7 @@ public:
     {
         j++;
         if(j==N)j=0;
-        xPr[j]=killRange(y,3);
+        xPr[j]=killRange(y,20);
         accumD+=((int16_t)xPr[j])*((int16_t)xPr[j]);//int16_t
         accumD-=((int16_t)xPr[(j==(N-1))?0:(j+1)])*
                 ((int16_t)xPr[(j==(N-1))?0:(j+1)]);
@@ -164,6 +164,38 @@ public:
 };
 
 
+
+class standartDevF
+{
+public:
+    int N;//400
+    float* xPr;
+    int j;
+    float accumD;
+    float  preNorm;
+    standartDevF()
+    {
+        N=200;
+        accumD=0;
+        xPr=new float[N];
+        for(int i=0;i<N;i++)
+            xPr[i]=0;
+    }
+    float operator()(int y)
+    {
+        j++;
+        if(j==N)j=0;
+        xPr[j]=killRange(y,20);
+        accumD+=(xPr[j])*(xPr[j]);//int16_t
+        accumD-=(xPr[(j==(N-1))?0:(j+1)])*
+                ((int16_t)xPr[(j==(N-1))?0:(j+1)]);
+        if(accumD<0)
+            accumD=0;
+
+        return(200*sqrt(accumD/N));
+
+    }
+};
 
 
 
@@ -423,7 +455,7 @@ public:
 standartDevMyo STDM[8];
 lowPassFrMyo LPFM[16], LPFM2[8];
 
-standartDev STD[8];
+standartDevF STD[8];
 frBuHp2 FBH[8];
 //bandPassFr BPF[2];
 matchedFr MF[4];
@@ -439,17 +471,24 @@ WillisonAmp WA[2];
 
 void getFeaturesKhor(vector<float>& x, vector<float>& y)
 {
+    static vector<float> xh;
+    int thr=110;
     for(int i=0;i<2;i++)
     {
         x[i]=fabs(FBH[i](x[i]));
-        y[i]=(.1*STD[i](x[i]));
     }
-    //    for(int i=0;i<x.size();i++)
-    //        y[i]=LPFM[i](.02*STDM[i](x[i]));
-    //    for(int i=0;i<x.size();i++)
-    //        y[i+x.size()]=9000*LPFM2[i](VLPFM[i](HAAR1[i](x[i])));
 
+    xh=x;
 
+    if((x[0]>thr)&&(x[1]>thr))
+    {
+        x[0]=x[1]=0;
+    }
+
+    for(int i=0;i<2;i++)
+    {
+        y[i]=(.02*STD[i](x[i]));
+    }
 }
 
 void getFeaturesMyo(vector<float> x, vector<float>& y)

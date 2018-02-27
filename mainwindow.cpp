@@ -376,7 +376,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl+1));
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-4000,4000);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,0,4000);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
 
@@ -677,7 +677,7 @@ void MainWindow::drawingInit(QwtPlot* d_plot, QString title)
     //    grid->attach( d_plot ); // добавить сетку к полю графика
 
 
-    d_plot->setMinimumSize(150,140);
+    d_plot->setMinimumSize(220,180);
 
 }
 
