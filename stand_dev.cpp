@@ -143,7 +143,7 @@ public:
     float  preNorm;
     standartDev()
     {
-        N=400;
+        N=200;
         accumD=0;
         xPr=new int8_t[N];
         for(int i=0;i<N;i++)
@@ -423,8 +423,8 @@ public:
 standartDevMyo STDM[8];
 lowPassFrMyo LPFM[16], LPFM2[8];
 
-standartDev STD[2];
-frBuHp2 FBH[2];
+standartDev STD[8];
+frBuHp2 FBH[8];
 //bandPassFr BPF[2];
 matchedFr MF[4];
 lowPassFr LPF[8];
@@ -436,6 +436,22 @@ integrator INTEGR[2];
 featureExtr1 FE1[2];
 WillisonAmp WA[2];
 
+
+void getFeaturesKhor(vector<float>& x, vector<float>& y)
+{
+    for(int i=0;i<2;i++)
+    {
+        x[i]=fabs(FBH[i](x[i]));
+        y[i]=(.1*STD[i](x[i]));
+    }
+    //    for(int i=0;i<x.size();i++)
+    //        y[i]=LPFM[i](.02*STDM[i](x[i]));
+    //    for(int i=0;i<x.size();i++)
+    //        y[i+x.size()]=9000*LPFM2[i](VLPFM[i](HAAR1[i](x[i])));
+
+
+}
+
 void getFeaturesMyo(vector<float> x, vector<float>& y)
 {
     //    y=x;
@@ -446,6 +462,8 @@ void getFeaturesMyo(vector<float> x, vector<float>& y)
     //        y[i+x.size()]=((HAAR1[i](x[i])));
 
 }
+
+
 
 void getFeatures_gearbox1(int8_t x, vector<float>& y)
 {

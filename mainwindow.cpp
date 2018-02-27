@@ -218,8 +218,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         {
             e3+=abs(dataEMG[LE_cor1->text().toInt()][i]);
             e4+=abs(dataEMG[LE_cor2->text().toInt()][i]);
-//            e3=0;
-//            e4=1;
+            //            e3=0;
+            //            e4=1;
         }
 
         LTR=linearTr(e1,e2,e3,e4);
@@ -317,7 +317,7 @@ MainWindow::MainWindow(QWidget *parent) :
         int frame_width=4;
         GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
 
-//        connect(SO,SIGNAL(dataOut(vector<float>)),this,SLOT(getEMG(vector<float>)));
+        //        connect(SO,SIGNAL(dataOut(vector<float>)),this,SLOT(getEMG(vector<float>)));
 
     }
 
@@ -421,8 +421,8 @@ MainWindow::MainWindow(QWidget *parent) :
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(600,600));
     int ii2=800;
-    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
-    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
+    set_plot->setAxisScale(QwtPlot::xBottom,0,ii2);
+    set_plot->setAxisScale(QwtPlot::yLeft,0,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
     set_plot->setAxisTitle(QwtPlot::xBottom,"EMG1, mV");
     //    set_plot->set
@@ -446,17 +446,17 @@ MainWindow::MainWindow(QWidget *parent) :
     rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
     rms_plot->setMinimumSize(QSize(300,300));
     drawingInit(rms_plot,"root mean square");
-//    rms_plot->show();
+    //    rms_plot->show();
 
     rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
     rmsCurve->setPen(QColor(0,0,0,0));
     symbol2 = new QwtSymbol( QwtSymbol::Rect,
-                                        QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
     rmsCurve->setSymbol( symbol2 );
 
 
 
-//        getEMG(SO->doWork());
+    //        getEMG(SO->doWork());
 
 }
 
@@ -464,26 +464,29 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::getEMG(vector<uint8_t> ix)
 {
-vector<float> x;
-//x.resize(ix.size());
-x.resize(2);
-x[0]=getInt(ix,0);
-x[1]=getInt(ix,4);
-//qDe
-//for(int i=0;i<x.size();i++)
-//    x[i]=ix[i];
-//    for(int i=0;i<8;i++)
-//        x[i]*=.056;//0.056
-//qDebug()<<x[0];
-//    vector<float> x=SO->doWork();
+    int dim=2;
+    vector<float> x;
+    //x.resize(ix.size());
+    x.resize(dim);
+    for(int i=0;i<dim;i++)
+    {
+        x[i]=getInt(ix,i*4);
+    }
+    //qDe
+    //for(int i=0;i<x.size();i++)
+    //    x[i]=ix[i];
+    //    for(int i=0;i<8;i++)
+    //        x[i]*=.056;//0.056
+    //qDebug()<<x[0];
+    //    vector<float> x=SO->doWork();
     int s=x.size();
     int ii=LE_cor1->text().toInt();
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
 
-//    getFeaturesMyo(x,featurePreOut);
+    getFeaturesKhor(x,featurePreOut);
 
-    for (int i=0;i<2;i++)
+    for (int i=0;i<dim;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
@@ -493,8 +496,8 @@ x[1]=getInt(ix,4);
         float h=x[i];
         if(write_on)
             cout<<h<<"  ";
-//        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-//        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+        //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
 
 
@@ -503,14 +506,14 @@ x[1]=getInt(ix,4);
         cout<<endl;
 
 
-//    myPCA.updateBuf(featurePreOut);
-//    //qDebug()<<featureOut.size();
-//    myPCA.proect(featureOut);
+    //    myPCA.updateBuf(featurePreOut);
+    //    //qDebug()<<featureOut.size();
+    //    myPCA.proect(featureOut);
 
-//    convertFromVec(featurePreOut,perc_inp,1/800.);
-//    perc_X->refresh(perc_inp);
-//    perc_Y->refresh(perc_inp);
-//    percBuf[ind_p]=*perc_X->out[0]*500;
+    //    convertFromVec(featurePreOut,perc_inp,1/800.);
+    //    perc_X->refresh(perc_inp);
+    //    perc_Y->refresh(perc_inp);
+    //    percBuf[ind_p]=*perc_X->out[0]*500;
 
     static int gg=0;
     if(resize_on)
@@ -555,10 +558,10 @@ void MainWindow::drawing()
     for(int p_ind=0;p_ind<8;p_ind++)
     {
         curveTest[p_ind]->signalDrawing(EMG_scale);
-//        curveFeature1[p_ind]->signalDrawing(EMG_scale);
-//        curveFeature2[p_ind]->signalDrawing(EMG_scale);
+        curveFeature1[p_ind]->signalDrawing(EMG_scale);
+        //        curveFeature2[p_ind]->signalDrawing(EMG_scale);
     }
-//    percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
+    //    percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
 
     //    QString::
 
@@ -568,7 +571,7 @@ void MainWindow::drawing()
     if((ii>-1)&(ii<8))
     {
         setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
-//        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt(), EMG_scale);
+        //        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt(), EMG_scale);
 
     }
     //                setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());

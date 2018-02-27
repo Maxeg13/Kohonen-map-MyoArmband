@@ -9,6 +9,8 @@ using namespace Eigen;
 
 void getFeaturesMyo(vector<float>, vector<float>&);
 
+void getFeaturesKhor(vector<float>&, vector<float>&);
+
 void getFeatures_gearbox1(int8_t x, vector<float>&);
 
 void getFeatures_gearbox2(int8_t x, vector<float>&);
