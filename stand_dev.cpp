@@ -476,16 +476,23 @@ integrator INTEGR[2];
 featureExtr1 FE1[2];
 WillisonAmp WA[2];
 
+void preproc(vector<float>& x)
+{
+    for(int i=0;i<2;i++)
+    {
+        x[i]=killRange(FBH[i](x[i]),0);
+    }
+}
 
 void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
 {
     state=1;
     static vector<float> xh;
     int thr=140;
-    for(int i=0;i<2;i++)
-    {
-        x[i]=killRange(FBH[i](x[i]),0);
-    }
+//    for(int i=0;i<2;i++)
+//    {
+//        x[i]=killRange(FBH[i](x[i]),0);
+//    }
 
     xh=x;
 

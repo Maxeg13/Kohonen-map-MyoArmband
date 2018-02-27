@@ -465,8 +465,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     QwtPlot* rms_plot=new QwtPlot();
-    rms_plot->setAxisScale(QwtPlot::xBottom,0,140);
-    rms_plot->setAxisScale(QwtPlot::yLeft,0,140);
+    rms_plot->setAxisScale(QwtPlot::xBottom,0,1200);
+    rms_plot->setAxisScale(QwtPlot::yLeft,0,1200);
     rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
     rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
     rms_plot->setMinimumSize(QSize(300,300));
@@ -503,28 +503,35 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 
 
     int state=1;
-    getFeaturesKhor(x,featurePreOut, state);
+    preproc(x);
+
 
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
 
-    int thr=70;
-    if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
-        state=!test_on;
-    if(state)
-        for (int i=0;i<dim;i++)
+
+    int thr=50;
+    if(test_on)
+        if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
         {
-            ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
-            ind_p=ind_c[0];
-
-            dataEMG[i][ind_c[i]]=x[i];
-
-            float h=x[i];
-            if(write_on)
-                cout<<h<<"  ";
-            featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-            //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+            x[0]=x[1]=0;
         }
+    getFeaturesKhor(x,featurePreOut, state);
+
+    //    if(state)
+    for (int i=0;i<dim;i++)
+    {
+        ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
+        ind_p=ind_c[0];
+
+        dataEMG[i][ind_c[i]]=x[i];
+
+        float h=x[i];
+        if(write_on)
+            cout<<h<<"  ";
+        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+        //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+    }
 
 
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
