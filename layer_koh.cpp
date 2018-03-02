@@ -12,7 +12,7 @@ void sector::rst()
 {
     for(int i=0;i<size_in;i++)
 //        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%10)/10.)*200;
+         w[i]=((rand()%1000)/1000.)*200;
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -90,6 +90,10 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     Ny=N_m;
     N=Nx*Ny;
 
+    state=new float*[inp_m.size()];
+    for(int i=0;i<inp_m.size();i++)
+        state[i]=&SR[i].state;
+
     w=new float**[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         w[i]=new float*[N];
@@ -138,8 +142,9 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 }
 
 
-int layer_koh::indOfMin(const std::vector<float>& inp)
+int layer_koh::indOfMin(const std::vector<float>& _inp)
 {
+    inp=_inp;
     int ind_h;
     float h1;
     float sumMin=100000000000000;

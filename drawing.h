@@ -13,9 +13,12 @@ public:
     int& ind_c;
 
     myCurve(std::vector<float> &dataH, QwtPlot* d_plotH,
+
                      const QString &title, int& ind_ch );
     void set_Drawing(std::vector<float> &x, std::vector<float> &y, int,float k);
-    void set_Drawing(float** x, float** y, int s);
+    void set_Drawing();
+    void addPoints(float** x, float** y, int s);
+    void addPoints(float* x, float* y, int s);
     myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,const QString &title,
             const QColor &color, const QColor &colorSymbol,int& ind_ch );
     void signalDrawing();

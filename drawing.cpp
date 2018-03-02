@@ -1,5 +1,5 @@
 #include "drawing.h"
-
+    QPolygonF points;
 
 myCurve::myCurve(std::vector<float> &dataH, QwtPlot* d_plotH,
                  const QString &title, int& ind_ch ):ind_c(ind_ch),data(dataH)
@@ -16,7 +16,7 @@ myCurve::myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,con
 {
     d_plot=d_plotH;
     setTitle(title);
-    setPen(color,2);
+    setPen(color,3);
 
 
     dataH.resize(bufShowSize);
@@ -52,15 +52,20 @@ void myCurve::set_Drawing(std::vector<float>& x, std::vector<float>& y, int ii, 
     attach( d_plot); // отобразить кривую на графике
 }
 
-void myCurve::set_Drawing(float** x, float** y, int s)
+void myCurve::addPoints(float** x, float** y, int s)
 {
-    // Добавить точки на ранее созданную кривую
-    QPolygonF points;
-
-    for(int i=0;i<s;i++)
+    for(int i=0;i<(s);i++)
         points<<QPointF(*x[i],*y[i]);
-//        qDebug()<<*x[i];
+}
 
+void myCurve::addPoints(float* x, float* y, int s)
+{
+    for(int i=0;i<(s);i++)
+        points<<QPointF(x[i],y[i]);
+}
+void myCurve::set_Drawing()
+{
     setSamples( points ); // ассоциировать набор точек с кривой
     attach( d_plot); // отобразить кривую на графике
+    points.resize(0);
 }

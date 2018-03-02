@@ -25,6 +25,8 @@ public:
 class layer_koh
 {
 public:
+    std::vector<float> inp;
+    float** state;
     float thresh(float , int ,int );
     int ind;
     int rad;

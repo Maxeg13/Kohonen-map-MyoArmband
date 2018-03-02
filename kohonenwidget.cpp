@@ -4,6 +4,8 @@
 #include "drawing.h"
 float rad=3.;//3
 myCurve* set_curve;
+QwtSymbol* plot_symbol;
+    QwtPlot* set_plot;
 
 void norm( vector<float>& x)
 {
@@ -67,8 +69,22 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     //    LK->indOfMin(featureInp);
     LK->reform();
     LK->draw(*painter);
-    set_curve->set_Drawing(LK->w[0],LK->w[1],LK->N);
+
     delete painter;
+
+    //    plot_symbol->setColor(QColor(255,0,0));
+//    set_plot->setAutoReplot(0);
+    plot_symbol->setPen(QPen(QColor(0,0,0),4));
+    set_curve->setSymbol(plot_symbol);
+    set_curve->addPoints(LK->w[L_E_ind1->text().toInt()],LK->w[L_E_ind2->text().toInt()],LK->N);
+//    set_curve->set_Drawing();
+
+//    plot_symbol->setPen(QPen(QColor(255,0,0),4));
+//    set_curve->setSymbol(plot_symbol);
+    set_curve->addPoints(&featureInp[L_E_ind1->text().toInt()],&featureInp[L_E_ind2->text().toInt()],1);
+    set_curve->set_Drawing();
+//    set_plot->setAutoReplot(0);
+
 }
 
 void KohonenWidget::getRad()
@@ -97,12 +113,12 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     //    str.remove(0,4);
     //    qDebug()<<str.toFloat();
 
-    QwtPlot* set_plot;
+
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(300,300));
     int ii2=150*1;
-//    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
-//    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
+    //    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
+    //    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"RMS1");
     set_plot->setAxisTitle(QwtPlot::xBottom,"RMS2");
     //    set_plot->set
@@ -114,27 +130,21 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     int ind_p;
     set_curve=new myCurve(h2,set_plot,"perc out", ind_p);
     set_curve->setPen(QColor(0,0,0,0));
-    QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
-                                        QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
-    set_curve->setSymbol( symbol2 );
+    plot_symbol = new QwtSymbol( QwtSymbol::Ellipse,
+                                 QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+
+    set_curve->setSymbol( plot_symbol );
 
     saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
     L_E_rad=new QLineEdit("rad: 3");
     L_E_ind1=new QLineEdit("0");
-    L_E_ind1=new QLineEdit("1");
-
+    L_E_ind2=new QLineEdit("1");
     saveB=new QPushButton("save patterns");
-
     corB=new QPushButton("correlation");
     rstLearningB=new QPushButton("rst learning");
-
-
     featureInp.resize(dimension,0);
-
-
-
     LK=new layer_koh(featureInp,24);
     //    LK->learnW(data_learn[0]);
 

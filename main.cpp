@@ -35,6 +35,9 @@ int main(int argc, char *argv[])
     GL->addWidget(KW.corB,2,3);
     GL->addWidget(KW.L_E,2,4);
     GL->addWidget(KW.L_E_rad,2,5);
+    GL->addWidget(KW.L_E_ind1,3,1);
+    GL->addWidget(KW.L_E_ind2,3,2);
+
     //    L_E.setText("COM6");
 
 
