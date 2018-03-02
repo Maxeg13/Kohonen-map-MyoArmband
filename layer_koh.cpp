@@ -80,6 +80,7 @@ void layer_koh::reform()
 }
 layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
+
     t=0;
     s=0.7,gap=30;
     QPT_origin.reserve(6);
@@ -88,6 +89,10 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     Nx=N_m/3;
     Ny=N_m;
     N=Nx*Ny;
+
+    w=new float**[inp_m.size()];
+    for(int i=0;i<inp_m.size();i++)
+        w[i]=new float*[N];
 
     SR.reserve(N);
     dist2.resize(N);
@@ -126,6 +131,10 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
                                            SR[i].centre-
                                            SR[j].centre);
         }
+
+    for(int i=0;i<inp_m.size();i++)
+        for(int j=0;j<N;j++)
+            w[i][j]=&SR[j].w[i];
 }
 
 

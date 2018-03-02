@@ -12,15 +12,15 @@ public:
     bool saving_on;
     int dimension;
     QLineEdit *L_E;
-    QLineEdit *L_E_F;
-     vector<float> featureInp;
+    QLineEdit *L_E_rad;
+    QLineEdit *L_E_ind1, *L_E_ind2;
+    vector<float> featureInp;
     QPushButton *saveB;
-
     QPushButton *corB;
     QPushButton *rstLearningB;
     layer_koh *LK;
     QTimer *timer;
-     vector< vector<float>> data_learn;
+    vector< vector<float>> data_learn;
     KohonenWidget( vector<float>,QWidget *parent = 0);
     void drawingInit(QwtPlot* d_plot);
 

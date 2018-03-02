@@ -67,12 +67,13 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     //    LK->indOfMin(featureInp);
     LK->reform();
     LK->draw(*painter);
+    set_curve->set_Drawing(LK->w[0],LK->w[1],LK->N);
     delete painter;
-
 }
+
 void KohonenWidget::getRad()
 {
-    rad=L_E_F->text().toFloat();
+    rad=L_E_rad->text().remove(0,4).toFloat();
 }
 
 void KohonenWidget::refresh( vector<float> inp)
@@ -92,12 +93,16 @@ void KohonenWidget::refresh( vector<float> inp)
 
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 {
+    //    QString str("rad 3");
+    //    str.remove(0,4);
+    //    qDebug()<<str.toFloat();
+
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(300,300));
     int ii2=150*1;
-    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
-    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
+//    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
+//    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"RMS1");
     set_plot->setAxisTitle(QwtPlot::xBottom,"RMS2");
     //    set_plot->set
@@ -108,15 +113,17 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     vector<float> h2;
     int ind_p;
     set_curve=new myCurve(h2,set_plot,"perc out", ind_p);
-        set_curve->setPen(QColor(0,0,0,0));
-        QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
-                                            QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+    set_curve->setPen(QColor(0,0,0,0));
+    QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
+                                        QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
     set_curve->setSymbol( symbol2 );
 
     saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
-    L_E_F=new QLineEdit("3");
+    L_E_rad=new QLineEdit("rad: 3");
+    L_E_ind1=new QLineEdit("0");
+    L_E_ind1=new QLineEdit("1");
 
     saveB=new QPushButton("save patterns");
 
@@ -138,7 +145,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 
     connect(rstLearningB,SIGNAL(released()),this,SLOT(rst()));
     connect(corB,SIGNAL(released()),this,SLOT(getCor()));
-    connect(L_E_F,SIGNAL(editingFinished()),this,SLOT(getRad()));
+    connect(L_E_rad,SIGNAL(editingFinished()),this,SLOT(getRad()));
 
     timer->start(40);
     update();

@@ -32,7 +32,7 @@ public:
     float** out;
     float speed_k;
     float diff_min, diff_max, diff_k;
-
+    float*** w;
     int N,Nx,Ny;
     //    std::vector<float>& out;
     QPoint SHIFT;

@@ -51,3 +51,16 @@ void myCurve::set_Drawing(std::vector<float>& x, std::vector<float>& y, int ii, 
     setSamples( points ); // ассоциировать набор точек с кривой
     attach( d_plot); // отобразить кривую на графике
 }
+
+void myCurve::set_Drawing(float** x, float** y, int s)
+{
+    // Добавить точки на ранее созданную кривую
+    QPolygonF points;
+
+    for(int i=0;i<s;i++)
+        points<<QPointF(*x[i],*y[i]);
+//        qDebug()<<*x[i];
+
+    setSamples( points ); // ассоциировать набор точек с кривой
+    attach( d_plot); // отобразить кривую на графике
+}
