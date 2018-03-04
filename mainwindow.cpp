@@ -509,8 +509,8 @@ void MainWindow::getEMG(vector<uint8_t> ix)
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
 
-
-    int thr=50;
+    //zerro-filling
+    int thr=65;
     if(test_on)
         if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
         {

@@ -64,7 +64,7 @@ void linearTr::inv()
 {
     inv_m=m.inverse();
     cout<<inv_m<<endl;
-//    cout<<inv_m*m<<endl;
+    //    cout<<inv_m*m<<endl;
 }
 
 void linearTr::proect(vector<float>& x,int i, int j)
@@ -78,6 +78,31 @@ void linearTr::proect(vector<float>& x,int i, int j)
     outv[1]=out(1,0);
 }
 
+
+class minMax
+{
+public:
+    float b[5];
+
+    float  operator()(vector<float>& x,int i)
+    {
+        b[2]=b[1];
+        b[1]=b[0];
+        b[0]=x[i];
+        if (b[2]<b[1])
+            if(b[0]<b[1])
+                return(b[1]);
+
+        if (b[2]>b[1])
+            if(b[0]>b[1])
+                return(b[1]);
+
+        for(int k=0;k<x.size();k++)
+            x[k]=0;
+
+        return 0;
+    }
+};
 
 int threshB( int x, int a)
 {
@@ -459,10 +484,46 @@ public:
     }
 };
 
+class buffer
+{
+public:
+    int N=5;
+    vector<float> x;
+    int ind=0;
+    buffer()
+    {
+        x.resize(N);
+    }
+    void push(int xx)
+    {
+        ind++;
+        ind%=N;
+        x[ind]=xx;
+    }
+};
+
+float order(vector<float>& x, vector<float>& y)
+{
+    int i;
+    int j;
+    float h;
+    y=x;
+    int s=x.size();
+    for(i=0;i<s;i++)
+    {
+        for(j=0;(j+i+1)<s;j++)
+            if(y[j]>y[j+1])
+            {
+                h=y[j];
+                y[j]=y[j+1];
+                y[j+1]=h;
+            }
+    }
+}
 
 standartDevMyo STDM[8];
 lowPassFrMyo LPFM[16], LPFM2[8];
-
+buffer BR[8];
 standartDevF STD[8];
 frBuHp2 FBH[8];
 //bandPassFr BPF[2];
@@ -475,34 +536,50 @@ matchedFrHAAR1 HAAR1[8];
 integrator INTEGR[2];
 featureExtr1 FE1[2];
 WillisonAmp WA[2];
+minMax MM[8];
+
 
 void preproc(vector<float>& x)
 {
     for(int i=0;i<2;i++)
     {
         x[i]=killRange(FBH[i](x[i]),0);
+//        BR[i].push(x[i]);
+//        x[i]=BR[i].x[3];
     }
+    //    for(int i=0;i<2;i++)
+    //    {
+    //        x[i]=MM[i](x,i);
+    //        if(x[i]==0) break;
+    //    }
+
+//    order()
 }
 
 void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
 {
     state=1;
     static vector<float> xh;
-    int thr=140;
-//    for(int i=0;i<2;i++)
-//    {
-//        x[i]=killRange(FBH[i](x[i]),0);
-//    }
+    //    int thr=160;
+    //    for(int i=0;i<2;i++)
+    //    {
+    //        x[i]=killRange(FBH[i](x[i]),0);
+    //    }
 
     xh=x;
 
-    if((x[0]>thr)&&(x[1]>thr))
-    {
-        x[0]=x[1]=0;
-        state=0;
-    }
+    //    if((x[0]>thr)&&(x[1]>thr))
+    //    {
+    //        x[0]=x[1]=0;
+    //        state=0;
+    //    }
+    //    else if((x[0]<thr)&&(x[1]<thr))
+    //    {
+    //        x[0]=x[1]=0;
+    //        state=0;
+    //    }
 
-    if(state)
+    //    if(state)
     for(int i=0;i<2;i++)
     {
         y[i]=(.02*LPF[i](STD[i](x[i])));
