@@ -74,7 +74,7 @@ void DataCollector::onAccelerometerData(myo::Myo* myo, uint64_t timestamp, const
 
 void DataCollector::print()
 {
-    qDebug() << '\r';
+
     //                for (size_t i = 0; i < emgSamples.size(); i++)
     //                {
     //                    ostringstream oss;
@@ -85,3 +85,9 @@ void DataCollector::print()
     //                    qDebug() << '[' << qemgString <<  qbuffStr << ']';
     //                }
 }
+
+//DataCollector::~DataCollector()
+//{
+//    delete myo;
+//    qDebug() << '\r';
+//}

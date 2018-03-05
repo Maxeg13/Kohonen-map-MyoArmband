@@ -3,9 +3,11 @@
 #include"layer_koh.h"
 #include "drawing.h"
 float rad=3.;//3
+bool rst_k=0;
+int rst_cnt=0;
 myCurve* set_curve;
 QwtSymbol* plot_symbol;
-    QwtPlot* set_plot;
+QwtPlot* set_plot;
 
 void norm( vector<float>& x)
 {
@@ -33,13 +35,15 @@ void KohonenWidget::saving()
 
 
 void KohonenWidget::rst()
-{
-    qDebug()<<rad;
+{    
+    //    qDebug()<<rad;
+    rst_k=1;
+    rst_cnt=0;
     LK->rst();
-    for(int i=0;i<10000;i++)
-    {
-        LK->learnW(data_learn[rand()%data_learn.size()],rad);
-    }
+    //    for(int i=0;i<10000;i++)
+    //    {
+    //        LK->learnW(data_learn[rand()%data_learn.size()],rad);
+    //    }
 }
 
 void KohonenWidget::getCor()
@@ -67,23 +71,33 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     painter->setPen(pen);
     painter->scale(0.2,0.2);
     //    LK->indOfMin(featureInp);
+
+    if(rst_k)
+    {
+        rst_cnt++;
+        for(int i=0;i<100;i++)
+            LK->learnW(data_learn[rand()%data_learn.size()],rad);
+    }
+    if(rst_cnt==100)
+        rst_k=0;
+
     LK->reform();
     LK->draw(*painter);
 
     delete painter;
 
     //    plot_symbol->setColor(QColor(255,0,0));
-//    set_plot->setAutoReplot(0);
+    //    set_plot->setAutoReplot(0);
     plot_symbol->setPen(QPen(QColor(0,0,0),4));
     set_curve->setSymbol(plot_symbol);
     set_curve->addPoints(LK->w[L_E_ind1->text().toInt()],LK->w[L_E_ind2->text().toInt()],LK->N);
-//    set_curve->set_Drawing();
+    //    set_curve->set_Drawing();
 
-//    plot_symbol->setPen(QPen(QColor(255,0,0),4));
-//    set_curve->setSymbol(plot_symbol);
+    //    plot_symbol->setPen(QPen(QColor(255,0,0),4));
+    //    set_curve->setSymbol(plot_symbol);
     set_curve->addPoints(&featureInp[L_E_ind1->text().toInt()],&featureInp[L_E_ind2->text().toInt()],1);
     set_curve->set_Drawing();
-//    set_plot->setAutoReplot(0);
+    //    set_plot->setAutoReplot(0);
 
 }
 
@@ -160,7 +174,10 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     timer->start(40);
     update();
 }
-
+void KohonenWidget::closeEvent (QCloseEvent *event)
+{
+   qDebug()<<"hello";
+}
 void KohonenWidget::drawingInit(QwtPlot* d_plot)
 {
 
@@ -222,4 +239,9 @@ void KohonenWidget::drawingInit(QwtPlot* d_plot)
 #else
     d_plot->setMinimumSize(90,30);
 #endif
+}
+
+void KohonenWidget::slot_close()
+{
+    close();
 }

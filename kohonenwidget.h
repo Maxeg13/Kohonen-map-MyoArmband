@@ -22,11 +22,13 @@ public:
     QTimer *timer;
     vector< vector<float>> data_learn;
     KohonenWidget( vector<float>,QWidget *parent = 0);
+//    ~KohonenWidget();
     void drawingInit(QwtPlot* d_plot);
-
+    void closeEvent (QCloseEvent *event);
 signals:
     pushStringS(QString);
     corSignal();
+    sign_close();
 public slots:
     void drawing();
     void refresh( vector<float>);
@@ -37,6 +39,7 @@ public slots:
     void pushString();
     void getCor();
     void getRad();
+    void slot_close();
 protected:
     void paintEvent(QPaintEvent *e);
 };

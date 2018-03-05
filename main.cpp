@@ -40,13 +40,14 @@ int main(int argc, char *argv[])
 
     //    L_E.setText("COM6");
 
-
+    QObject::connect(&SignalMW,SIGNAL(sign_close()),&a,SLOT(closeAllWindows()));
     KohonenMW.setCentralWidget(centralWidget1);
     QObject::connect(&SignalMW,SIGNAL(featureOutSignal( vector<float>)),&KW,SLOT(refresh( vector<float>)));
     //QObject::connect(&KW.learnB1,SIGNAL(released()),&KW,SLOT(learning_1()));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
     QObject::connect(&KW,SIGNAL(pushStringS(QString)),&SignalMW,SLOT(reconnect(QString)));
     QObject::connect(&KW,SIGNAL(corSignal()),&SignalMW,SLOT(getCor()));
+//    QObject::connect();
 
     KohonenMW.setWindowTitle("Kohonen hex-top Map");
     SignalMW.setWindowTitle("Myographic signals");
@@ -54,5 +55,6 @@ int main(int argc, char *argv[])
     KohonenMW.show();
     SignalMW.show();
     //    w.kohonenWidget->show();
-    return a.exec();
+     a.exec();
+//     a.closeAllWindows();
 }

@@ -37,9 +37,13 @@ public slots:
     void getEMG( vector<float>);
     void kickMyo();
     void getCor();
+    void slot_close();
 signals:
+    void sign_close();
     void featureOutSignal( vector<float>);
     void sended();
+protected:
+    void closeEvent(QCloseEvent *);
 };
 
 #endif // MAINWINDOW_H

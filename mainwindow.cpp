@@ -299,11 +299,22 @@ void MainWindow::drawingInit(QwtPlot* d_plot)
 
 MainWindow::~MainWindow()
 {
-    //    delete ui;
+
 }
 
 
 void MainWindow::paintEvent(QPaintEvent *e)
 {
 
+}
+
+void MainWindow::closeEvent(QCloseEvent *)
+{
+
+    emit sign_close();
+}
+
+void MainWindow::slot_close()
+{
+    this->close();
 }
