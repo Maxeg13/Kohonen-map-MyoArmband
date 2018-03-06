@@ -35,13 +35,17 @@ void KohonenWidget::saving()
     saving_on=1;
 }
 
+void KohonenWidget::learning()
+{
+    rst_k=1;
+    rst_cnt=0;
+}
 
 void KohonenWidget::rst()
 {    
     //    qDebug()<<rad;
-    rst_k=1;
-    rst_cnt=0;
-//    LK->rst();
+
+    LK->rst();
     //    for(int i=0;i<10000;i++)
     //    {
     //        LK->learnW(data_learn[rand()%data_learn.size()],rad);
@@ -184,7 +188,8 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     L_E_ind2=new QLineEdit("1");
     saveB=new QPushButton("save patterns");
     corB=new QPushButton("correlation");
-    rstLearningB=new QPushButton("rst learning");
+    rstB=new QPushButton("rst");
+    learningB=new QPushButton("learn");
     featureInp.resize(dimension,0);
     LK=new layer_koh(featureInp,24);
     //    LK->learnW(data_learn[0]);
@@ -194,7 +199,8 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     connect(saveB,SIGNAL(pressed()),this,SLOT(saving()));
     connect(saveB,SIGNAL(released()),this,SLOT(unsaving()));
 
-    connect(rstLearningB,SIGNAL(released()),this,SLOT(rst()));
+    connect(learningB,SIGNAL(released()),this,SLOT(learning()));
+    connect(rstB,SIGNAL(released()),this,SLOT(rst()));
     connect(corB,SIGNAL(released()),this,SLOT(getCor()));
     connect(L_E_rad,SIGNAL(editingFinished()),this,SLOT(getRad()));
 

@@ -31,10 +31,11 @@ int main(int argc, char *argv[])
     int buttons_n=9;
     GL->addWidget(&KW,1,1,1,buttons_n);
     GL->addWidget(KW.saveB,2,1);
-    GL->addWidget(KW.rstLearningB,2,2);
-    GL->addWidget(KW.corB,2,3);
-    GL->addWidget(KW.L_E,2,4);
-    GL->addWidget(KW.L_E_rad,2,5);
+    GL->addWidget(KW.rstB,2,2);
+    GL->addWidget(KW.learningB,2,3);
+    GL->addWidget(KW.corB,2,4);
+    GL->addWidget(KW.L_E,2,5);
+    GL->addWidget(KW.L_E_rad,2,6);
     GL->addWidget(KW.L_E_ind1,3,1);
     GL->addWidget(KW.L_E_ind2,3,2);
 

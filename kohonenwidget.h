@@ -18,7 +18,8 @@ public:
     vector<float> featureInp;
     QPushButton *saveB;
     QPushButton *corB;
-    QPushButton *rstLearningB;
+    QPushButton *rstB;
+    QPushButton *learningB;
     layer_koh *LK;
     QTimer *timer;
     vector< vector<float>> data_learn;
@@ -32,6 +33,7 @@ signals:
     corSignal();
     sign_close();
 public slots:
+    void learning();
     void drawing();
     void refresh( vector<float>);
     void saving();

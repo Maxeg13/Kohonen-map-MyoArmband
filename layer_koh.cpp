@@ -12,7 +12,7 @@ void sector::rst()
 {
     for(int i=0;i<size_in;i++)
 //        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%1000)/1000.)*200-40;
+         w[i]=((rand()%1000)/1000.)*200-100;
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -177,7 +177,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.002;
+    speed_k=0.0009;
 
 
     ind=indOfMin(inp);
