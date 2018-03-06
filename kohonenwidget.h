@@ -9,6 +9,7 @@ class KohonenWidget : public QWidget
 {
     Q_OBJECT
 public:
+    float scale;
     bool saving_on;
     int dimension;
     QLineEdit *L_E;
@@ -25,6 +26,7 @@ public:
 //    ~KohonenWidget();
     void drawingInit(QwtPlot* d_plot);
     void closeEvent (QCloseEvent *event);
+    void mousePressEvent(QMouseEvent *);
 signals:
     pushStringS(QString);
     corSignal();

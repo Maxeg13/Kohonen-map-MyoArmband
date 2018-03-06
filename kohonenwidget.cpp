@@ -2,12 +2,14 @@
 #include"headers.h"
 #include"layer_koh.h"
 #include "drawing.h"
+#include<QMouseEvent>
 float rad=3.;//3
 bool rst_k=0;
 int rst_cnt=0;
 myCurve* set_curve;
 QwtSymbol* plot_symbol;
 QwtPlot* set_plot;
+int ind=0;
 
 void norm( vector<float>& x)
 {
@@ -39,7 +41,7 @@ void KohonenWidget::rst()
     //    qDebug()<<rad;
     rst_k=1;
     rst_cnt=0;
-    LK->rst();
+//    LK->rst();
     //    for(int i=0;i<10000;i++)
     //    {
     //        LK->learnW(data_learn[rand()%data_learn.size()],rad);
@@ -69,7 +71,7 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     painter->setRenderHint(QPainter::Antialiasing, 1);
     QPen pen(Qt::black, 8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter->setPen(pen);
-    painter->scale(0.2,0.2);
+    painter->scale(scale,scale);
     //    LK->indOfMin(featureInp);
 
     if(rst_k)
@@ -121,8 +123,33 @@ void KohonenWidget::refresh( vector<float> inp)
     }
 }
 
+void KohonenWidget::mousePressEvent(QMouseEvent *e)
+{
+
+    QPointF p=(e->pos())/scale;
+//    qDebug()<<p;
+//    qDebug()<<LK->SR[0][0];
+    int ind=0;
+    float pd=0;
+    float min=1000000000000000;
+    for(int i=0;i<LK->N;i++)
+    {
+        pd=QPointF::dotProduct((p-LK->SR[i][0]),(p-LK->SR[i][0]));
+        if(pd<min)
+        {
+            min=pd;
+            ind=i;
+//            qDebug()<<pd;
+        }
+    }
+    qDebug()<<ind;
+    for(int i=0;i<LK->inp_s;i++)
+    LK->SR[ind].w[i]=featureInp[i];
+}
+
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 {
+    scale=0.2;
     //    QString str("rad 3");
     //    str.remove(0,4);
     //    qDebug()<<str.toFloat();

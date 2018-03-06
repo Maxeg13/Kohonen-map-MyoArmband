@@ -12,7 +12,7 @@ void sector::rst()
 {
     for(int i=0;i<size_in;i++)
 //        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%1000)/1000.)*200;
+         w[i]=((rand()%1000)/1000.)*200-40;
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -94,6 +94,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     for(int i=0;i<inp_m.size();i++)
         state[i]=&SR[i].state;
 
+    inp_s=inp_m.size();
     w=new float**[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         w[i]=new float*[N];
