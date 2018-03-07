@@ -10,9 +10,19 @@ sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 
 void sector::rst()
 {
-    for(int i=0;i<size_in;i++)
-//        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%1000)/1000.)*200-100;
+    float range=500;
+    float accum=100000000000;
+    while(accum>(range*range/4))
+    {
+        accum=0;
+        for(int i=0;i<size_in;i++)
+        {
+            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+
+            w[i]=((rand()%1000)/1000.)*range-range/2;
+         accum+=w[i]*w[i];
+        }
+    }
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -121,7 +131,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
             SR.push_back(sector(inp_m,QPT,SHIFT));
-//            SR.
+            //            SR.
         }
     }
     out=new float*[N];
@@ -187,7 +197,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     {
         h1=dist2[i][ind];
         float exp_val=exp(-0.0005*t);
-//        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+        //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
         float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000
         for(int j=0;j<SR[i].size_in;j++)

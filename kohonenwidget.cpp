@@ -43,13 +43,8 @@ void KohonenWidget::learning()
 
 void KohonenWidget::rst()
 {    
-    //    qDebug()<<rad;
-
     LK->rst();
-    //    for(int i=0;i<10000;i++)
-    //    {
-    //        LK->learnW(data_learn[rand()%data_learn.size()],rad);
-    //    }
+
 }
 
 void KohonenWidget::getCor()
