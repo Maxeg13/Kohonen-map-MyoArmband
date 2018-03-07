@@ -64,6 +64,8 @@ void KohonenWidget::drawing()
     update();
 }
 
+
+
 void KohonenWidget::pushString()
 {
     emit(pushStringS(L_E->text()));
@@ -138,7 +140,7 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
     float min=1000000000000000;
     for(int i=0;i<LK->N;i++)
     {
-        pd=QPointF::dotProduct((p-LK->SR[i][0]),(p-LK->SR[i][0]));
+        pd=QPointF::dotProduct((p-LK->SR[i].centre),(p-LK->SR[i].centre));
         if(pd<min)
         {
             min=pd;
@@ -189,6 +191,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     saveB=new QPushButton("save patterns");
     corB=new QPushButton("correlation");
     rstB=new QPushButton("rst");
+    connectB=new QPushButton("connect to Myo");
     learningB=new QPushButton("learn");
     featureInp.resize(dimension,0);
     LK=new layer_koh(featureInp,24);

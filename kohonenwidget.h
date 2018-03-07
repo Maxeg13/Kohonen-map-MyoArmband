@@ -20,6 +20,7 @@ public:
     QPushButton *corB;
     QPushButton *rstB;
     QPushButton *learningB;
+    QPushButton *connectB;
     layer_koh *LK;
     QTimer *timer;
     vector< vector<float>> data_learn;

@@ -38,6 +38,7 @@ public slots:
     void kickMyo();
     void getCor();
     void slot_close();
+    void connectMyo();
 signals:
     void sign_close();
     void featureOutSignal( vector<float>);

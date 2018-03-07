@@ -13,8 +13,13 @@ DataCollector::DataCollector()
 //    myo->vibrate(myo->vibrationShort);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 
-    hub.addListener(this);
+//    hub.addListener(this);
+//hub.
+}
 
+void DataCollector::addListener()
+{
+    hub.addListener(this);
 }
 
 void DataCollector::kick(int x)

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     MainWindow SignalMW;
     SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
-    KohonenMW.resize(QSize(590,550));
+    KohonenMW.resize(QSize(590,570));
 //    qDebug()<< SignalMW.featureOut;
     KohonenWidget KW(SignalMW.featureOut);
 
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     GL->addWidget(KW.L_E_rad,2,6);
     GL->addWidget(KW.L_E_ind1,3,1);
     GL->addWidget(KW.L_E_ind2,3,2);
+    GL->addWidget(KW.connectB,3,3);
 
     //    L_E.setText("COM6");
 
@@ -48,6 +49,7 @@ int main(int argc, char *argv[])
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
     QObject::connect(&KW,SIGNAL(pushStringS(QString)),&SignalMW,SLOT(reconnect(QString)));
     QObject::connect(&KW,SIGNAL(corSignal()),&SignalMW,SLOT(getCor()));
+    QObject::connect(KW.connectB,SIGNAL(released()),&SignalMW,SLOT(connectMyo()));
 //    QObject::connect();
 
     KohonenMW.setWindowTitle("Kohonen hex-top Map");

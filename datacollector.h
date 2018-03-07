@@ -30,7 +30,7 @@ public:
     void onAccelerometerData(myo::Myo* myo, uint64_t timestamp, const myo::Vector3<float> &accel);
 
     void print();
-
+    void addListener();
 
     myo::Myo* myo;
     myo::Hub hub;

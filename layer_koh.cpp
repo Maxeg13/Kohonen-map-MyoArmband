@@ -121,6 +121,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
             SR.push_back(sector(inp_m,QPT,SHIFT));
+//            SR.
         }
     }
     out=new float*[N];
@@ -177,7 +178,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.0009;
+    speed_k=0.0016;
 
 
     ind=indOfMin(inp);

@@ -13,6 +13,7 @@
 
 
 #include "drawing.h"
+#include "mainwindow.h"
 //#include "layer_koh.h"
 
 
@@ -47,6 +48,11 @@ QPainter *painter;
  vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
 int dim_in=8,dim_out=8;
+
+void MainWindow::connectMyo()
+{
+    collector->addListener();
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
