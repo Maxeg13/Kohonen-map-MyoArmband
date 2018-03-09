@@ -22,6 +22,11 @@ void DataCollector::addListener()
     hub.addListener(this);
 }
 
+void DataCollector::removeListener()
+{
+    hub.removeListener(this);
+}
+
 void DataCollector::kick(int x)
 {
 

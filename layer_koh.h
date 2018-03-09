@@ -37,6 +37,7 @@ public:
     float diff_min, diff_max, diff_k;
     float*** w;
     int N,Nx,Ny;
+    int width;
     //    std::vector<float>& out;
     QPoint SHIFT;
     QVector<QPoint> QPT_origin, QPT;

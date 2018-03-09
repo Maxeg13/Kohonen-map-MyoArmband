@@ -31,6 +31,7 @@ public:
 
     void print();
     void addListener();
+    void removeListener();
 
     myo::Myo* myo;
     myo::Hub hub;

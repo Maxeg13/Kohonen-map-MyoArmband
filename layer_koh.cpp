@@ -2,6 +2,18 @@
 #include "headers.h"
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
+float min(float x, float y)
+{
+    if(x>y)
+        return y;
+    else
+        return x;
+}
+
+float dist2_F(QPoint a, QPoint b, int c)
+{
+    return QPoint::dotProduct(a-(b+QPoint(c,0)),a-(b+QPoint(c,0)));
+}
 
 sector::sector()
 {}
@@ -20,7 +32,7 @@ void sector::rst()
             //        w[i]=((rand()%10)/10.-0.5)*1;//2000
 
             w[i]=((rand()%1000)/1000.)*range-range/2;
-         accum+=w[i]*w[i];
+            accum+=w[i]*w[i];
         }
     }
 }
@@ -97,6 +109,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     QPT.reserve(6);
 
     Nx=N_m/3;
+    width=(300+gap)*Nx;
     Ny=N_m;
     N=Nx*Ny;
 
@@ -142,10 +155,12 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     for(int i=0;i<N;i++)
         for(int j=0;j<N;j++)
         {
-            dist2[i][j]=QPoint::dotProduct(SR[i].centre-
-                                           SR[j].centre,
-                                           SR[i].centre-
-                                           SR[j].centre);
+#ifdef TOROID
+            dist2[i][j]=min(dist2_F(SR[i].centre, SR[j].centre,0),dist2_F(SR[i].centre, SR[j].centre,width));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,-width));
+#else
+            dist2[i][j]=(dist2_F(SR[i].centre, SR[j].centre,0));
+#endif
         }
 
     for(int i=0;i<inp_m.size();i++)

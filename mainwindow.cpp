@@ -316,11 +316,15 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
 void MainWindow::closeEvent(QCloseEvent *)
 {
-
+//    qDebug()<<"hey";
+        this->close();
+    collector->removeListener();
     emit sign_close();
 }
 
 void MainWindow::slot_close()
 {
-    this->close();
+
+
+
 }

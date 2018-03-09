@@ -189,6 +189,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     connectB=new QPushButton("connect to Myo");
     learningB=new QPushButton("learn");
     featureInp.resize(dimension,0);
+    data_learn.push_back(featureInp);
     LK=new layer_koh(featureInp,24);
     //    LK->learnW(data_learn[0]);
 
@@ -207,7 +208,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 }
 void KohonenWidget::closeEvent (QCloseEvent *event)
 {
-   qDebug()<<"hello";
+//   qDebug()<<"hello";
 }
 void KohonenWidget::drawingInit(QwtPlot* d_plot)
 {
