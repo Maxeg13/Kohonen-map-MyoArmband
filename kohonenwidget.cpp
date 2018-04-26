@@ -1,9 +1,17 @@
 #include"kohonenwidget.h"
 #include"headers.h"
 #include"layer_koh.h"
+#include "drawing.h"
+
+myCurve* set_curve;
+QwtSymbol* plot_symbol;
+QwtPlot* set_plot;
+
 float rad=3.;//3
 
-void norm(std::vector<float>& x)
+void drawingInit(QwtPlot*);
+
+void norm(vector<float>& x)
 {
     float energy=0;
     for(int i=0;i<x.size();i++)
@@ -67,13 +75,20 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     LK->draw(*painter);
     delete painter;
 
+    plot_symbol->setPen(QPen(QColor(0,0,0),4));
+    set_curve->setSymbol(plot_symbol);
+    set_curve->addPoints(LK->w[L_E_1->text().toInt()], LK->w[L_E_2->text().toInt()] ,LK->N);
+    set_curve->addPoints(&featureInp[L_E_1->text().toInt()],&featureInp[L_E_2->text().toInt()],1);
+    set_curve->set_Drawing();
 }
+
+
 void KohonenWidget::getRad()
 {
     rad=L_E_F->text().toFloat();
 }
 
-void KohonenWidget::refresh(std::vector<float> inp)
+void KohonenWidget::refresh(vector<float> inp)
 {    
     featureInp=inp;
     LK->refresh(inp);
@@ -88,12 +103,37 @@ void KohonenWidget::refresh(std::vector<float> inp)
     }
 }
 
-KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(parent)
+KohonenWidget::KohonenWidget(vector<float> inp,QWidget *parent):QWidget(parent)
 {
+
+    set_plot=new QwtPlot();
+    set_plot->setMinimumSize(QSize(300,300));
+    int ii2=150*1;
+    //    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
+    //    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
+    set_plot->setAxisTitle(QwtPlot::yLeft,"angle 1");
+    set_plot->setAxisTitle(QwtPlot::xBottom,"angle 2");
+    //    set_plot->set
+    set_plot->show();
+    drawingInit(set_plot);
+    set_plot->setMinimumSize(400,400);
+
+    vector<float> h2;
+    int ind_p;
+    set_curve=new myCurve(h2,set_plot,"perc out", ind_p);
+    set_curve->setPen(QColor(0,0,0,0));
+    plot_symbol = new QwtSymbol( QwtSymbol::Ellipse,
+                                 QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+
+    set_curve->setSymbol( plot_symbol );
+
+
     saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
     L_E_F=new QLineEdit("3");
+    L_E_1=new QLineEdit("0");
+    L_E_2=new QLineEdit("1");
 
     saveB=new QPushButton("save patterns");
 
@@ -119,4 +159,61 @@ KohonenWidget::KohonenWidget(std::vector<float> inp,QWidget *parent):QWidget(par
 
     timer->start(40);
     update();
+}
+
+
+void drawingInit(QwtPlot* d_plot)
+{
+    //        setCentralWidget(MW);
+    //canvas().resize(925,342)
+    //    d_plot->canvas()->resize(100,150);
+    //d_plot->autoRefresh();
+    d_plot->setAutoReplot();
+    //_______232
+
+    // настройка функций
+    QwtPlotPicker *d_picker =
+            new QwtPlotPicker(
+                QwtPlot::xBottom, QwtPlot::yLeft, // ассоциация с осями
+                QwtPlotPicker::CrossRubberBand, // стиль перпендикулярных линий
+                QwtPicker::ActiveOnly, // включение/выключение
+                d_plot->canvas() ); // ассоциация с полем
+    // Цвет перпендикулярных линий
+    d_picker->setRubberBandPen( QColor( Qt::red ) );
+
+    // цвет координат положения указателя
+    d_picker->setTrackerPen( QColor( Qt::black ) );
+
+    // непосредственное включение вышеописанных функций
+    d_picker->setStateMachine( new QwtPickerDragPointMachine() );
+
+    // Включить возможность приближения/удаления графика
+    // #include <qwt_plot_magnifier.h>
+    QwtPlotMagnifier *magnifier = new QwtPlotMagnifier(d_plot->canvas());
+    // клавиша, активирующая приближение/удаление
+    magnifier->setMouseButton(Qt::MidButton);
+    // Включить возможность перемещения по графику
+    // #include <qwt_plot_panner.h>
+    QwtPlotPanner *d_panner = new QwtPlotPanner( d_plot->canvas() );
+    // клавиша, активирующая перемещение
+    d_panner->setMouseButton( Qt::RightButton );
+    // Включить отображение координат курсора и двух перпендикулярных
+    // линий в месте его отображения
+    // #include <qwt_plot_picker.h>
+    //    d_plot->setTitle( "My perceptron demonstration" ); // заголовок
+    d_plot->setCanvasBackground( Qt::white ); // цвет фона
+
+
+
+
+    // Включить сетку
+    // #include <qwt_plot_grid.h>
+    //    QwtPlotGrid *grid = new QwtPlotGrid(); //
+
+    //    grid->setMajorPen(QPen( Qt::gray, 2 )); // цвет линий и толщина
+    //    grid->attach( d_plot ); // добавить сетку к полю графика
+
+
+    d_plot->setMinimumSize(90,30);
+
 }

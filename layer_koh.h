@@ -25,6 +25,9 @@ public:
 class layer_koh
 {
 public:
+    int inp_s;
+    std::vector<float> inp;
+    float** state;
     float thresh(float , int ,int );
     int ind;
     int rad;
@@ -32,7 +35,7 @@ public:
     float** out;
     float speed_k;
     float diff_min, diff_max, diff_k;
-
+    float*** w;
     int N,Nx,Ny;
     //    std::vector<float>& out;
     QPoint SHIFT;

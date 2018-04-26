@@ -10,9 +10,19 @@ sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 
 void sector::rst()
 {
-    for(int i=0;i<size_in;i++)
-//        w[i]=((rand()%10)/10.-0.5)*1;//2000
-         w[i]=((rand()%10)/10.)*200;
+    float range=500;
+    float accum=100000000000;
+    while(accum>(range*range/4))
+    {
+        accum=0;
+        for(int i=0;i<size_in;i++)
+        {
+            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+
+            w[i]=((rand()%1000)/1000.)*range-range/2;
+            accum+=w[i]*w[i];
+        }
+    }
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -61,6 +71,7 @@ void layer_koh::rst()
     t=0;
 }
 
+
 void layer_koh::reform()
 {
     int ind_h;
@@ -78,8 +89,11 @@ void layer_koh::reform()
         }
     }
 }
+
+
 layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
+
     t=0;
     s=0.7,gap=30;
     QPT_origin.reserve(6);
@@ -88,6 +102,15 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     Nx=N_m/3;
     Ny=N_m;
     N=Nx*Ny;
+
+    state=new float*[inp_m.size()];
+    for(int i=0;i<inp_m.size();i++)
+        state[i]=&SR[i].state;
+
+    inp_s=inp_m.size();
+    w=new float**[inp_m.size()];
+    for(int i=0;i<inp_m.size();i++)
+        w[i]=new float*[N];
 
     SR.reserve(N);
     dist2.resize(N);
@@ -111,6 +134,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
             SR.push_back(sector(inp_m,QPT,SHIFT));
+            //            SR.
         }
     }
     out=new float*[N];
@@ -126,11 +150,16 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
                                            SR[i].centre-
                                            SR[j].centre);
         }
+
+    for(int i=0;i<inp_m.size();i++)
+        for(int j=0;j<N;j++)
+            w[i][j]=&SR[j].w[i];
 }
 
 
-int layer_koh::indOfMin(const std::vector<float>& inp)
+int layer_koh::indOfMin(const std::vector<float>& _inp)
 {
+    inp=_inp;
     int ind_h;
     float h1;
     float sumMin=100000000000000;
@@ -162,7 +191,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.002;
+    speed_k=0.0016;
 
 
     ind=indOfMin(inp);
@@ -171,7 +200,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     {
         h1=dist2[i][ind];
         float exp_val=exp(-0.0005*t);
-//        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+        //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
         float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000
         for(int j=0;j<SR[i].size_in;j++)
@@ -209,17 +238,22 @@ float** layer_koh::refresh(std::vector<float>& inp)
 }
 void layer_koh::draw(QPainter& painter)
 {
+    QPoint centre=SR[Ny/2*Nx+Nx/2].centre;
     for(int i=0;i<SR.size();i++)
     {
         QPainterPath path;
         path.addPolygon(SR[i]);
-        if(i!=ind)
-            painter.fillPath(path,QBrush(QColor(255*SR[i].diff_norm_inv,255*SR[i].diff_norm_inv,
-                                                255,150)));
-        else
-            painter.fillPath(path,QBrush(QColor(255,255,255)));
+        int rad = 4;
+        if(QPoint::dotProduct(SR[i].centre-centre, SR[i].centre-centre)>100*100*rad*rad)
+        {
+            if(i!=ind)
+                painter.fillPath(path,QBrush(QColor(255*SR[i].diff_norm_inv,255*SR[i].diff_norm_inv,
+                                                    255,150)));
+            else
+                painter.fillPath(path,QBrush(QColor(255,255,255)));
 
-        painter.drawPolygon(SR[i]);
+            painter.drawPolygon(SR[i]);
+        }
     }
 }
 

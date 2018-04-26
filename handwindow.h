@@ -21,6 +21,6 @@ private:
 public slots:
     void loop();
 signals:
-    void featureOutSignal(std::vector<float>);
+    void featureOutSignal(vector<float>);
 };
 #endif // HANDWINDOW_H

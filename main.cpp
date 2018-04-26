@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     {
         h.resize(0);
         for(int j=0;j<3;j++)
-            h.push_back((rand()%100)*0.001*(HW.hand.max[j]-HW.hand.min[j])+HW.hand.min[j]);
+            h.push_back((rand()%100)*0.01*(HW.hand.max[j]-HW.hand.min[j])+HW.hand.min[j]);
         KW.data_learn.push_back(h);
     }
 
@@ -48,12 +48,13 @@ int main(int argc, char *argv[])
     GL->addWidget(KW.rstLearningB,2,2);
     GL->addWidget(KW.corB,2,3);
     //        GL->addWidget(KW.L_E,2,4);
-    GL->addWidget(KW.L_E_F,2,4);
+    GL->addWidget(KW.L_E_1,3,1);
+    GL->addWidget(KW.L_E_2,3,2);
     //        L_E.setText("COM6");
 
 
     KohonenMW.setCentralWidget(centralWidget1);
-    QObject::connect(&HW,SIGNAL(featureOutSignal(std::vector<float>)),&KW,SLOT(refresh(std::vector<float>)));
+    QObject::connect(&HW,SIGNAL(featureOutSignal(vector<float>)),&KW,SLOT(refresh(vector<float>)));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
 
 

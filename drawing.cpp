@@ -1,34 +1,77 @@
 #include "drawing.h"
+    QPolygonF points;
 
 
+void myCurve::set_Drawing(vector<float>& x, vector<float>& y, int ii, float k)
+{
+    // Добавить точки на ранее созданную кривую
+    QPolygonF points;
+
+    for(int i=abs(ii);i<(x.size()-abs(ii));i++)
+        points<<QPointF(x[i]*k,y[i+ii]*k);
+
+    setSamples( points ); // ассоциировать набор точек с кривой
+    attach( d_plot); // отобразить кривую на графике
+}
 
 
+myCurve::myCurve(vector<float> &dataH, QwtPlot* d_plotH,
+                 const QString &title, int& ind_ch ):ind_c(ind_ch),data(dataH)
+{
+    d_plot=d_plotH;
+    setTitle(title);
+//    setPen(color,2);
+}
 
-    myCurve::myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,const QString &title,
-            const QColor &color, const QColor &colorSymbol,int& ind_ch ):
-        data(dataH),ind_c(ind_ch)
+
+myCurve::myCurve(int bufShowSize, vector<float> &dataH,QwtPlot* d_plotH,const QString &title,
+                 const QColor &color, const QColor &colorSymbol,int& ind_ch ):
+    data(dataH),ind_c(ind_ch)
+{
+    d_plot=d_plotH;
+    setTitle(title);
+    setPen(color,3);
+
+
+    dataH.resize(bufShowSize);
+    for(int i=0;i<dataH.size();i++)
     {
-        d_plot=d_plotH;
-        setTitle(title);
-        setPen(color,2);
-
-
-        dataH.resize(bufShowSize);
-        for(int i=0;i<dataH.size();i++)
-        {
-            dataH[i ]=cos(i/4.);
-        }
+        dataH[i ]=cos(i/4.);
     }
+}
 
-    void myCurve::signalDrawing()
+
+void myCurve::signalDrawing()
+{
+    // Добавить точки на ранее созданную кривую
+    QPolygonF points;
+
+    for (int i=0;i<data.size();i++)
     {
-        // Добавить точки на ранее созданную кривую
-        QPolygonF points;
-
-        for (int i=0;i<data.size();i++)
-        {
-            points<<QPointF(i,data[(ind_c+i+1)%data.size()]);
-        }
-        setSamples( points ); // ассоциировать набор точек с кривой
-        attach( d_plot); // отобразить кривую на графике
+        points<<QPointF(i,data[(ind_c+i+1)%data.size()]);
     }
+    setSamples( points ); // ассоциировать набор точек с кривой
+    attach( d_plot); // отобразить кривую на графике
+}
+
+
+void myCurve::set_Drawing()
+{
+    setSamples( points ); // ассоциировать набор точек с кривой
+    attach( d_plot); // отобразить кривую на графике
+    points.resize(0);
+}
+
+
+
+void myCurve::addPoints(float** x, float** y, int s)
+{
+    for(int i=0;i<(s);i++)
+        points<<QPointF(*x[i],*y[i]);
+}
+
+void myCurve::addPoints(float* x, float* y, int s)
+{
+    for(int i=0;i<(s);i++)
+        points<<QPointF(x[i],y[i]);
+}
