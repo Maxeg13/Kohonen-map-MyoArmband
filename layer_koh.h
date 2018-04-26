@@ -30,6 +30,7 @@ public:
     float** state;
     float thresh(float , int ,int );
     int ind;
+    int* ind_on;
     int rad;
     float t;
     float** out;

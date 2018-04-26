@@ -103,6 +103,8 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     Ny=N_m;
     N=Nx*Ny;
 
+    ind_on=new int[N];
+
     state=new float*[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         state[i]=&SR[i].state;
@@ -134,9 +136,23 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
             SR.push_back(sector(inp_m,QPT,SHIFT));
-            //            SR.
         }
     }
+
+
+    int rad = 4;
+    QPoint centre=SR[Ny/2*Nx+Nx/2-1].centre;
+    for(int i=0;i<SR.size();i++)
+    {
+        if(QPoint::dotProduct(SR[i].centre-centre, SR[i].centre-centre)>100*100*rad*rad)
+        {
+            ind_on[i]=1;
+        }
+        else
+            ind_on[i]=0;
+    }
+
+
     out=new float*[N];
     for(int i=0;i<N;i++)
         out[i]=&SR[i].diff;
@@ -198,53 +214,64 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
 
     for(int i=0;i<N;i++)
     {
-        h1=dist2[i][ind];
-        float exp_val=exp(-0.0005*t);
-        //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
-        float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
-        //////////////////////////////2400000
-        for(int j=0;j<SR[i].size_in;j++)
+        if(ind_on[i])
         {
-            SR[i].w[j]+=speed_k*h_func*
-                    (inp[j]-SR[i].w[j]);
+            h1=dist2[i][ind];
+            float exp_val=exp(-0.0005*t);
+            //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+            float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
+            //////////////////////////////2400000
+            for(int j=0;j<SR[i].size_in;j++)
+            {
+                SR[i].w[j]+=speed_k*h_func*
+                        (inp[j]-SR[i].w[j]);
+            }
         }
     }
 }
+
+
 float** layer_koh::refresh(std::vector<float>& inp)
 {
     ind=indOfMin(inp);
     for(int k=0;k<N;k++)
-        SR[k].getDiff(inp);
+        if(ind_on[k])
+            SR[k].getDiff(inp);
 
     diff_min=100000000000000;
     for(int i=0;i<N;i++)
-        if(SR[i].diff<diff_min)
-            diff_min=SR[i].diff;
+        if(ind_on[i])
+            if(SR[i].diff<diff_min)
+                diff_min=SR[i].diff;
 
     diff_max=0;
     for(int i=0;i<N;i++)
-        if(diff_max<SR[i].diff)
-            diff_max=SR[i].diff;
+        if(ind_on[i])
+            if(diff_max<SR[i].diff)
+                diff_max=SR[i].diff;
 
     diff_k=1./(diff_max-diff_min);
 
     for(int k=0;k<N;k++)
     {
-        SR[k].diff_norm_inv=(SR[k].diff-diff_min)*diff_k;
-        SR[k].diff_norm=1-SR[k].diff_norm_inv;
-        SR[k].diff_norm_inv=sqrt(SR[k].diff_norm_inv);
+        if(ind_on[k])
+        {
+            SR[k].diff_norm_inv=(SR[k].diff-diff_min)*diff_k;
+            SR[k].diff_norm=1-SR[k].diff_norm_inv;
+            SR[k].diff_norm_inv=sqrt(SR[k].diff_norm_inv);
+        }
     }
     return(out);
 }
+
+
 void layer_koh::draw(QPainter& painter)
 {
-    QPoint centre=SR[Ny/2*Nx+Nx/2].centre;
     for(int i=0;i<SR.size();i++)
     {
         QPainterPath path;
         path.addPolygon(SR[i]);
-        int rad = 4;
-        if(QPoint::dotProduct(SR[i].centre-centre, SR[i].centre-centre)>100*100*rad*rad)
+        if(ind_on[i])
         {
             if(i!=ind)
                 painter.fillPath(path,QBrush(QColor(255*SR[i].diff_norm_inv,255*SR[i].diff_norm_inv,
