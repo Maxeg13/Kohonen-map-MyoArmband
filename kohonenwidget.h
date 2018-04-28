@@ -15,6 +15,7 @@ public:
     QLineEdit *L_E;
     QLineEdit *L_E_rad;
     QLineEdit *L_E_ind1, *L_E_ind2;
+    QLineEdit *L_E_shift1, *L_E_shift2;
     vector<float> featureInp;
     QPushButton *saveB;
     QPushButton *corB;
@@ -34,6 +35,8 @@ signals:
     corSignal();
     sign_close();
 public slots:
+    void SHIFT();
+
     void learning();
     void drawing();
     void refresh( vector<float>);

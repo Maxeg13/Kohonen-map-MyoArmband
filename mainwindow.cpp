@@ -44,10 +44,10 @@ QTimer *timerMyo;
 QPainter *painter;
 
 
- vector < vector<float>> dataEMG;
- vector < vector < vector<float>>> featureEMG;
+vector < vector<float>> dataEMG;
+vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
-int dim_in=8,dim_out=8;
+int dim_in=8,dim_out=4;
 
 void MainWindow::connectMyo()
 {
@@ -118,8 +118,8 @@ MainWindow::MainWindow(QWidget *parent) :
         drawingInit(d_plot[i_pl]);
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
-//        d_plot[i_pl]->setAxisScaleDiv(QwtPlot::xBottom,QwtScaleDiv::NoTick);
-//        d_plot[i_pl]->setAxisScaleDiv(1,QwtScaleDiv(-10000,10000));
+        //        d_plot[i_pl]->setAxisScaleDiv(QwtPlot::xBottom,QwtScaleDiv::NoTick);
+        //        d_plot[i_pl]->setAxisScaleDiv(1,QwtScaleDiv(-10000,10000));
 
 
 
@@ -176,12 +176,17 @@ void MainWindow::getEMG( vector<float> x)
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         dataEMG[i][ind_c[i]]=x[i];
         featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-//        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+        //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
-//    myPCA.updateBuf(featurePreOut);
-//qDebug()<<featureOut.size();
-//        myPCA.proect(featureOut);
-featureOut=featurePreOut;
+    //    myPCA.updateBuf(featurePreOut);
+    //qDebug()<<featureOut.size();
+    //        myPCA.proect(featureOut);
+/////////////////
+//    featureOut=featureOut;
+    for(int i=0;i<4;i++)
+    {
+        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
+    }
 #endif
 }
 
@@ -212,18 +217,18 @@ void MainWindow::drawing()
 }
 void MainWindow::getCor()
 {
- #ifndef SERIAL
-//    myPCA.centr();
-//    myPCA.getCor();
-//    myPCA.algorithm();
-//    myPCA.sort();
+#ifndef SERIAL
+    //    myPCA.centr();
+    //    myPCA.getCor();
+    //    myPCA.algorithm();
+    //    myPCA.sort();
 #endif
-//    myPCA.proect(8,v);
+    //    myPCA.proect(8,v);
 }
 
 void MainWindow::getFeature( vector<float> x)
 {
-//    qDebug()<<x[0];
+    //    qDebug()<<x[0];
 
 }
 
@@ -233,9 +238,9 @@ void MainWindow::reconnect(QString s)
     SO->close();
     SO->init(s);
 #else
-//    delete collector;
+    //    delete collector;
 
-//    collector=new DataCollector();
+    //    collector=new DataCollector();
 #endif
 }
 
@@ -316,8 +321,8 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
 void MainWindow::closeEvent(QCloseEvent *)
 {
-//    qDebug()<<"hey";
-        this->close();
+    //    qDebug()<<"hey";
+    this->close();
     collector->removeListener();
     emit sign_close();
 }

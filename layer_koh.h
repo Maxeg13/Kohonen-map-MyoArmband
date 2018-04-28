@@ -17,6 +17,7 @@ public:
     float diff;
     sector();
     sector(const QVector<QPoint>&);
+//    sector(int ,const QVector<QPoint>&,QPoint );
     sector(std::vector<float>& ,const QVector<QPoint>&,QPoint );
     float getState(std::vector<float>& );
     float getDiff(std::vector<float>& );
@@ -25,6 +26,7 @@ public:
 class layer_koh
 {
 public:
+    int is, ks;
     int inp_s;
     std::vector<float> inp;
     float** state;
@@ -38,6 +40,7 @@ public:
     float*** w;
     int N,Nx,Ny;
     int width;
+    int height;
     //    std::vector<float>& out;
     QPoint SHIFT;
     QVector<QPoint> QPT_origin, QPT;
@@ -47,7 +50,7 @@ public:
 
     void reform();
     layer_koh(std::vector<float>& inp_m,int N_m);
-
+    void GET_TOROID_SHIFT(int _is, int _ks);
     int indOfMin(const std::vector<float>& inp);
     void learnBegin();
     void learnW(const std::vector<float>& inp,float rad);

@@ -1,5 +1,6 @@
 #include "layer_koh.h"
 #include "headers.h"
+//#define TOROID
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
 float min(float x, float y)
@@ -10,9 +11,9 @@ float min(float x, float y)
         return x;
 }
 
-float dist2_F(QPoint a, QPoint b, int c)
+float dist2_F(QPoint a, QPoint b, int c, int d)
 {
-    return QPoint::dotProduct(a-(b+QPoint(c,0)),a-(b+QPoint(c,0)));
+    return QPoint::dotProduct(a-(b+QPoint(c,d)),a-(b+QPoint(c,d)));
 }
 
 sector::sector()
@@ -44,6 +45,15 @@ sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
     w=new float[size_in];
     rst();
 }
+
+
+//sector::sector(int size_inp,const QVector<QPoint> &QPT,QPoint c):
+//    QPolygon(QPT),centre(c)
+//{
+//    size_in=inp.size();
+//    w=new float[size_in];
+//    rst();
+//}
 
 
 float sector::getState(std::vector<float>& inp)
@@ -83,23 +93,7 @@ void layer_koh::rst()
     t=0;
 }
 
-void layer_koh::reform()
-{
-    int ind_h;
-    for(int k=0;k<Ny;k++)
-    {
-        for(int i=0;i<Nx;i++)
-        {
-            ind_h=k*Nx+i;
-            SHIFT=QPoint((300+gap)*i+x0-(150+gap/2)*(k%2),y0+(86+gap*.36)*k);
-            for(int j=0;j<QPT_origin.size();j++)
-                if(ind_h!=ind)
-                    SR[ind_h][j]=QPT_origin[j]*s*SR[ind_h].diff_norm*SR[ind_h].diff_norm*SR[ind_h].diff_norm+SHIFT;
-                else
-                    SR[ind_h][j]=QPT_origin[j]*s+SHIFT;
-        }
-    }
-}
+
 layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
 
@@ -107,10 +101,13 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     s=0.7,gap=30;
     QPT_origin.reserve(6);
     QPT.reserve(6);
+    is=0;
+    ks=0;
 
     Nx=N_m/3;
     width=(300+gap)*Nx;
     Ny=N_m;
+    height=(86+gap*.36)*Ny;
     N=Nx*Ny;
 
     state=new float*[inp_m.size()];
@@ -136,17 +133,22 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     QPT_origin.push_back(QPoint(-50,-86) );
     QPT=QPT_origin;
 
-    for(int k=0;k<Ny;k++)
+    SR.resize(N);
+    for(int k1=0;k1<Ny;k1++)
     {
-        for(int i=0;i<Nx;i++)
+        for(int i1=0;i1<Nx;i1++)
         {
+            int i=(i1)%Nx;
+            int k=(k1)%Ny;
             SHIFT=QPoint((300+gap)*i+x0-(150+gap/2)*(k%2),y0+(86+gap*.36)*k);
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
-            SR.push_back(sector(inp_m,QPT,SHIFT));
+            SR[k1*Nx+i1]=(sector(inp_m,QPT,SHIFT));
             //            SR.
         }
     }
+
+
     out=new float*[N];
     for(int i=0;i<N;i++)
         out[i]=&SR[i].diff;
@@ -156,10 +158,18 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
         for(int j=0;j<N;j++)
         {
 #ifdef TOROID
-            dist2[i][j]=min(dist2_F(SR[i].centre, SR[j].centre,0),dist2_F(SR[i].centre, SR[j].centre,width));
-            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,-width));
+            dist2[i][j]=min(dist2_F(SR[i].centre, SR[j].centre,0,0),dist2_F(SR[i].centre, SR[j].centre,width,0));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,-width,0));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,0,height));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,0,-height));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,-width,-height));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,width,-height));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre,-width,height));
+            dist2[i][j]=min(dist2[i][j],dist2_F(SR[i].centre, SR[j].centre, width,height));
+
+
 #else
-            dist2[i][j]=(dist2_F(SR[i].centre, SR[j].centre,0));
+            dist2[i][j]=(dist2_F(SR[i].centre, SR[j].centre,0,0));
 #endif
         }
 
@@ -168,6 +178,32 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
             w[i][j]=&SR[j].w[i];
 }
 
+void layer_koh::reform()
+{
+    qDebug()<<is;
+    int ind_h;
+    for(int k1=0;k1<Ny;k1++)
+    {
+        for(int i1=0;i1<Nx;i1++)
+        {
+            int i=(i1+is+Nx)%Nx;
+            int k=(k1+ks+Ny)%Ny;
+            ind_h=k1*Nx+i1;
+            SHIFT=QPoint((300+gap)*i+x0-(150+gap/2)*(k%2),y0+(86+gap*.36)*k);
+            for(int j=0;j<QPT_origin.size();j++)
+                if(ind_h!=ind)
+                    SR[ind_h][j]=QPT_origin[j]*s*SR[ind_h].diff_norm*SR[ind_h].diff_norm*SR[ind_h].diff_norm+SHIFT;
+                else
+                    SR[ind_h][j]=QPT_origin[j]*s+SHIFT;
+        }
+    }
+}
+
+void layer_koh::GET_TOROID_SHIFT(int _is, int _ks)
+{
+    is=_is;
+    ks=_ks;
+}
 
 int layer_koh::indOfMin(const std::vector<float>& _inp)
 {
@@ -248,6 +284,8 @@ float** layer_koh::refresh(std::vector<float>& inp)
     }
     return(out);
 }
+
+
 void layer_koh::draw(QPainter& painter)
 {
     for(int i=0;i<SR.size();i++)

@@ -128,8 +128,8 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
 {
 
     QPointF p=(e->pos())/scale;
-//    qDebug()<<p;
-//    qDebug()<<LK->SR[0][0];
+    //    qDebug()<<p;
+    //    qDebug()<<LK->SR[0][0];
     int ind=0;
     float pd=0;
     float min=1000000000000000;
@@ -140,12 +140,12 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
         {
             min=pd;
             ind=i;
-//            qDebug()<<pd;
+            //            qDebug()<<pd;
         }
     }
     qDebug()<<ind;
     for(int i=0;i<LK->inp_s;i++)
-    LK->SR[ind].w[i]=featureInp[i];
+        LK->SR[ind].w[i]=featureInp[i];
 }
 
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
@@ -183,6 +183,13 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     L_E_rad=new QLineEdit("rad: 3");
     L_E_ind1=new QLineEdit("0");
     L_E_ind2=new QLineEdit("1");
+    L_E_shift1=new QLineEdit("0");
+    L_E_shift2=new QLineEdit("0");
+    L_E_shift1->setToolTip(QString("rotate by x"));
+    L_E_shift2->setToolTip(QString("rotate by y"));
+    L_E_ind1->setToolTip(QString("w[]"));
+    L_E_ind2->setToolTip(QString("w[]"));
+
     saveB=new QPushButton("save patterns");
     corB=new QPushButton("correlation");
     rstB=new QPushButton("rst");
@@ -206,9 +213,17 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     timer->start(40);
     update();
 }
+
+void KohonenWidget::SHIFT()
+{
+    LK->is=( L_E_shift1->text().toInt());
+    LK->ks=( L_E_shift2->text().toInt());
+    //    qDebug()<<LK->is;
+}
+
 void KohonenWidget::closeEvent (QCloseEvent *event)
 {
-//   qDebug()<<"hello";
+    //   qDebug()<<"hello";
 }
 void KohonenWidget::drawingInit(QwtPlot* d_plot)
 {
