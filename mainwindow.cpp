@@ -15,13 +15,7 @@
 #include "drawing.h"
 #include "mainwindow.h"
 //#include "layer_koh.h"
-
-
-
 using namespace std;
-
-
-
 
 #ifdef SERIAL
 QThread* thread;
@@ -47,7 +41,7 @@ QPainter *painter;
 vector < vector<float>> dataEMG;
 vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
-int dim_in=8,dim_out=4;
+int dim_in=8,dim_out=8;
 
 void MainWindow::connectMyo()
 {
@@ -181,12 +175,13 @@ void MainWindow::getEMG( vector<float> x)
     //    myPCA.updateBuf(featurePreOut);
     //qDebug()<<featureOut.size();
     //        myPCA.proect(featureOut);
-/////////////////
-//    featureOut=featureOut;
-    for(int i=0;i<4;i++)
-    {
-        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
-    }
+
+    featureOut=featurePreOut;
+
+//    for(int i=0;i<4;i++)
+//    {
+//        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
+//    }
 #endif
 }
 

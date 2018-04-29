@@ -1,6 +1,6 @@
 #include "layer_koh.h"
 #include "headers.h"
-//#define TOROID
+#define TOROID
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
 float min(float x, float y)
@@ -98,7 +98,8 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
 
     t=0;
-    s=0.7,gap=30;
+    s=0.7;
+    gap=30;
     QPT_origin.reserve(6);
     QPT.reserve(6);
     is=0;
@@ -180,7 +181,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 
 void layer_koh::reform()
 {
-    qDebug()<<is;
+//    qDebug()<<is;
     int ind_h;
     for(int k1=0;k1<Ny;k1++)
     {
