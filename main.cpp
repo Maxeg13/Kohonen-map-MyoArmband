@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     vector<float> h;
     h.resize(3);
     KohonenWidget KW(h);
+//    KW.RH=HW.hand;
     KW.show();
 
 
@@ -34,6 +35,13 @@ int main(int argc, char *argv[])
         for(int j=0;j<3;j++)
             h.push_back((rand()%100)*0.01*(HW.hand.max[j]-HW.hand.min[j])+HW.hand.min[j]);
         KW.data_learn.push_back(h);
+    }
+
+    for(int i=0;i<1000;i++)
+    {
+        HW.setAngles(KW.data_learn[i]);
+        HW.hand.get_bones();
+        KW.LK->set_on(((HW.hand.origin[2]-HW.hand.origin[0])*5+QPoint(0,800)));
     }
 
     KW.rst();
@@ -56,7 +64,7 @@ int main(int argc, char *argv[])
     KohonenMW.setCentralWidget(centralWidget1);
     QObject::connect(&HW,SIGNAL(featureOutSignal(vector<float>)),&KW,SLOT(refresh(vector<float>)));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
-
+    QObject::connect(&KW,SIGNAL(pushWeight(vector<float>)),&HW,SLOT(setConf(vector<float>)));
 
     KohonenMW.setWindowTitle("Kohonen hex-top Map");
     //    SignalMW.setWindowTitle("Myographic signals");

@@ -15,6 +15,8 @@ public:
     void get_bones();
     void set_form(int i, float width_k, float length_k);
     float k;
+
+
 };
 
 #endif // ROBOHAND_H

@@ -22,6 +22,7 @@ public:
     void set_Drawing();
     void addPoints(float** x, float** y, int s);
     void addPoints(float* x, float* y, int s);
+    void addPoints(float** x, float** y, int s, int* on);
 };
 
 

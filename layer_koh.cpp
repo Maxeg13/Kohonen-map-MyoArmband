@@ -94,6 +94,7 @@ void layer_koh::reform()
 layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 {
 
+
     t=0;
     s=0.7,gap=30;
     QPT_origin.reserve(6);
@@ -104,12 +105,14 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     N=Nx*Ny;
 
     ind_on=new int[N];
+    for(int i=0;i<N;i++)
+        ind_on[i]=0;
 
     state=new float*[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         state[i]=&SR[i].state;
 
-    inp_s=inp_m.size();
+    size_inp=inp_m.size();
     w=new float**[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         w[i]=new float*[N];
@@ -128,6 +131,8 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     QPT_origin.push_back(QPoint(-50,-86) );
     QPT=QPT_origin;
 
+
+
     for(int k=0;k<Ny;k++)
     {
         for(int i=0;i<Nx;i++)
@@ -140,17 +145,6 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     }
 
 
-    int rad = 4;
-    QPoint centre=SR[Ny/2*Nx+Nx/2-1].centre;
-    for(int i=0;i<SR.size();i++)
-    {
-        if(QPoint::dotProduct(SR[i].centre-centre, SR[i].centre-centre)>100*100*rad*rad)
-        {
-            ind_on[i]=1;
-        }
-        else
-            ind_on[i]=0;
-    }
 
 
     out=new float*[N];
@@ -182,16 +176,19 @@ int layer_koh::indOfMin(const std::vector<float>& _inp)
     float accum;
     for(int i=0;i<N;i++)
     {
-        accum=0;
-        for(int j=0;j<SR[i].size_in;j++)
-        {
-            h1=(SR[i].w[j]-inp[j]);
-            accum+=h1*h1;
-        }
-        if(accum<sumMin)
-        {
-            sumMin=accum;
-            ind_h=i;
+        if(ind_on[i]){
+            accum=0;
+            for(int j=0;j<SR[i].size_in;j++)
+            {
+                h1=(SR[i].w[j]-inp[j]);
+                accum+=h1*h1;
+
+            }
+            if(accum<sumMin)
+            {
+                sumMin=accum;
+                ind_h=i;
+            }
         }
     }
     return(ind_h);
@@ -227,6 +224,23 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
                         (inp[j]-SR[i].w[j]);
             }
         }
+    }
+}
+
+
+void layer_koh::set_on(QPoint x)
+{
+    int rad = 1;
+    qDebug()<<N;
+    //    QPoint centre=SR[Ny/2*Nx+Nx/2-1].centre;
+    for(int i=0;i<N;i++)
+    {
+        if(QPoint::dotProduct(SR[i].centre-x, SR[i].centre-x)>100*100*rad*rad)
+        {
+            //            ind_on[i]=0;
+        }
+        else
+            ind_on[i]=1;
     }
 }
 

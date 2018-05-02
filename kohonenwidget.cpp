@@ -40,6 +40,13 @@ void KohonenWidget::rst()
 {
     qDebug()<<rad;
     LK->rst();
+
+    //set_on
+    for(int i=0;i<10000;i++)
+    {
+
+//        LK->set_on();
+    }
     for(int i=0;i<10000;i++)
     {
         LK->learnW(data_learn[rand()%data_learn.size()],rad);
@@ -69,7 +76,7 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     painter->setRenderHint(QPainter::Antialiasing, 1);
     QPen pen(Qt::black, 8, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     painter->setPen(pen);
-    painter->scale(0.2,0.2);
+    painter->scale(scale,scale);
     //    LK->indOfMin(featureInp);
     LK->reform();
     LK->draw(*painter);
@@ -77,7 +84,7 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
 
     plot_symbol->setPen(QPen(QColor(0,0,0),4));
     set_curve->setSymbol(plot_symbol);
-    set_curve->addPoints(LK->w[L_E_1->text().toInt()], LK->w[L_E_2->text().toInt()] ,LK->N);
+    set_curve->addPoints(LK->w[L_E_1->text().toInt()], LK->w[L_E_2->text().toInt()] ,LK->N,LK->ind_on);
     set_curve->addPoints(&featureInp[L_E_1->text().toInt()],&featureInp[L_E_2->text().toInt()],1);
     set_curve->set_Drawing();
 }
@@ -91,6 +98,7 @@ void KohonenWidget::getRad()
 void KohonenWidget::refresh(vector<float> inp)
 {    
     featureInp=inp;
+
     LK->refresh(inp);
 
     static int cnt=0;
@@ -161,6 +169,37 @@ KohonenWidget::KohonenWidget(vector<float> inp,QWidget *parent):QWidget(parent)
     update();
 }
 
+void KohonenWidget::mousePressEvent(QMouseEvent *e)
+{
+
+    QPointF p=(e->pos())/scale;
+    //    qDebug()<<p;
+    //    qDebug()<<LK->SR[0][0];
+    int ind=0;
+    float pd=0;
+    float min=1000000000000000;
+    for(int i=0;i<LK->N;i++)
+    {
+        pd=QPointF::dotProduct((p-LK->SR[i].centre),(p-LK->SR[i].centre));
+        if(pd<min)
+        {
+            min=pd;
+            ind=i;
+            //            qDebug()<<pd;
+        }
+    }
+//    qDebug()<<ind;
+//    QVector wh=LK->SR[ind].w;
+    vector<float> wh(LK->size_inp);
+//    wh[0]=1;
+    for(int i=0;i<LK->size_inp;i++)
+        wh[i]=LK->SR[ind].w[i];
+
+
+    emit pushWeight(wh);
+//    for(int i=0;i<LK->inp_s;i++)
+//        LK->SR[ind].w[i]=featureInp[i];
+}
 
 void drawingInit(QwtPlot* d_plot)
 {

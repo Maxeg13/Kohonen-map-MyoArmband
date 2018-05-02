@@ -32,6 +32,11 @@ Robohand::Robohand()
     get_bones();
 }
 
+//void Robohand::setConf()
+//{
+
+//}
+
 void Robohand::get_bones()
 {
 

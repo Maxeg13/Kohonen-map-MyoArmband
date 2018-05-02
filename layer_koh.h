@@ -25,7 +25,7 @@ public:
 class layer_koh
 {
 public:
-    int inp_s;
+    int size_inp;
     std::vector<float> inp;
     float** state;
     float thresh(float , int ,int );
@@ -45,9 +45,9 @@ public:
     QVector<sector> SR;
     std::vector<std::vector<float>> dist2;
 
+    void set_on(QPoint);
     void reform();
     layer_koh(std::vector<float>& inp_m,int N_m);
-
     int indOfMin(const std::vector<float>& inp);
     void learnBegin();
     void learnW(const std::vector<float>& inp,float rad);

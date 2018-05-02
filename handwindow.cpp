@@ -4,7 +4,7 @@ bool mouse_move_on[3];
 void HandWindow::loop()
 {
     update();
-//    qDebug()<<"hello2";
+    //    qDebug()<<"hello2";
 }
 
 HandWindow::HandWindow(QWidget *parent) :
@@ -49,6 +49,17 @@ void HandWindow::mousePressEvent(QMouseEvent *e)
             mouse_move_on[i]=1;
         }
     }
+}
+
+void HandWindow::setAngles(vector<float> x)
+{
+    for(int i=0;i<3;i++)
+        hand.data[i]=x[i];
+}
+
+void HandWindow::setConf(vector<float> w)
+{
+    setAngles(w);
 }
 
 void HandWindow::mouseMoveEvent(QMouseEvent *e)

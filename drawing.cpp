@@ -15,6 +15,8 @@ void myCurve::set_Drawing(vector<float>& x, vector<float>& y, int ii, float k)
 }
 
 
+
+
 myCurve::myCurve(vector<float> &dataH, QwtPlot* d_plotH,
                  const QString &title, int& ind_ch ):ind_c(ind_ch),data(dataH)
 {
@@ -60,6 +62,13 @@ void myCurve::set_Drawing()
     setSamples( points ); // ассоциировать набор точек с кривой
     attach( d_plot); // отобразить кривую на графике
     points.resize(0);
+}
+
+void myCurve::addPoints(float** x, float** y, int s, int* on)
+{
+    for(int i=0;i<(s);i++)
+        if(on[i])
+        points<<QPointF(*x[i],*y[i]);
 }
 
 

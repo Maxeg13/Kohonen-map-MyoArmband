@@ -1,14 +1,17 @@
 #ifndef KOHONENQWIDGET_H
 #define KOHONENQWIDGET_H
 #include"headers.h"
+//#include
 #include "layer_koh.h"
 #include "QPushButton"
+#include <QMouseEvent>
 using namespace std;
 
 class KohonenWidget : public QWidget
 {
     Q_OBJECT
 public:
+    float scale=0.2;
     bool saving_on;
     int dimension;
     QLineEdit *L_E, *L_E_1, *L_E_2;
@@ -27,7 +30,9 @@ public:
 signals:
     pushStringS(QString);
     corSignal();
+    pushWeight(vector<float>);
 public slots:
+    void mousePressEvent(QMouseEvent *e);
     void drawing();
     void refresh(vector<float>);
     void saving();
