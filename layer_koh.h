@@ -4,21 +4,25 @@
 
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
+class layer_koh;
+class sector;
 
 class sector:public QPolygon
 {
 public:
+//    static layer_koh* LK;
+
     float* w;
     float diff_norm, diff_norm_inv;
     int size_in;
-    void rst();
+    void rst(int i, int k, layer_koh *LK);
     QPoint centre;
     float state;
     float diff;
     sector();
     sector(const QVector<QPoint>&);
 //    sector(int ,const QVector<QPoint>&,QPoint );
-    sector(std::vector<float>& ,const QVector<QPoint>&,QPoint );
+    sector(std::vector<float>& , const QVector<QPoint>&, QPoint , int i, int k, layer_koh*);
     float getState(std::vector<float>& );
     float getDiff(std::vector<float>& );
 };

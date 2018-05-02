@@ -1,8 +1,9 @@
 #include "layer_koh.h"
 #include "headers.h"
-#define TOROID
+//#define TOROID
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
+
 float min(float x, float y)
 {
     if(x>y)
@@ -21,11 +22,14 @@ sector::sector()
 sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 {}
 
-void sector::rst()
+void sector::rst(int i, int k,layer_koh* LK)
 {
+    float rad_k=.01;
     float range=500;
     float accum=100000000000;
-    while(accum>(range*range/4))
+    float k1=sqrt(((i-LK->Nx/2)*(i-LK->Nx/2)+(k-LK->Ny/2)*(k-LK->Ny/2))/(LK->Nx*LK->Nx/4+LK->Ny*LK->Ny/4));
+
+    while((accum>(range*range*rad_k)/(k1+.1))||(accum<((range*range*rad_k*0.8)/(k1+.1))))
     {
         accum=0;
         for(int i=0;i<size_in;i++)
@@ -38,12 +42,14 @@ void sector::rst()
     }
 }
 
-sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
+
+
+sector::sector(std::vector<float>& inp, const QVector<QPoint> &QPT, QPoint c, int i, int k, layer_koh* LK):
     QPolygon(QPT),centre(c)
 {
     size_in=inp.size();
     w=new float[size_in];
-    rst();
+    rst(i,k,LK);
 }
 
 
@@ -89,7 +95,7 @@ float layer_koh::thresh(float x, int x1,int x2)
 void layer_koh::rst()
 {
     for (int i=0;i<N;i++)
-        SR[i].rst();
+        SR[i].rst(i%Nx,i/Nx,this);
     t=0;
 }
 
@@ -135,16 +141,18 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     QPT=QPT_origin;
 
     SR.resize(N);
+//    layer_koh* sector::LK;
+
     for(int k1=0;k1<Ny;k1++)
     {
         for(int i1=0;i1<Nx;i1++)
         {
-            int i=(i1)%Nx;
-            int k=(k1)%Ny;
+            int i=(i1);
+            int k=(k1);
             SHIFT=QPoint((300+gap)*i+x0-(150+gap/2)*(k%2),y0+(86+gap*.36)*k);
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
-            SR[k1*Nx+i1]=(sector(inp_m,QPT,SHIFT));
+            SR[k1*Nx+i1]=(sector(inp_m,QPT,SHIFT,i,k,this));
             //            SR.
         }
     }
@@ -240,7 +248,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.0016;
+    speed_k=0.0019;
 
 
     ind=indOfMin(inp);
@@ -248,7 +256,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     for(int i=0;i<N;i++)
     {
         h1=dist2[i][ind];
-        float exp_val=exp(-0.0005*t);
+        float exp_val=exp(-0.00055*t);
         //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
         float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000
