@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     KohonenMW.resize(QSize(590,550));
     //    qDebug()<< SignalMW.featureOut;
     vector<float> h;
-    h.resize(3);
+    ////
+    h.resize(2);
     KohonenWidget KW(h);
 //    KW.RH=HW.hand;
     KW.show();
@@ -32,7 +33,8 @@ int main(int argc, char *argv[])
     for(int i=0;i<1000;i++)
     {
         h.resize(0);
-        for(int j=0;j<3;j++)
+        for(int j=0;j<2;j++)
+            ////
             h.push_back((rand()%100)*0.01*(HW.hand.max[j]-HW.hand.min[j])+HW.hand.min[j]);
         KW.data_learn.push_back(h);
     }

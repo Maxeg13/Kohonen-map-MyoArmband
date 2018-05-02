@@ -190,9 +190,9 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
     }
 //    qDebug()<<ind;
 //    QVector wh=LK->SR[ind].w;
-    vector<float> wh(LK->size_inp);
+    vector<float> wh(LK->size_in);
 //    wh[0]=1;
-    for(int i=0;i<LK->size_inp;i++)
+    for(int i=0;i<LK->size_in;i++)
         wh[i]=LK->SR[ind].w[i];
 
 

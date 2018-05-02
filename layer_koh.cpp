@@ -108,13 +108,14 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     for(int i=0;i<N;i++)
         ind_on[i]=0;
 
-    state=new float*[inp_m.size()];
-    for(int i=0;i<inp_m.size();i++)
+    size_in=inp_m.size();
+    state=new float*[size_in];
+    for(int i=0;i<size_in;i++)
         state[i]=&SR[i].state;
 
-    size_inp=inp_m.size();
-    w=new float**[inp_m.size()];
-    for(int i=0;i<inp_m.size();i++)
+
+    w=new float**[size_in];
+    for(int i=0;i<size_in;i++)
         w[i]=new float*[N];
 
     SR.reserve(N);
@@ -161,7 +162,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
                                            SR[j].centre);
         }
 
-    for(int i=0;i<inp_m.size();i++)
+    for(int i=0;i<size_in;i++)
         for(int j=0;j<N;j++)
             w[i][j]=&SR[j].w[i];
 }
@@ -178,7 +179,7 @@ int layer_koh::indOfMin(const std::vector<float>& _inp)
     {
         if(ind_on[i]){
             accum=0;
-            for(int j=0;j<SR[i].size_in;j++)
+            for(int j=0;j<size_in;j++)
             {
                 h1=(SR[i].w[j]-inp[j]);
                 accum+=h1*h1;
@@ -218,7 +219,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
             //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
             float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
             //////////////////////////////2400000
-            for(int j=0;j<SR[i].size_in;j++)
+            for(int j=0;j<size_in;j++)
             {
                 SR[i].w[j]+=speed_k*h_func*
                         (inp[j]-SR[i].w[j]);
@@ -281,7 +282,7 @@ float** layer_koh::refresh(std::vector<float>& inp)
 
 void layer_koh::draw(QPainter& painter)
 {
-    for(int i=0;i<SR.size();i++)
+    for(int i=0;i<N;i++)
     {
         QPainterPath path;
         path.addPolygon(SR[i]);

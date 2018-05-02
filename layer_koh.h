@@ -25,7 +25,7 @@ public:
 class layer_koh
 {
 public:
-    int size_inp;
+    int size_in;
     std::vector<float> inp;
     float** state;
     float thresh(float , int ,int );
