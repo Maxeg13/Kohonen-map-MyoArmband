@@ -1,6 +1,6 @@
 #include "layer_koh.h"
 #include "headers.h"
-#define TOROID
+//#define TOROID
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
 float min(float x, float y)
