@@ -44,8 +44,8 @@ SOURCES += main.cpp\
     datacollector.cpp \
     kohonenwidget.cpp \
 #    serialqobj.cpp \
-    drawing.cpp \
-    stand_dev.cpp
+    stand_dev.cpp \
+    drawing.cpp
 #    stand_dev.cpp
 
 HEADERS  += \

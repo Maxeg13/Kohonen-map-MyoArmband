@@ -150,7 +150,7 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
 
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 {
-    scale=0.1;
+    scale=0.2;
     //    QString str("rad 3");
     //    str.remove(0,4);
     //    qDebug()<<str.toFloat();
@@ -198,7 +198,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     featureInp.resize(dimension,0);
     data_learn.push_back(featureInp);
 
-    LK=new layer_koh(featureInp,50);
+    LK=new layer_koh(featureInp,24);
     //    LK->learnW(data_learn[0]);
 
     timer = new QTimer(this);
