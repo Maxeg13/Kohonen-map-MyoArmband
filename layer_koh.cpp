@@ -29,14 +29,15 @@ void sector::rst(int i, int k,layer_koh* LK)
     float accum=100000000000;
     float k1=sqrt(((i-LK->Nx/2)*(i-LK->Nx/2)+(k-LK->Ny/2)*(k-LK->Ny/2))/(LK->Nx*LK->Nx/4+LK->Ny*LK->Ny/4));
 
-    while((accum>(range*range*rad_k)/(k1+.1))||(accum<((range*range*rad_k*0.8)/(k1+.1))))
+//    while((accum>(range*range*rad_k)/(k1+.1))||(accum<((range*range*rad_k*0.5)/(k1+.1))))
+    while(accum>(range*range))
     {
         accum=0;
         for(int i=0;i<size_in;i++)
         {
             //        w[i]=((rand()%10)/10.-0.5)*1;//2000
 
-            w[i]=((rand()%1000)/1000.)*range-range/2;
+            w[i]=((rand()%2000)/1000.-1)*range;
             accum+=w[i]*w[i];
         }
     }
@@ -141,7 +142,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     QPT=QPT_origin;
 
     SR.resize(N);
-//    layer_koh* sector::LK;
+    //    layer_koh* sector::LK;
 
     for(int k1=0;k1<Ny;k1++)
     {
@@ -189,7 +190,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 
 void layer_koh::reform()
 {
-//    qDebug()<<is;
+    //    qDebug()<<is;
     int ind_h;
     for(int k1=0;k1<Ny;k1++)
     {
@@ -260,10 +261,17 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
         //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
         float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000
+        float r=0;
         for(int j=0;j<SR[i].size_in;j++)
         {
             SR[i].w[j]+=speed_k*h_func*
                     (inp[j]-SR[i].w[j]);
+            r+=SR[i].w[j]*SR[i].w[j];
+        }
+        r=sqrt(r+0.0001)/100;
+        for(int j=0;j<SR[i].size_in;j++)
+        {
+            SR[i].w[j]/=r;
         }
     }
 }

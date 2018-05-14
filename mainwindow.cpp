@@ -41,7 +41,7 @@ QPainter *painter;
 vector < vector<float>> dataEMG;
 vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
-int dim_in=8,dim_out=4;
+int dim_in=8,dim_out=8;
 int displace=0;
 
 void MainWindow::connectMyo()
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
         featurePreOut[i]=1;
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
-    featureOut[dim_out-1]=displace;
+//    featureOut[dim_out-1]=displace;
 
 
     QGridLayout* GL=new QGridLayout();
@@ -178,13 +178,13 @@ void MainWindow::getEMG( vector<float> x)
     //qDebug()<<featureOut.size();
     //        myPCA.proect(featureOut);
 
-//    featureOut=featurePreOut;
+    featureOut=featurePreOut;
 
 
-    for(int i=0;i<4;i++)
-    {
-        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
-    }
+//    for(int i=0;i<4;i++)
+//    {
+//        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
+//    }
 
 //    featureOut.resize(dim_out);
 //    featureOut[dim_out-1]=displace;
