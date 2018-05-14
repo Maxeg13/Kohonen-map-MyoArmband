@@ -181,7 +181,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 
 void layer_koh::reform()
 {
-//    qDebug()<<is;
+    //    qDebug()<<is;
     int ind_h;
     for(int k1=0;k1<Ny;k1++)
     {
@@ -245,19 +245,22 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
 
     ind=indOfMin(inp);
 
-    for(int i=0;i<N;i++)
-    {
-        h1=dist2[i][ind];
-        float exp_val=exp(-0.0005*t);
-        //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
-        float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
-        //////////////////////////////2400000
-        for(int j=0;j<SR[i].size_in;j++)
+
+
+
+        for(int i=0;i<N;i++)
         {
-            SR[i].w[j]+=speed_k*h_func*
-                    (inp[j]-SR[i].w[j]);
+            h1=dist2[i][ind];
+            float exp_val=exp(-0.0005*t);
+            //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+            float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
+            //////////////////////////////2400000
+            for(int j=0;j<SR[i].size_in;j++)
+            {
+                SR[i].w[j]+=speed_k*h_func*
+                        (inp[j]-SR[i].w[j]);
+            }
         }
-    }
 }
 float** layer_koh::refresh(std::vector<float>& inp)
 {

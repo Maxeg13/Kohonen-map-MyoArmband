@@ -1,30 +1,37 @@
 #include "datacollector.h"
 #include <vector>
 
+void DataCollector::recon()
+{
+    myo->setStreamEmg(myo::Myo::streamEmgEnabled);
+}
+
 DataCollector::DataCollector()
-    : emgSamples(), hub("com.example.emg-data-sample")
+
 {
     emgSamples.resize(8);               // The values of this array is set by onEmgData() above.
     emgSamplesD.resize(8);               // The values of this array is set by onEmgData() above.
     accSamplesD.resize(4);
 //    while(!myo)
-    myo = hub.waitForMyo(1000);
-    myo->unlock(myo->unlockHold);
+
+    hub=new myo::Hub("ru.myCompany.MyoClass");
+    myo = hub->waitForMyo(10000);
+//    myo->unlock(myo->unlockHold);
 //    myo->vibrate(myo->vibrationShort);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 
-//    hub.addListener(this);
-//hub.
+//    hub->addListener(this);
+//hub->
 }
 
 void DataCollector::addListener()
 {
-    hub.addListener(this);
+    hub->addListener(this);
 }
 
 void DataCollector::removeListener()
 {
-    hub.removeListener(this);
+    hub->removeListener(this);
 }
 
 void DataCollector::kick(int x)
@@ -35,13 +42,13 @@ void DataCollector::kick(int x)
  if(cnt==100)
  {
      cnt=0;
-//     hub.waitForMyo(1000);
+//     hub->waitForMyo(1000);
 //     myo->unlock(myo->unlockHold);
  //    myo->vibrate(myo->vibrationShort);
-     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
+//     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
  }
 //    myo->unlock(myo->unlockHold);
-    hub.run(10);
+    hub->run(10);
 }
 // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.
 //void DataCollector::onUnpair(myo::Myo* myo, uint64_t timestamp)
@@ -79,7 +86,7 @@ void DataCollector::onAccelerometerData(myo::Myo* myo, uint64_t timestamp, const
     accSamplesD[2] = (double) accel.z();
     accSamplesD[3] = (double) accel.magnitude();
     //    qDebug()<<accSamplesD[0];
-    //        hub.run(10);
+    //        hub->run(10);
 }
 
 void DataCollector::print()

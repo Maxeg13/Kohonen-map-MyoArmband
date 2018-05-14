@@ -22,6 +22,7 @@ public:
     QPushButton *rstB;
     QPushButton *learningB;
     QPushButton *connectB;
+    QPushButton *reconB;
     layer_koh *LK;
     QTimer *timer;
     vector< vector<float>> data_learn;
@@ -48,6 +49,8 @@ public slots:
     void getCor();
     void getRad();
     void slot_close();
+    void killB();
+
 protected:
     void paintEvent(QPaintEvent *e);
 };

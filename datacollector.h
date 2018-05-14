@@ -32,9 +32,10 @@ public:
     void print();
     void addListener();
     void removeListener();
+    void recon();
 
     myo::Myo* myo;
-    myo::Hub hub;
+    myo::Hub* hub;
     vector<float> emgSamples;               // The values of this array is set by onEmgData() above.
     vector<float> emgSamplesD;               // The values of this array is set by onEmgData() above.
     vector<float> accSamplesD;

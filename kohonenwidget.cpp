@@ -9,6 +9,7 @@ int rst_cnt=0;
 myCurve* set_curve;
 QwtSymbol* plot_symbol;
 QwtPlot* set_plot;
+vector<int> b_ind;
 int ind=0;
 
 void norm( vector<float>& x)
@@ -30,13 +31,46 @@ void KohonenWidget::unsaving()
 
 void KohonenWidget::saving()
 {
-    qDebug()<<data_learn.size();
-    data_learn.resize(0);
-    saving_on=1;
+    //       saveB->setChecked(true);
+    saving_on=!saving_on;
+    if(saving_on)
+    {
+        saveB->setText(QString("continue..."));
+        data_learn.resize(0);
+    }
+    else
+    {
+        saveB->setText(QString("save patterns"));
+        qDebug()<<data_learn.size();
+    }
 }
 
 void KohonenWidget::learning()
 {
+    float thr=120;
+    int cnt=0;
+
+    for(int i=0;i<(data_learn.size()-cnt);i++)
+    {
+        float scatter2=0;
+        for(int j=0;j<data_learn[0].size()-1;j++)
+        {
+            scatter2+=data_learn[i][j]*data_learn[i][j];
+        }
+
+        if(scatter2<(thr*thr))
+        {
+            qDebug()<<i;
+            data_learn.erase(data_learn.begin()+i);
+            i--;
+            cnt++;
+
+        }
+    }
+    qDebug()<<"real learn_data  size"<<data_learn.size();
+
+
+
     rst_k=1;
     rst_cnt=0;
 }
@@ -124,6 +158,11 @@ void KohonenWidget::refresh( vector<float> inp)
     }
 }
 
+void KohonenWidget::killB()
+{
+    connectB->setDisabled(true);
+}
+
 void KohonenWidget::mousePressEvent(QMouseEvent *e)
 {
 
@@ -138,14 +177,17 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
         pd=QPointF::dotProduct((p-LK->SR[i].centre),(p-LK->SR[i].centre));
         if(pd<min)
         {
+            //            qDebug()<<LK->SR[ind].w[i];
             min=pd;
             ind=i;
             //            qDebug()<<pd;
         }
     }
-    qDebug()<<ind;
+    qDebug()<<"ind="<<ind;
     for(int i=0;i<LK->inp_s;i++)
-        LK->SR[ind].w[i]=featureInp[i];
+        qDebug()<<LK->SR[ind].w[i];
+    qDebug()<<"\n\n";
+    //        LK->SR[ind].w[i]=featureInp[i];
 }
 
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
@@ -189,6 +231,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     L_E_shift2->setToolTip(QString("rotate by y"));
     L_E_ind1->setToolTip(QString("w[]"));
     L_E_ind2->setToolTip(QString("w[]"));
+    reconB=new QPushButton("reconnect");
 
     saveB=new QPushButton("save patterns");
     corB=new QPushButton("correlation");
@@ -204,12 +247,14 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
     connect(saveB,SIGNAL(pressed()),this,SLOT(saving()));
-    connect(saveB,SIGNAL(released()),this,SLOT(unsaving()));
+    //    connect(saveB,SIGNAL(released()),this,SLOT(unsaving()));
 
     connect(learningB,SIGNAL(released()),this,SLOT(learning()));
     connect(rstB,SIGNAL(released()),this,SLOT(rst()));
     connect(corB,SIGNAL(released()),this,SLOT(getCor()));
     connect(L_E_rad,SIGNAL(editingFinished()),this,SLOT(getRad()));
+    connect(connectB,SIGNAL(released()),this,SLOT(killB()));
+
 
     timer->start(40);
     update();
@@ -221,6 +266,8 @@ void KohonenWidget::SHIFT()
     LK->ks=( L_E_shift2->text().toInt());
     //    qDebug()<<LK->is;
 }
+
+
 
 void KohonenWidget::closeEvent (QCloseEvent *event)
 {

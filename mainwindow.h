@@ -20,7 +20,7 @@ public:
 #else
     QwtPlot *d_plot[8];
 #endif
-     vector<float> featureOut, featurePreOut;
+    vector<float> featureOut, featurePreOut;
 
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -39,6 +39,7 @@ public slots:
     void getCor();
     void slot_close();
     void connectMyo();
+    void recon();
 signals:
     void sign_close();
     void featureOutSignal( vector<float>);

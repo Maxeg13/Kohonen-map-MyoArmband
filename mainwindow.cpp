@@ -178,12 +178,12 @@ void MainWindow::getEMG( vector<float> x)
 
     featureOut=featurePreOut;
     featureOut.resize(9);
-    featureOut[8]=100;
+    featureOut[8]=20;
 
-//    for(int i=0;i<4;i++)
-//    {
-//        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
-//    }
+    //    for(int i=0;i<4;i++)
+    //    {
+    //        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
+    //    }
 #endif
 }
 
@@ -314,6 +314,11 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *e)
 {
 
+}
+
+void MainWindow::recon()
+{
+    collector->recon();
 }
 
 void MainWindow::closeEvent(QCloseEvent *)
