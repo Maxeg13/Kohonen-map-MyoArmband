@@ -151,15 +151,15 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
 
     //my fit
     ///////
-    for(int i=0;i<N/2;i++)
-    {
-        SR[i].clr[0]=255;
-        SR[i].clr[1]=0;
-        SR[i].clr[2]=0;
-    }
+//    for(int i=0;i<N/2;i++)
+//    {
+//        SR[i].clr[0]=255;
+//        SR[i].clr[1]=0;
+//        SR[i].clr[2]=0;
+//    }
 
 
-    for(int i=(N/2);i<N;i++)
+    for(int i=(0);i<N;i++)
     {
         SR[i].clr[0]=0;
         SR[i].clr[1]=0;
@@ -259,11 +259,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     float h1;
     speed_k=0.0016;
 
-
     ind=indOfMin(inp);
-
-
-
 
         for(int i=0;i<N;i++)
         {
@@ -314,8 +310,8 @@ void layer_koh::draw(QPainter& painter)
         QPainterPath path;
         path.addPolygon(SR[i]);
         if(i!=ind)
-            painter.fillPath(path,QBrush(QColor(SR[i].clr[0]*SR[i].diff_norm_inv,SR[i].clr[1]*SR[i].diff_norm_inv,
-                                                SR[i].clr[2],255)));//150
+            painter.fillPath(path,QBrush(QColor(255*SR[i].diff_norm,255*SR[i].diff_norm,
+                                                255,150)));//150
         else
             painter.fillPath(path,QBrush(QColor(255,255,255)));
 
