@@ -8,6 +8,7 @@
 class sector:public QPolygon
 {
 public:
+    int clr[3];
     float* w;
     float diff_norm, diff_norm_inv;
     int size_in;

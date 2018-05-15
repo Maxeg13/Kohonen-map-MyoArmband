@@ -149,6 +149,23 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
         }
     }
 
+    //my fit
+    ///////
+    for(int i=0;i<N/2;i++)
+    {
+        SR[i].clr[0]=255;
+        SR[i].clr[1]=0;
+        SR[i].clr[2]=0;
+    }
+
+
+    for(int i=(N/2);i<N;i++)
+    {
+        SR[i].clr[0]=0;
+        SR[i].clr[1]=0;
+        SR[i].clr[2]=255;
+    }
+
 
     out=new float*[N];
     for(int i=0;i<N;i++)
@@ -193,7 +210,7 @@ void layer_koh::reform()
             SHIFT=QPoint((300+gap)*i+x0-(150+gap/2)*(k%2),y0+(86+gap*.36)*k);
             for(int j=0;j<QPT_origin.size();j++)
                 if(ind_h!=ind)
-                    SR[ind_h][j]=QPT_origin[j]*s*SR[ind_h].diff_norm*SR[ind_h].diff_norm*SR[ind_h].diff_norm+SHIFT;
+                    SR[ind_h][j]=QPT_origin[j]*s*SR[ind_h].diff_norm_inv*SR[ind_h].diff_norm_inv*SR[ind_h].diff_norm_inv+SHIFT;
                 else
                     SR[ind_h][j]=QPT_origin[j]*s+SHIFT;
         }
@@ -282,8 +299,8 @@ float** layer_koh::refresh(std::vector<float>& inp)
 
     for(int k=0;k<N;k++)
     {
-        SR[k].diff_norm_inv=(SR[k].diff-diff_min)*diff_k;
-        SR[k].diff_norm=1-SR[k].diff_norm_inv;
+        SR[k].diff_norm=(SR[k].diff-diff_min)*diff_k;
+        SR[k].diff_norm_inv=1-SR[k].diff_norm;
         SR[k].diff_norm_inv=sqrt(SR[k].diff_norm_inv);
     }
     return(out);
@@ -297,8 +314,8 @@ void layer_koh::draw(QPainter& painter)
         QPainterPath path;
         path.addPolygon(SR[i]);
         if(i!=ind)
-            painter.fillPath(path,QBrush(QColor(255*SR[i].diff_norm_inv,255*SR[i].diff_norm_inv,
-                                                255,150)));
+            painter.fillPath(path,QBrush(QColor(SR[i].clr[0]*SR[i].diff_norm_inv,SR[i].clr[1]*SR[i].diff_norm_inv,
+                                                SR[i].clr[2],255)));//150
         else
             painter.fillPath(path,QBrush(QColor(255,255,255)));
 
