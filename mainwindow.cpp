@@ -2,6 +2,8 @@
 //0010
 //1000
 
+// samples  [][samples][]
+#include <QPushButton>
 #include "mainwindow.h"
 #include "headers.h"
 #include "stand_dev.h"
@@ -57,7 +59,7 @@ QTimer *timerCOM;
 QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
-int gestures_N=9;
+
 int gest_ind;
 int resize_on;
 
@@ -65,10 +67,10 @@ int resize_on;
 
 float* perc_inp;
 float* perc_out;
-perceptron* perc_X;
+perceptron* perc;
 perceptron* perc_Y;
 vector<vector<float>> dataTest;
-vector<vector<deque<float>>> data_l_inp;
+vector<deque<vector<float>>> data_l_inp;
 vector<vector<float>> data_l_out;
 
 vector <vector<float>> dataEMG;
@@ -77,41 +79,15 @@ vector<float> percBuf;
 vector <vector <vector<float>>> featureEMG;
 int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
-int perc_dim=8;
-
-int getInt(vector<uint8_t>& xi, int k)
-{
-    static int i=0;
-    static int out=0;
-    out=0;
-    for(i=(3+k);i>(-1+k);i--)
-    {
-        out=(out<<8)+xi[i];
-    }
-    //    qDebug()<<xi[0]<<" "<<xi[1]<<" "<<xi[2]<<" "<<xi[3];
-    return out;
-}
-
-void convertFromVec(vector<float>& x,float* y, float scale)
-{
-    for(int j=0;j<perc_dim;j++)
-    {
-        y[j]=x[j]*scale;
-    }
-}
+int perc_dim;
+int gestures_N=5;
 
 
-void convertFromVec(vector<deque<float>>& x,float* y, float scale)
-{
-    //    qDebug()<<x[0].size();
-    static int l;
-    l=rand()%x[0].size();
-    for(int i=0;i<x.size();i++)
-    {
-        y[i]=x[i][l]*scale;
-    }
-}
+int getInt(vector<uint8_t>& xi, int k);
 
+void convertFromVec(vector<float>& x,float* y, float scale);
+
+void convertFromVec(vector<deque<float>>& x,float* y, float scale);
 
 
 void MainWindow::buttonClicked(int j)
@@ -119,33 +95,19 @@ void MainWindow::buttonClicked(int j)
     float med1=.3, med2=.45;
     float high1=.7, high2=.9;
 
-    data_l_out[0][0]=0;
-    data_l_out[0][1]=0;
+    for(int i=0;i<gestures_N;i++)
+        for(int j=0;j<perc->out_size;j++)
+            data_l_out[i][j]=0;
 
-    data_l_out[1][0]=-med1;
-    data_l_out[1][1]=0;
+    for(int i=0;i<(gestures_N-1);i++)
+        data_l_out[i+1][i]=high1;
 
-    data_l_out[2][0]=med1;
-    data_l_out[2][1]=0;
+    //    for(int i=0;i<(gestures_N);i++)
+    //        data_l_out[gestures_N][i]=high1;
 
-    data_l_out[3][0]=-high1;
-    data_l_out[3][1]=0;
 
-    data_l_out[4][0]=high1;
-    data_l_out[4][1]=0;
 
-    data_l_out[5][0]=0;
-    data_l_out[5][1]=med2;
-
-    data_l_out[6][0]=0;
-    data_l_out[6][1]=-med2;
-
-    data_l_out[7][0]=0;
-    data_l_out[7][1]=high2;
-
-    data_l_out[8][0]=0;
-    data_l_out[8][1]=-high2;
-
+    //    qDebug()<<j;
     switch(j)
     {
     case 0:
@@ -160,30 +122,21 @@ void MainWindow::buttonClicked(int j)
 
         gest_ind=j;
         resize_on=1;
-        //        qDebug()<<"hello";
 
+        data_l_inp[gest_ind].resize(0);
 
-        for(int i=0;i<perc_dim;i++)
-        {
-            data_l_inp[gest_ind][i].resize(0);
-        }
-        //        data_l_inp.
-        //        data_l_inp.front()[j].push_back(featurePreOut);
-        //        data_l_inp.front()[j][0];
-        //        vector<float>::resize(0,1);
         break;
     case 9:
-        for( int k=0;k<50000;k++)
+
+        for( int k=0;k<150000;k++)
             for(int i=0;i<gestures_N;i++)
             {
-                convertFromVec(data_l_inp[i],perc_inp, 1/800.);
-                perc_X->learn1(perc_inp,data_l_out[i][0]);
-                perc_Y->learn1(perc_inp,data_l_out[i][1]);
+                perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i]);
             }
         break;
     case 10:
-        perc_X->reset_w();
-        perc_Y->reset_w();
+        perc->reset_w();
+
         break;
     case 11:
         write_on=1;
@@ -259,6 +212,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    qDebug()<<hist.N;
+    perc_dim=hist.N;
 
     difEMG.resize(bufShowSize);
     LTR.inv();
@@ -304,20 +259,20 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(signalMapper2, SIGNAL(mapped(int)),
             this, SLOT(buttonReleased(int)));
 
-    for(int i=0;i<(gestures_N+3);i++)
+    for(int i=0;i<(12);i++)
     {
         switch(i)
         {
         case 0:
             button_learn=new QPushButton("save weak");break;
         case 1:
-            button_learn=new QPushButton("save left");break;
+            button_learn=new QPushButton("save 1");break;
         case 2:
-            button_learn=new QPushButton("save right");break;
+            button_learn=new QPushButton("save 2");break;
         case 3:
-            button_learn=new QPushButton("save strong left");break;
+            button_learn=new QPushButton("save 3");break;
         case 4:
-            button_learn=new QPushButton("save strong right");break;
+            button_learn=new QPushButton("save 4");break;
         case 5:
             button_learn=new QPushButton("save up");break;
         case 6:
@@ -354,26 +309,20 @@ MainWindow::MainWindow(QWidget *parent) :
 
     int frame_width=4;
 
-    GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,1+(gestures_N+3)%frame_width);
-    GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,1+(gestures_N+4)%frame_width);
-    GL->addWidget(LE,2+(gestures_N+5)/frame_width,1+(gestures_N+5)%frame_width);
-    GL->addWidget(LE_cor1,2+(gestures_N+6)/frame_width,1+(gestures_N+6)%frame_width);
-    GL->addWidget(LE_cor2,2+(gestures_N+7)/frame_width,1+(gestures_N+7)%frame_width);
-    GL->addWidget(LE_shift,2+(gestures_N+8)/frame_width,1+(gestures_N+8)%frame_width);
+    //    GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,1+(gestures_N+3)%frame_width);
+    //    GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,1+(gestures_N+4)%frame_width);
+    //    GL->addWidget(LE,2+(gestures_N+5)/frame_width,1+(gestures_N+5)%frame_width);
+    //    GL->addWidget(LE_cor1,2+(gestures_N+6)/frame_width,1+(gestures_N+6)%frame_width);
+    //    GL->addWidget(LE_cor2,2+(gestures_N+7)/frame_width,1+(gestures_N+7)%frame_width);
+    //    GL->addWidget(LE_shift,2+(gestures_N+8)/frame_width,1+(gestures_N+8)%frame_width);
 
     GL->setColumnMinimumWidth(0,400);
 
     //__________________machine learning
     perc_inp=new float[perc_dim];
-    perc_out=new float [1];
+    perc_out=new float [2];
 
     data_l_inp.resize(gestures_N);
-    for(int i=0;i<gestures_N;i++)
-        data_l_inp[i].resize(perc_dim);
-
-    //    for (int j=0;j<gestures_N;j++)
-    //        for(int i=0;i<data_l_inp[0].size();i++)
-    //            data_l_inp[j][i]=0;
 
     data_l_out.resize(gestures_N);
     for (int i=0;i<gestures_N;i++)
@@ -381,21 +330,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     vector<int> constr;
-    constr.push_back(perc_dim);
+    constr.push_back(hist.N2);
     constr.push_back(5);
     constr.push_back(5);
-    constr.push_back(1);//output
-    perc_X=new perceptron(constr);
-    perc_Y=new perceptron(constr);
+    constr.push_back(gestures_N-1);//output
+    perc=new perceptron(constr);
+    //    perc_Y=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
         featurePreOut[i]=1;
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
-
-
-
 
 
     dataEMG.resize(8);
@@ -422,18 +368,18 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(REC,SIGNAL(sig_out(vector<uint8_t>)),this,SLOT(getEMG(vector<uint8_t>)));
     }
 
-//    perc_pl=new QwtPlot(this);
-//    drawingInit(perc_pl,QString("perc out"));
-//    //    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
-//    //    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
-//    percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
-//    QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
-//                                       QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
-//    percCurve->setSymbol( symbol );
-//    GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
-//    perc_pl->setMinimumWidth(390);
-//    perc_pl->setAxisScale(QwtPlot::yLeft,-1.5,1.5);
-//    perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
+    //    perc_pl=new QwtPlot(this);
+    //    drawingInit(perc_pl,QString("perc out"));
+    //    //    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
+    //    //    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+    //    percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
+    //    QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
+    //                                       QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
+    //    percCurve->setSymbol( symbol );
+    //    GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
+    //    perc_pl->setMinimumWidth(390);
+    //    perc_pl->setAxisScale(QwtPlot::yLeft,-1.5,1.5);
+    //    perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
 
 
 
@@ -470,20 +416,20 @@ MainWindow::MainWindow(QWidget *parent) :
     setCurve->setSymbol( symbol2 );
 
 
-//    QwtPlot* rms_plot=new QwtPlot();
-//    rms_plot->setAxisScale(QwtPlot::xBottom,0,1200);
-//    rms_plot->setAxisScale(QwtPlot::yLeft,0,1200);
-//    rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
-//    rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
-//    rms_plot->setMinimumSize(QSize(300,300));
-//    drawingInit(rms_plot,"root mean square");
-//    rms_plot->show();
+    //    QwtPlot* rms_plot=new QwtPlot();
+    //    rms_plot->setAxisScale(QwtPlot::xBottom,0,1200);
+    //    rms_plot->setAxisScale(QwtPlot::yLeft,0,1200);
+    //    rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
+    //    rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
+    //    rms_plot->setMinimumSize(QSize(300,300));
+    //    drawingInit(rms_plot,"root mean square");
+    //    rms_plot->show();
 
-//    rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
-//    rmsCurve->setPen(QColor(0,0,0,0));
-//    symbol2 = new QwtSymbol( QwtSymbol::Rect,
-//                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
-//    rmsCurve->setSymbol( symbol2 );
+    //    rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
+    //    rmsCurve->setPen(QColor(0,0,0,0));
+    //    symbol2 = new QwtSymbol( QwtSymbol::Rect,
+    //                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+    //    rmsCurve->setSymbol( symbol2 );
 
 
 
@@ -522,7 +468,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         {
             x[0]=x[1]=0;
         }
-//    getFeaturesKhor(x,featurePreOut, state);
+    //    getFeaturesKhor(x,featurePreOut, state);
 
     //    if(state)
     for (int i=0;i<dim;i++)
@@ -535,11 +481,14 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         float h=x[i];
         if(write_on)
             cout<<h<<"  ";
-//        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+        //        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
 
 
+
+    hist.increment(x[0],x[1]);
+    //    qDebug()<<hist.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
         cout<<endl;
@@ -551,12 +500,8 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         gg++;
         if(gg%10==0)
         {
-            //            qDebug()<<gg;
             gg=0;
-            for(int i=0;i<perc_dim;i++)
-            {
-                data_l_inp[gest_ind][i].push_back(featurePreOut[i]);
-            }
+            data_l_inp[gest_ind].push_back(hist.b);
         }
     }
 
@@ -567,9 +512,10 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 void MainWindow::drawing()
 {
 
-
-    int x=(thresh((slider_x->value()/255.-*perc_X->out[0]*1)*255));
-    int y=(thresh((slider_y->value()/255.+*perc_Y->out[0])*255));
+    int x;
+    int y;
+    //    int x=(thresh((slider_x->value()/255.-*perc_X->out[0]*1)*255));
+    //    int y=(thresh((slider_y->value()/255.+*perc_Y->out[0])*255));
     //    x*=slider_x->value()/125.;
     //    y*=slider_y->value()/125.;
 
@@ -590,7 +536,7 @@ void MainWindow::drawing()
     for(int p_ind=0;p_ind<8;p_ind++)
     {
         curveTest[p_ind]->signalDrawing(EMG_scale);
-//        curveFeature1[p_ind]->signalDrawing(EMG_scale);
+        //        curveFeature1[p_ind]->signalDrawing(EMG_scale);
         //        curveFeature2[p_ind]->signalDrawing(EMG_scale);
     }
     //    percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
@@ -617,7 +563,8 @@ void MainWindow::buttonReleased(int x)
     if(x==11)
         write_on=0;
 
-    //    qDebug()<<data_l_inp[gest_ind][0].size();
+    //    qDebug()<<data_l_inp[gest_ind].size();
+    //        qDebug()<<data_l_inp[gest_ind][0].size();
 }
 
 
@@ -720,22 +667,86 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *e)
 {
     QPainter* painter=new QPainter(this);
-    QPainterPath path;
+    perc->refresh(hist.b);
+//    for(int i=0;i<perc->out_size;i++)
+//        qDebug()<<*perc->out[i];
+//    qDebug()<<"\n";
 
     //                        painter->setBrush(brush);
     //                        painter->drawRect(rect=QRect(i*width,j*width,width,width));
-    QRect rect=QRect(0,0,40,40);
+    QRect rect=QRect(0,0,400,400);
     QColor color;
-    QBrush brush;
-    color=QColor(0,0,0);
-    brush.setColor(color);
-    painter->setBrush(brush);
-    //    painter->setPen(pen);
-    path.addRect(rect);
-//    painter->drawPath(path);
-    painter->fillPath(path,color);
 
+    for(int i=0;i<hist.N;i++)
+        for(int j=0;j<hist.N;j++)
+        {
+            color.setRed(255-hist.a[i][j]);
+            color.setGreen(255-hist.a[i][j]);
+            color.setBlue(255-hist.a[i][j]);
+
+            rect.setX(hist.grid_out[j]);
+            rect.setY(hist.grid_out[i]);
+            rect.setWidth(hist.width);
+            rect.setHeight(hist.width);
+            //                rect.setCoords(hist.grid_out[j], hist.grid_out[i],hist.grid_out[j+1], hist.grid_out[i+1]);
+            //            QRect rect=QRect(hist.grid_out[j],hist.grid_out[i],hist.width,hist.width);
+            QPainterPath path;
+            path.addRect(rect);
+            //    painter->drawPath(path);
+            painter->fillPath(path,color);
+
+        }
+
+    color.setRed(0);
+    color.setGreen(0);
+    color.setBlue(0);
+
+    for(int i=0;i<perc->out_size;i++)
+    {
+        rect.setX(hist.grid_out[hist.N-1] +30+i*2*hist.width);
+        rect.setY(hist.grid_out[hist.N-1]-*perc->out[i]*200);
+        rect.setWidth(hist.width*2);
+        rect.setHeight(hist.width*2);
+
+        QPainterPath path;
+        path.addRect(rect);
+        //    painter->drawPath(path);
+        painter->fillPath(path,color);
+    }
     delete painter;
+}
+
+int getInt(vector<uint8_t>& xi, int k)
+{
+    static int i=0;
+    static int out=0;
+    out=0;
+    for(i=(3+k);i>(-1+k);i--)
+    {
+        out=(out<<8)+xi[i];
+    }
+    //    qDebug()<<xi[0]<<" "<<xi[1]<<" "<<xi[2]<<" "<<xi[3];
+    return out;
+}
+
+void convertFromVec(vector<float>& x,float* y, float scale)
+{
+    for(int j=0;j<perc_dim;j++)
+    {
+        y[j]=x[j]*scale;
+    }
+}
+
+
+void convertFromVec(vector<deque<float>>& x,float* y, float scale)
+{
+    //    qDebug()<<x[0].size();
+    static int l;
+    l=rand()%x[0].size();
+    for(int i=0;i<x.size();i++)
+    {
+        y[i]=x[i][l]*scale;
+    }
 }
 
 int thresh(float x)

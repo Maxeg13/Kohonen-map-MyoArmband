@@ -42,7 +42,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
     mainwindow.cpp \
-    layer_koh.cpp \
     drawing.cpp \
     stand_dev.cpp \
     layer.cpp \
@@ -58,7 +57,6 @@ HEADERS  += \
     drawing.h \
     stand_dev.h \
     mainwindow.h \
-    layer_koh.h \
     eig.h \
     pca.h \
     layer.h \
@@ -69,7 +67,6 @@ HEADERS  += \
     eig.h \
     headers.h \
     layer.h \
-    layer_koh.h \
     mainwindow.h \
     pca.h \
     perceptron.h \

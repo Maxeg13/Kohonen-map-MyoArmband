@@ -3,7 +3,11 @@
 perceptron::perceptron(vector<int>& constr)
 {
 
+
     N=constr.size();
+    inp_size=constr[0];
+    out_size=constr[N-1];
+
     inp_ptr=new float[constr[0]];
     tg_ptr=new float[constr[N-1]];
 
@@ -74,7 +78,7 @@ void perceptron::learn1(float* x,float* t)
         lr[i]->refreshW();
 }
 
-void perceptron::learn1(vector<float>& x,float* t)
+void perceptron::learn1(vector<float>& x,vector<float>& t)
 {
     for( i=0;i<lr[0]->size;i++)
         inp_ptr[i]=x[i];

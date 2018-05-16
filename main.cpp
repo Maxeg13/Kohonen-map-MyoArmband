@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "kohonenwidget.h"
+//#include "kohonenwidget.h"
 #include <QApplication>
 #include <QDebug>
 #include <QtGui>

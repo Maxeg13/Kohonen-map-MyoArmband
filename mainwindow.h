@@ -2,8 +2,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 //#define SERIAL
+#include "histogramm.h"
 #include "QKeyEvent"
-#include "kohonenwidget.h"
+//#include "kohonenwidget.h"
 #include "headers.h"
 #include "receiver.h"
 
@@ -13,8 +14,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-Receiver* REC;
-QwtPlot *d_plot[8];
+    Histogramm hist;
+    Receiver* REC;
+    QwtPlot *d_plot[8];
 
     vector<float> featureOut, featurePreOut;
 
@@ -29,7 +31,7 @@ private:
     void paintEvent(QPaintEvent *e);
 public slots:
     void keyPressEvent(QKeyEvent *event);
-//   void clicked(int buttonId);
+    //   void clicked(int buttonId);
     void drawing();
     void getFeature(vector<float>);
     void reconnect(QString);
