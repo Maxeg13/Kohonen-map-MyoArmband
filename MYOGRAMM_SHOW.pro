@@ -43,14 +43,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
     mainwindow.cpp \
     layer_koh.cpp \
-    kohonenwidget.cpp \
     drawing.cpp \
     stand_dev.cpp \
     layer.cpp \
     perceptron.cpp \
     serial.cpp \
-    datacollector.cpp \
-    receiver.cpp
+    receiver.cpp \
+    histogramm.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -58,18 +57,6 @@ HEADERS  += \
     stand_dev.h \
     drawing.h \
     stand_dev.h \
-#    myo/cxx/detail/ThrowOnError.hpp \
-#    myo/cxx/impl/Hub_impl.hpp \
-#    myo/cxx/impl/Myo_impl.hpp \
-#    myo/cxx/impl/Pose_impl.hpp \
-#    myo/cxx/DeviceListener.hpp \
-#    myo/cxx/Hub.hpp \
-#    myo/cxx/Myo.hpp \
-#    myo/cxx/Pose.hpp \
-#    myo/cxx/Quaternion.hpp \
-#    myo/cxx/Vector3.hpp \
-#    myo/libmyo/detail/visibility.h \
-    kohonenwidget.h \
     mainwindow.h \
     layer_koh.h \
     eig.h \
@@ -77,24 +64,10 @@ HEADERS  += \
     layer.h \
     drawing_perc.h \
     perceptron.h \
-    myo/cxx/detail/ThrowOnError.hpp \
-    myo/cxx/impl/Hub_impl.hpp \
-    myo/cxx/impl/Myo_impl.hpp \
-    myo/cxx/impl/Pose_impl.hpp \
-    myo/cxx/DeviceListener.hpp \
-    myo/cxx/Hub.hpp \
-    myo/cxx/Myo.hpp \
-    myo/cxx/Pose.hpp \
-    myo/cxx/Quaternion.hpp \
-    myo/cxx/Vector3.hpp \
-    myo/libmyo/detail/visibility.h \
-    myo/libmyo.h \
-    myo/myo.hpp \
     drawing.h \
     drawing_perc.h \
     eig.h \
     headers.h \
-    kohonenwidget.h \
     layer.h \
     layer_koh.h \
     mainwindow.h \
@@ -104,8 +77,8 @@ HEADERS  += \
     stand_dev.h \
     stdafx.h \
     targetver.h \
-    datacollector.h \
-    receiver.h
+    receiver.h \
+    histogramm.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

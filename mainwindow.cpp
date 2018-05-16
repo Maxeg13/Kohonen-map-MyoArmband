@@ -1,3 +1,7 @@
+//placement:
+//0010
+//1000
+
 #include "mainwindow.h"
 #include "headers.h"
 #include "stand_dev.h"
@@ -340,7 +344,7 @@ MainWindow::MainWindow(QWidget *parent) :
         signalMapper2->setMapping(button_learn, i);
 
         int frame_width=4;
-        GL->addWidget(button_learn,2+i/frame_width,i%frame_width);
+        GL->addWidget(button_learn,2+i/frame_width,1+i%frame_width);
 
         //        connect(SO,SIGNAL(dataOut(vector<float>)),this,SLOT(getEMG(vector<float>)));
 
@@ -349,13 +353,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
-    GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,(gestures_N+3)%frame_width);
-    GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,(gestures_N+4)%frame_width);
-    GL->addWidget(LE,2+(gestures_N+5)/frame_width,(gestures_N+5)%frame_width);
-    GL->addWidget(LE_cor1,2+(gestures_N+6)/frame_width,(gestures_N+6)%frame_width);
-    GL->addWidget(LE_cor2,2+(gestures_N+7)/frame_width,(gestures_N+7)%frame_width);
-    GL->addWidget(LE_shift,2+(gestures_N+8)/frame_width,(gestures_N+8)%frame_width);
 
+    GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,1+(gestures_N+3)%frame_width);
+    GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,1+(gestures_N+4)%frame_width);
+    GL->addWidget(LE,2+(gestures_N+5)/frame_width,1+(gestures_N+5)%frame_width);
+    GL->addWidget(LE_cor1,2+(gestures_N+6)/frame_width,1+(gestures_N+6)%frame_width);
+    GL->addWidget(LE_cor2,2+(gestures_N+7)/frame_width,1+(gestures_N+7)%frame_width);
+    GL->addWidget(LE_shift,2+(gestures_N+8)/frame_width,1+(gestures_N+8)%frame_width);
+
+    GL->setColumnMinimumWidth(0,400);
 
     //__________________machine learning
     perc_inp=new float[perc_dim];
@@ -403,7 +409,7 @@ MainWindow::MainWindow(QWidget *parent) :
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl+1));
         d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-2000,2000);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
-        GL->addWidget(d_plot[i_pl],(i_pl)/4,(i_pl)%4);
+        GL->addWidget(d_plot[i_pl],(i_pl)/4,1+(i_pl)%4);
 
         curveTest[i_pl]=new myCurve(bufShowSize, dataEMG[i_pl],d_plot[i_pl],"EMG",Qt::black,Qt::black,ind_c[i_pl]);
         curveFeature1[i_pl]=
@@ -416,18 +422,18 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(REC,SIGNAL(sig_out(vector<uint8_t>)),this,SLOT(getEMG(vector<uint8_t>)));
     }
 
-    perc_pl=new QwtPlot(this);
-    drawingInit(perc_pl,QString("perc out"));
-    //    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
-    //    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
-    percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
-    QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
-                                       QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
-    percCurve->setSymbol( symbol );
-    GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
-    perc_pl->setMinimumWidth(390);
-    perc_pl->setAxisScale(QwtPlot::yLeft,-1.5,1.5);
-    perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
+//    perc_pl=new QwtPlot(this);
+//    drawingInit(perc_pl,QString("perc out"));
+//    //    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
+//    //    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
+//    percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
+//    QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
+//                                       QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
+//    percCurve->setSymbol( symbol );
+//    GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
+//    perc_pl->setMinimumWidth(390);
+//    perc_pl->setAxisScale(QwtPlot::yLeft,-1.5,1.5);
+//    perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
 
 
 
@@ -464,20 +470,20 @@ MainWindow::MainWindow(QWidget *parent) :
     setCurve->setSymbol( symbol2 );
 
 
-    QwtPlot* rms_plot=new QwtPlot();
-    rms_plot->setAxisScale(QwtPlot::xBottom,0,1200);
-    rms_plot->setAxisScale(QwtPlot::yLeft,0,1200);
-    rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
-    rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
-    rms_plot->setMinimumSize(QSize(300,300));
-    drawingInit(rms_plot,"root mean square");
-    rms_plot->show();
+//    QwtPlot* rms_plot=new QwtPlot();
+//    rms_plot->setAxisScale(QwtPlot::xBottom,0,1200);
+//    rms_plot->setAxisScale(QwtPlot::yLeft,0,1200);
+//    rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
+//    rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
+//    rms_plot->setMinimumSize(QSize(300,300));
+//    drawingInit(rms_plot,"root mean square");
+//    rms_plot->show();
 
-    rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
-    rmsCurve->setPen(QColor(0,0,0,0));
-    symbol2 = new QwtSymbol( QwtSymbol::Rect,
-                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
-    rmsCurve->setSymbol( symbol2 );
+//    rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
+//    rmsCurve->setPen(QColor(0,0,0,0));
+//    symbol2 = new QwtSymbol( QwtSymbol::Rect,
+//                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
+//    rmsCurve->setSymbol( symbol2 );
 
 
 
@@ -516,7 +522,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         {
             x[0]=x[1]=0;
         }
-    getFeaturesKhor(x,featurePreOut, state);
+//    getFeaturesKhor(x,featurePreOut, state);
 
     //    if(state)
     for (int i=0;i<dim;i++)
@@ -529,7 +535,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         float h=x[i];
         if(write_on)
             cout<<h<<"  ";
-        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+//        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
 
@@ -560,6 +566,8 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 
 void MainWindow::drawing()
 {
+
+
     int x=(thresh((slider_x->value()/255.-*perc_X->out[0]*1)*255));
     int y=(thresh((slider_y->value()/255.+*perc_Y->out[0])*255));
     //    x*=slider_x->value()/125.;
@@ -582,7 +590,7 @@ void MainWindow::drawing()
     for(int p_ind=0;p_ind<8;p_ind++)
     {
         curveTest[p_ind]->signalDrawing(EMG_scale);
-        curveFeature1[p_ind]->signalDrawing(EMG_scale);
+//        curveFeature1[p_ind]->signalDrawing(EMG_scale);
         //        curveFeature2[p_ind]->signalDrawing(EMG_scale);
     }
     //    percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
@@ -595,12 +603,10 @@ void MainWindow::drawing()
     if((ii>-1)&(ii<8))
     {
         setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
-        rmsCurve->set_Drawing(featureEMG[ii][0],featureEMG[ii2][0],LE_shift->text().toInt(), EMG_scale);
-
     }
     //                    setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
     //    percCurve->signalDrawing();
-
+    update();
     emit featureOutSignal(featureOut);
 }
 
@@ -713,7 +719,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent *e)
 {
+    QPainter* painter=new QPainter(this);
+    QPainterPath path;
 
+    //                        painter->setBrush(brush);
+    //                        painter->drawRect(rect=QRect(i*width,j*width,width,width));
+    QRect rect=QRect(0,0,40,40);
+    QColor color;
+    QBrush brush;
+    color=QColor(0,0,0);
+    brush.setColor(color);
+    painter->setBrush(brush);
+    //    painter->setPen(pen);
+    path.addRect(rect);
+//    painter->drawPath(path);
+    painter->fillPath(path,color);
+
+    delete painter;
 }
 
 int thresh(float x)
