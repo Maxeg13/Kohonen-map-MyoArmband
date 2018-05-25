@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    Histogramm hist;
+    Histogramm hist1, hist2;
     Receiver* REC;
     QwtPlot *d_plot[8];
 

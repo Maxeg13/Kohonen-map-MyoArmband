@@ -212,8 +212,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    qDebug()<<hist.N;
-    perc_dim=hist.N;
+    qDebug()<<hist1.N;
+    perc_dim=hist1.N;
 
     difEMG.resize(bufShowSize);
     LTR.inv();
@@ -330,7 +330,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     vector<int> constr;
-    constr.push_back(hist.N2);
+    constr.push_back(hist1.N2);
     constr.push_back(5);
     constr.push_back(5);
     constr.push_back(gestures_N-1);//output
@@ -441,13 +441,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::getEMG(vector<uint8_t> ix)
 {
-    int dim=2;
+    int dim=3;
     vector<float> x;
 
     x.resize(dim);
     for(int i=0;i<dim;i++)
     {
         x[i]=getInt(ix,i*4);
+        if(i==2)
+            x[i]-=92;
     }
 
     int s=x.size();
@@ -487,8 +489,10 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 
 
 
-    hist.increment(x[0],x[1]);
-    //    qDebug()<<hist.a[3][3];
+    hist1.increment(x[0],x[1]);
+    qDebug()<<x[2];
+    hist2.increment(x[0],x[2]);
+    //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
         cout<<endl;
@@ -501,7 +505,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         if(gg%10==0)
         {
             gg=0;
-            data_l_inp[gest_ind].push_back(hist.b);
+            data_l_inp[gest_ind].push_back(hist1.b);
         }
     }
 
@@ -667,7 +671,7 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *e)
 {
     QPainter* painter=new QPainter(this);
-    perc->refresh(hist.b);
+    perc->refresh(hist1.b);
 //    for(int i=0;i<perc->out_size;i++)
 //        qDebug()<<*perc->out[i];
 //    qDebug()<<"\n";
@@ -677,24 +681,43 @@ void MainWindow::paintEvent(QPaintEvent *e)
     QRect rect=QRect(0,0,400,400);
     QColor color;
 
-    for(int i=0;i<hist.N;i++)
-        for(int j=0;j<hist.N;j++)
+    for(int i=0;i<hist1.N;i++)
+        for(int j=0;j<hist1.N;j++)
         {
-            color.setRed(255-hist.a[i][j]);
-            color.setGreen(255-hist.a[i][j]);
-            color.setBlue(255-hist.a[i][j]);
+            color.setRed(255-hist1.a[i][j]);
+            color.setGreen(255-hist1.a[i][j]);
+            color.setBlue(255-hist1.a[i][j]);
 
-            rect.setX(hist.grid_out[j]);
-            rect.setY(hist.grid_out[i]);
-            rect.setWidth(hist.width);
-            rect.setHeight(hist.width);
-            //                rect.setCoords(hist.grid_out[j], hist.grid_out[i],hist.grid_out[j+1], hist.grid_out[i+1]);
-            //            QRect rect=QRect(hist.grid_out[j],hist.grid_out[i],hist.width,hist.width);
+            rect.setX(hist1.grid_out[j]);
+            rect.setY(hist1.grid_out[i]);
+            rect.setWidth(hist1.width);
+            rect.setHeight(hist1.width);
+            //                rect.setCoords(hist1.grid_out[j], hist1.grid_out[i],hist1.grid_out[j+1], hist1.grid_out[i+1]);
+            //            QRect rect=QRect(hist1.grid_out[j],hist1.grid_out[i],hist1.width,hist1.width);
             QPainterPath path;
             path.addRect(rect);
             //    painter->drawPath(path);
             painter->fillPath(path,color);
 
+        }
+
+    for(int i=0;i<hist2.N;i++)
+        for(int j=0;j<hist2.N;j++)
+        {
+            color.setRed(255-hist2.a[i][j]);
+            color.setGreen(255-hist2.a[i][j]);
+            color.setBlue(255-hist2.a[i][j]);
+
+            rect.setX(hist2.grid_out[j]);
+            rect.setY(hist2.grid_out[i]+hist2.width*hist2.N);
+            rect.setWidth(hist2.width);
+            rect.setHeight(hist2.width);
+            //                rect.setCoords(hist2.grid_out[j], hist2.grid_out[i],hist2.grid_out[j+1], hist2.grid_out[i+1]);
+            //            QRect rect=QRect(hist2.grid_out[j],hist2.grid_out[i],hist2.width,hist2.width);
+            QPainterPath path;
+            path.addRect(rect);
+            //    painter->drawPath(path);
+            painter->fillPath(path,color);
         }
 
     color.setRed(0);
@@ -703,10 +726,10 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
     for(int i=0;i<perc->out_size;i++)
     {
-        rect.setX(hist.grid_out[hist.N-1] +30+i*2*hist.width);
-        rect.setY(hist.grid_out[hist.N-1]-*perc->out[i]*200);
-        rect.setWidth(hist.width*2);
-        rect.setHeight(hist.width*2);
+        rect.setX(hist1.grid_out[hist1.N-1] +30+i*2*hist1.width);
+        rect.setY(hist1.grid_out[hist1.N-1]-*perc->out[i]*200);
+        rect.setWidth(hist1.width*2);
+        rect.setHeight(hist1.width*2);
 
         QPainterPath path;
         path.addRect(rect);

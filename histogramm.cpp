@@ -16,9 +16,9 @@ Histogramm::Histogramm()
 
     grid_out=new int [N+1];
 
-    grid=new int [N];
+    grid=new int [N+1];
 
-    for(int i=0;i<N;i++)
+    for(int i=0;i<(N+1);i++)
         grid[i]=-range/2+discr*i;
 
     for(int i=0;i<N;i++)
@@ -43,8 +43,8 @@ void Histogramm::increment(int x, int y)
 {
     int ind=0;
     {
-        for(int i=0;i<(N-1);i++)
-            for(int j=0;j<(N-1);j++)
+        for(int i=0;i<(N);i++)
+            for(int j=0;j<(N);j++)
             {
                 ind++;
                 a[i][j]*=k;
