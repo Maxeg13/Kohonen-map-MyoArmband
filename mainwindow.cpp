@@ -128,7 +128,7 @@ void MainWindow::buttonClicked(int j)
         break;
     case 9:
 
-        for( int k=0;k<150000;k++)
+        for( int k=0;k<150000;k++)//150000
             for(int i=0;i<gestures_N;i++)
             {
                 perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i]);
@@ -213,7 +213,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     qDebug()<<hist1.N;
-    perc_dim=hist1.N;
+    perc_dim=hist1.N2;
 
     difEMG.resize(bufShowSize);
     LTR.inv();
@@ -330,7 +330,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     vector<int> constr;
-    constr.push_back(hist1.N2);
+    constr.push_back(hist1.N2+hist2.N2);
     constr.push_back(5);
     constr.push_back(5);
     constr.push_back(gestures_N-1);//output
@@ -367,23 +367,6 @@ MainWindow::MainWindow(QWidget *parent) :
         REC=new Receiver();
         connect(REC,SIGNAL(sig_out(vector<uint8_t>)),this,SLOT(getEMG(vector<uint8_t>)));
     }
-
-    //    perc_pl=new QwtPlot(this);
-    //    drawingInit(perc_pl,QString("perc out"));
-    //    //    perc_pl->setAxisScale(QwtPlot::yLeft,-400,400);
-    //    //    perc_pl->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
-    //    percCurve=new myCurve(bufShowSize, percBuf,perc_pl,"perc out", Qt::black, Qt::black,ind_p);
-    //    QwtSymbol* symbol = new QwtSymbol( QwtSymbol::Rect,
-    //                                       QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 7, 7 ) );
-    //    percCurve->setSymbol( symbol );
-    //    GL->addWidget(perc_pl,0,4,2,3,Qt::AlignLeft);
-    //    perc_pl->setMinimumWidth(390);
-    //    perc_pl->setAxisScale(QwtPlot::yLeft,-1.5,1.5);
-    //    perc_pl->setAxisScale(QwtPlot::xBottom,-1.5,1.5);
-
-
-
-
 
 
     setCentralWidget(centralWidget1);
@@ -490,7 +473,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 
 
     hist1.increment(x[0],x[1]);
-    qDebug()<<x[2];
+    //    qDebug()<<x[2];
     hist2.increment(x[0],x[2]);
     //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
@@ -505,7 +488,16 @@ void MainWindow::getEMG(vector<uint8_t> ix)
         if(gg%10==0)
         {
             gg=0;
-            data_l_inp[gest_ind].push_back(hist1.b);
+            vector<float> vv;
+            //    vv=(hist1.b);
+
+            vv.resize(0);
+            for(int i=0;i<hist1.b.size();i++)
+                vv.push_back(hist1.b[i]);
+            for(int i=0;i<hist2.b.size();i++)
+                vv.push_back(hist2.b[i]);
+            data_l_inp[gest_ind].push_back(vv);
+            //            data_l_inp[gest_ind].push_back(hist2.b);
         }
     }
 
@@ -518,8 +510,7 @@ void MainWindow::drawing()
 
     int x;
     int y;
-    //    int x=(thresh((slider_x->value()/255.-*perc_X->out[0]*1)*255));
-    //    int y=(thresh((slider_y->value()/255.+*perc_Y->out[0])*255));
+
     //    x*=slider_x->value()/125.;
     //    y*=slider_y->value()/125.;
 
@@ -543,7 +534,7 @@ void MainWindow::drawing()
         //        curveFeature1[p_ind]->signalDrawing(EMG_scale);
         //        curveFeature2[p_ind]->signalDrawing(EMG_scale);
     }
-    //    percCurve->pointDrawing(*perc_X->out[0],*perc_Y->out[0]);
+
 
     //    QString::
 
@@ -554,8 +545,6 @@ void MainWindow::drawing()
     {
         setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
     }
-    //                    setCurve->set_Drawing(dataEMG[ii],difEMG,LE_shift->text().toInt());
-    //    percCurve->signalDrawing();
     update();
     emit featureOutSignal(featureOut);
 }
@@ -671,10 +660,19 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *e)
 {
     QPainter* painter=new QPainter(this);
-    perc->refresh(hist1.b);
-//    for(int i=0;i<perc->out_size;i++)
-//        qDebug()<<*perc->out[i];
-//    qDebug()<<"\n";
+    vector<float> vv;
+    //    vv=(hist1.b);
+
+    vv.resize(0);
+    for(int i=0;i<hist1.b.size();i++)
+        vv.push_back(hist1.b[i]);
+    for(int i=0;i<hist2.b.size();i++)
+        vv.push_back(hist2.b[i]);
+
+    perc->refresh(vv);
+    //    for(int i=0;i<perc->out_size;i++)
+    //        qDebug()<<*perc->out[i];
+    //    qDebug()<<"\n";
 
     //                        painter->setBrush(brush);
     //                        painter->drawRect(rect=QRect(i*width,j*width,width,width));
