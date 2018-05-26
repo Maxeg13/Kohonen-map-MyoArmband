@@ -6,7 +6,7 @@ float neuron::act(float x)
 {
     return(1/(1+exp(-x)));
 }
- float neuron::actDer(float x)
+float neuron::actDer(float x)
 {
     return(act(x)*(1-act(x)));
 }
@@ -24,15 +24,16 @@ layer::layer()
 }
 layer::layer(int N,int mode,layer* l=NULL)
 {
+    two_sub_inLayers=0;
     a=0.5;
     inLayer=l;
     size=N;
     switch(mode)
     {
     case 1:
-    n=new neuron[N]();break;
+        n=new neuron[N]();break;
     case 2:
-    n=new integrNeuron[N]();
+        n=new integrNeuron[N]();
     }
     if(l!=NULL)
     {
@@ -46,9 +47,9 @@ layer::layer(int N,int mode,layer* l=NULL)
 
 void layer::reset_w()
 {
-for(int i=0;i<(size_inp+1);i++)
-    for(int j=0;j<size;j++)
-        w[i][j]=((rand()%50)-25)/25.;
+    for(int i=0;i<(size_inp+1);i++)
+        for(int j=0;j<size;j++)
+            w[i][j]=((rand()%50)-25)/25.;
 }
 
 void layer::set(float* x)
@@ -88,6 +89,7 @@ void layer::pushErr()
 }
 void layer::refreshW()
 {
+
     for(int i=0;i<size_inp;i++)
         for(int j=0;j<size;j++)
         {
@@ -95,4 +97,19 @@ void layer::refreshW()
         }
     for(int j=0;j<size;j++)
         w[size_inp][j]+=a*n[j].err;
+
+
+    if(two_sub_inLayers)
+        for(int i=0;i<size_inp;i++)
+            for(int j=0;j<size;j++)
+                if(i<size_inp/2)
+                {
+                    if(j>(size/2-1))
+                        w[i][j]=0;
+                }
+                else
+                    if(i>(size_inp/2-1))
+                        if(j<(size/2))
+                            w[i][j]=0;
+
 }

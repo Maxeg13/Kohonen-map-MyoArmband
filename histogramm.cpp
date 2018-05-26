@@ -4,9 +4,9 @@ Histogramm::Histogramm()
 {
     N=9;
     N2=N*N;
-    k=0.996;
+    k=0.997;
     width=20;
-    range=150;
+    range=200;
     discr=range/N;
     incr=3;
 
@@ -41,22 +41,54 @@ Histogramm::Histogramm()
 
 void Histogramm::increment(int x, int y)
 {
+    int i0=0,j0=0;
     int ind=0;
+    int isHitY=0;
+    int isHitX=0;
     {
         for(int i=0;i<(N);i++)
-            for(int j=0;j<(N);j++)
+            if((y>grid[i])&(y<grid[i+1]))
             {
-                ind++;
-                a[i][j]*=k;
-                if((x>grid[j])&(x<grid[j+1]))
-                    if((y>grid[i])&(y<grid[i+1]))
-                    {
-                        a[i][j]+=incr;
-                        if(a[i][j]>255)
-                            a[i][j]=255;
-                    }
-                b[ind]=a[i][j]/270.;
+                i0=i;
+                isHitY=1;
+            }
 
+        for(int j=0;j<(N);j++)
+            if((x>grid[j])&(x<grid[j+1]))
+            {
+                j0=j;
+                isHitX=1;
+            }
+
+
+        if(!isHitX)
+        {
+            if(x<grid[0])
+                j0=0;
+            else if(x>grid[N])
+                j0=N-1;
+        }
+
+        if(!isHitY)
+        {
+            if(y<grid[0])
+                i0=0;
+            else if(y>grid[N])
+                i0=N-1;
+        }
+
+        a[i0][j0]+=incr;
+        if(a[i0][j0]>255)
+            a[i0][j0]=255;
+
+        for(int i=0;i<N;i++)
+            for(int j=0;j<N;j++)
+            {
+
+                a[i][j]*=k;
+
+                ind++;
+                b[ind]=a[i][j]/270.;
             }
     }
 

@@ -5,6 +5,7 @@
 class neuron
 {
 public:
+
     float state_in;
     float state;
     float err_in;
@@ -34,6 +35,7 @@ public:
 class layer
 {
 public:
+    bool two_sub_inLayers;
     layer* inLayer;
     int size;
     int size_inp;

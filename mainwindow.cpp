@@ -128,7 +128,7 @@ void MainWindow::buttonClicked(int j)
         break;
     case 9:
 
-        for( int k=0;k<150000;k++)//150000
+        for( int k=0;k<110000;k++)//150000
             for(int i=0;i<gestures_N;i++)
             {
                 perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i]);
@@ -331,10 +331,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     vector<int> constr;
     constr.push_back(hist1.N2+hist2.N2);
-    constr.push_back(5);
-    constr.push_back(5);
+    constr.push_back(8);
+//    constr.push_back(8);
     constr.push_back(gestures_N-1);//output
     perc=new perceptron(constr);
+    perc->lr[1]->two_sub_inLayers=1;
     //    perc_Y=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
