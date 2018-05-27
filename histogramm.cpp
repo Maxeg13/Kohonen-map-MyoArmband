@@ -2,11 +2,11 @@
 
 Histogramm::Histogramm()
 {
-    N=9;
+    N=8;
     N2=N*N;
     k=0.997;
     width=20;
-    range=200;
+    range=180;
     discr=range/N;
     incr=3;
 
@@ -47,14 +47,14 @@ void Histogramm::increment(int x, int y)
     int isHitX=0;
     {
         for(int i=0;i<(N);i++)
-            if((y>grid[i])&(y<grid[i+1]))
+            if((y>=grid[i])&(y<=grid[i+1]))
             {
                 i0=i;
                 isHitY=1;
             }
 
         for(int j=0;j<(N);j++)
-            if((x>grid[j])&(x<grid[j+1]))
+            if((x>=grid[j])&(x<=grid[j+1]))
             {
                 j0=j;
                 isHitX=1;
@@ -84,9 +84,7 @@ void Histogramm::increment(int x, int y)
         for(int i=0;i<N;i++)
             for(int j=0;j<N;j++)
             {
-
                 a[i][j]*=k;
-
                 ind++;
                 b[ind]=a[i][j]/270.;
             }

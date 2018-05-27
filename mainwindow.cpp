@@ -2,6 +2,8 @@
 //0010
 //1000
 
+//8642
+//7531
 // samples  [][samples][]
 #include <QPushButton>
 #include "mainwindow.h"
@@ -80,8 +82,8 @@ vector <vector <vector<float>>> featureEMG;
 int ind_c[8], ind_p;
 int dim_in=16,dim_out=8;
 int perc_dim;
-int gestures_N=5;
-
+int gestures_N=8;//5+...
+int fing_N=5;
 
 int getInt(vector<uint8_t>& xi, int k);
 
@@ -92,15 +94,7 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale);
 
 void MainWindow::buttonClicked(int j)
 {
-    float med1=.3, med2=.45;
-    float high1=.7, high2=.9;
 
-    for(int i=0;i<gestures_N;i++)
-        for(int j=0;j<perc->out_size;j++)
-            data_l_out[i][j]=0;
-
-    for(int i=0;i<(gestures_N-1);i++)
-        data_l_out[i+1][i]=high1;
 
     //    for(int i=0;i<(gestures_N);i++)
     //        data_l_out[gestures_N][i]=high1;
@@ -128,11 +122,14 @@ void MainWindow::buttonClicked(int j)
         break;
     case 9:
 
-        for( int k=0;k<110000;k++)//150000
+        for( int k=0;k<80000;k++)//150000
+        {
             for(int i=0;i<gestures_N;i++)
             {
                 perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i]);
             }
+            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);
+        }
         break;
     case 10:
         perc->reset_w();
@@ -274,11 +271,11 @@ MainWindow::MainWindow(QWidget *parent) :
         case 4:
             button_learn=new QPushButton("save 4");break;
         case 5:
-            button_learn=new QPushButton("save up");break;
+            button_learn=new QPushButton("save 5");break;
         case 6:
-            button_learn=new QPushButton("save down");break;
+            button_learn=new QPushButton("save ring");break;
         case 7:
-            button_learn=new QPushButton("save strong up");break;
+            button_learn=new QPushButton("save fist");break;
         case 8:
             button_learn=new QPushButton("save strong down");break;
         case 9:
@@ -319,21 +316,16 @@ MainWindow::MainWindow(QWidget *parent) :
     GL->setColumnMinimumWidth(0,400);
 
     //__________________machine learning
-    perc_inp=new float[perc_dim];
-    perc_out=new float [2];
+//    perc_inp=new float[perc_dim];
+//    perc_out=new float [2];
 
-    data_l_inp.resize(gestures_N);
-
-    data_l_out.resize(gestures_N);
-    for (int i=0;i<gestures_N;i++)
-        data_l_out[i].resize(2);
 
 
     vector<int> constr;
     constr.push_back(hist1.N2+hist2.N2);
-    constr.push_back(8);
+    constr.push_back(10);
 //    constr.push_back(8);
-    constr.push_back(gestures_N-1);//output
+    constr.push_back(fing_N);//output
     perc=new perceptron(constr);
     perc->lr[1]->two_sub_inLayers=1;
     //    perc_Y=new perceptron(constr);
@@ -344,6 +336,41 @@ MainWindow::MainWindow(QWidget *parent) :
     featureOut=featurePreOut;
     featureOut.resize(dim_out);
 
+
+    data_l_inp.resize(gestures_N);
+
+    for(int i=0;i<gestures_N;i++)
+        data_l_inp[i].resize(1);
+
+    for(int i=0;i<gestures_N;i++)
+        data_l_inp[i][0].resize(hist1.N2+hist2.N2);
+
+    data_l_out.resize(gestures_N);
+    for (int i=0;i<gestures_N;i++)
+        data_l_out[i].resize(fing_N);
+
+    float med1=.3, med2=.45;
+    float high1=.7, high2=.9;
+
+    for(int i=0;i<gestures_N;i++)
+        for(int j=0;j<fing_N;j++)
+            data_l_out[i][j]=0;
+
+    for(int i=0;i<(fing_N);i++)
+        data_l_out[i+1][i]=high2;
+
+    for(int i=0;i<2;i++)
+        data_l_out[gestures_N-2][i]=high2;
+
+    for(int i=0;i<(fing_N);i++)
+        data_l_out[gestures_N-1][i]=high2;
+
+    for(int i=0;i<gestures_N;i++)
+    {
+        for(int j=0;j<fing_N;j++)
+            cout<<data_l_out[i][j]<<"     ";
+        cout<<"\n";
+    }
 
     dataEMG.resize(8);
     featureEMG.resize(8);
@@ -398,27 +425,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
                                         QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
     setCurve->setSymbol( symbol2 );
-
-
-    //    QwtPlot* rms_plot=new QwtPlot();
-    //    rms_plot->setAxisScale(QwtPlot::xBottom,0,1200);
-    //    rms_plot->setAxisScale(QwtPlot::yLeft,0,1200);
-    //    rms_plot->setAxisTitle(QwtPlot::yLeft,"RMS_2");
-    //    rms_plot->setAxisTitle(QwtPlot::xBottom,"RMS_1");
-    //    rms_plot->setMinimumSize(QSize(300,300));
-    //    drawingInit(rms_plot,"root mean square");
-    //    rms_plot->show();
-
-    //    rmsCurve=new myCurve(bufShowSize, percBuf,rms_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
-    //    rmsCurve->setPen(QColor(0,0,0,0));
-    //    symbol2 = new QwtSymbol( QwtSymbol::Rect,
-    //                             QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
-    //    rmsCurve->setSymbol( symbol2 );
-
-
-
-    //        getEMG(SO->doWork());
-
 }
 
 
@@ -432,8 +438,8 @@ void MainWindow::getEMG(vector<uint8_t> ix)
     for(int i=0;i<dim;i++)
     {
         x[i]=getInt(ix,i*4);
-        if(i==2)
-            x[i]-=92;
+//        if(i==2)
+//            x[i]-=92;
     }
 
     int s=x.size();
@@ -475,7 +481,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 
     hist1.increment(x[0],x[1]);
     //    qDebug()<<x[2];
-    hist2.increment(x[0],x[2]);
+    hist2.increment(x[1],x[2]);
     //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
@@ -723,10 +729,19 @@ void MainWindow::paintEvent(QPaintEvent *e)
     color.setGreen(0);
     color.setBlue(0);
 
+    int ff=0;
+    vector<float> vvv;
+    vvv.resize(fing_N);
+    for(int i=0;i<fing_N;i++)
+        vvv[i]=(*perc->out[i]);
+
+    getFeatures_gearbox1(ff,vvv);
+
+
     for(int i=0;i<perc->out_size;i++)
     {
-        rect.setX(hist1.grid_out[hist1.N-1] +30+i*2*hist1.width);
-        rect.setY(hist1.grid_out[hist1.N-1]-*perc->out[i]*200);
+        rect.setX(hist1.grid_out[hist1.N-1]+30+(/*perc->out_size-1-*/i)*2*hist1.width);
+        rect.setY(/*hist1.grid_out[hist1.N-1]*1.5-*/*perc->out[i]*200);
         rect.setWidth(hist1.width*2);
         rect.setHeight(hist1.width*2);
 

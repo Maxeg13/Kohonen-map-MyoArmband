@@ -528,7 +528,7 @@ standartDevF STD[8];
 frBuHp2 FBH[8];
 //bandPassFr BPF[2];
 matchedFr MF[4];
-lowPassFr LPF[8];
+lowPassFr LPF[5];
 veryLowPassFr VLPF[8];
 veryLowPassFrMyo VLPFM[8], VLPFM2[8];
 matchedFrV MFV[2];
@@ -602,10 +602,12 @@ void getFeaturesMyo(vector<float> x, vector<float>& y)
 void getFeatures_gearbox1(int8_t x, vector<float>& y)
 {
 
-    y[0]=FE1[0](x)/20;
-    y[1]=LPF[0](STD[0](x));
-    y[2]=LPF[1](WA[0](x));
-    y[3]=(400*VLPF[0]((killRange(MFV[0](x),30))));
+//    y[0]=FE1[0](x)/20;
+//    y[1]=LPF[0](STD[0](x));
+//    y[2]=LPF[1](WA[0](x));
+//    y[3]=(400*VLPF[0]((killRange(MFV[0](x),30))));
+    for(int i=0;i<y.size();i++)
+        y[i]=VLPF[i](y[i]);
 }
 
 void getFeatures_gearbox2(int8_t x, vector<float>& y)
