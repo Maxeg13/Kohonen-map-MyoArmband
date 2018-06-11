@@ -7,7 +7,7 @@
 using namespace std;
 using namespace Eigen;
 
-void getFeaturesMyo(vector<float>, vector<float>&);
+void getFeaturesMyo(vector<float>&);
 
 void preproc(vector<float>&);
 

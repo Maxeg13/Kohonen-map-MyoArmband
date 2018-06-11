@@ -24,6 +24,7 @@ public:
     float** refresh(float* x);
     float** refresh(vector<float>& x);
     void learn1(vector<float>&, vector<float>&);
+    void learn1(vector<float>&, vector<float>&, float);
     void learn1(float* x,float* t);
     void learn1(float* x,float t);
     void learnFunc();

@@ -78,6 +78,17 @@ void perceptron::learn1(float* x,float* t)
         lr[i]->refreshW();
 }
 
+void perceptron::learn1(vector<float>& x,vector<float>& t, float k)
+{
+    for( i=0;i<lr[0]->size;i++)
+        inp_ptr[i]=x[i];
+
+    for( i=0;i<lr[N-1]->size;i++)
+        tg_ptr[i]=t[i]*k;
+
+    learn1(inp_ptr, tg_ptr);
+}
+
 void perceptron::learn1(vector<float>& x,vector<float>& t)
 {
     for( i=0;i<lr[0]->size;i++)
@@ -100,6 +111,8 @@ void perceptron::learn1(float* x,float t)
     for( i=1;i<N;i++)
         lr[i]->refreshW();
 }
+
+
 
 void perceptron::learnFunc()
 {}

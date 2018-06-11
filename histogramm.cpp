@@ -4,7 +4,7 @@ Histogramm::Histogramm()
 {
     N=8;
     N2=N*N;
-    k=0.997;
+    k=0.9985;
     width=20;
     range=170;
     discr=range/N;

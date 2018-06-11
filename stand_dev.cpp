@@ -400,12 +400,12 @@ public:
     {
         v[0] = v[1];
         v[1] = v[2];
-        v[2] = (9.865221073379615291e-8 * x)
-             + (-0.99911181807963878043 * v[0])
-             + (1.99911142347079584525 * v[1]);
+        v[2] = (1.576334488051500671e-6 * x)
+                + (-0.99645200271929113001 * v[0])
+                + (1.99644569738133892400 * v[1]);
         return
-             (v[0] + v[2])
-            +2 * v[1];
+                (v[0] + v[2])
+                +2 * v[1];
     }
     
 };
@@ -586,15 +586,10 @@ void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
     }
 }
 
-void getFeaturesMyo(vector<float> x, vector<float>& y)
+void getFeaturesMyo(vector<float>& y)
 {
-    //    y=x;
-    for(int i=0;i<x.size();i++)
-        y[i]=LPFM[i](.02*STDM[i](x[i]));
-    for(int i=0;i<x.size();i++)
-        y[i+x.size()]=9000*LPFM2[i](VLPFM[i](HAAR1[i](x[i])));
-    //        y[i+x.size()]=((HAAR1[i](x[i])));
-
+    for(int i=0;i<y.size();i++)
+        y[i]=FBH[i](y[i]);
 }
 
 

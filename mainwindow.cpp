@@ -35,6 +35,7 @@ Serial hSerial;
 QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
+
 float EMG_scale=1;
 int thresh(float);
 
@@ -73,6 +74,7 @@ perceptron* perc;
 perceptron* perc_Y;
 vector<vector<float>> dataTest;
 vector<vector<float>> sum;
+vector<float> maxV;
 vector<deque<vector<float>>> data_l_inp;
 vector<vector<float>> data_l_out;
 
@@ -123,17 +125,34 @@ void MainWindow::buttonClicked(int j)
         break;
     case 9:
 
-//        sum.resize(gestures_N);
+        maxV.resize(gestures_N);
+        sum.resize(gestures_N);
 
-//        for(int)
-//        sum.resize();
+
+        for(int i=0;i<gestures_N;i++)
+        {
+            sum[i].resize(data_l_inp[i].size(),0);
+            for(int j=0;j<sum[i].size();j++)
+                for(int k=0;k<data_l_inp[i][j].size();k++)
+                    sum[i][j]+=data_l_inp[i][j][k];
+        }
+        for(int i=0;i<gestures_N;i++)
+        {
+            vector<float>::iterator it;
+            it= max_element(sum[i].begin(),sum[i].end());
+            maxV[i]=sum[i][distance(sum[i].begin(),it)];
+//            qDebug()<<i<<"   "<<maxV[i];
+        }
+
         for( int k=0;k<50000;k++)//150000
         {
             for(int i=0;i<gestures_N;i++)
             {
-                perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i]);
+
+                perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i],sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000001));
+//                qDebug()<<sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000000001);
             }
-            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);
+//            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);
         }
         break;
     case 10:
@@ -321,15 +340,15 @@ MainWindow::MainWindow(QWidget *parent) :
     GL->setColumnMinimumWidth(0,400);
 
     //__________________machine learning
-//    perc_inp=new float[perc_dim];
-//    perc_out=new float [2];
+    //    perc_inp=new float[perc_dim];
+    //    perc_out=new float [2];
 
 
 
     vector<int> constr;
     constr.push_back(hist1.N2+hist2.N2);
     constr.push_back(10);
-//    constr.push_back(8);
+    //    constr.push_back(8);
     constr.push_back(fing_N);//output
     perc=new perceptron(constr);
     perc->lr[1]->two_sub_inLayers=1;
@@ -443,8 +462,8 @@ void MainWindow::getEMG(vector<uint8_t> ix)
     for(int i=0;i<dim;i++)
     {
         x[i]=getInt(ix,i*4);
-//        if(i==2)
-//            x[i]+=15;
+        //        if(i==2)
+        //            x[i]+=15;
     }
 
     int s=x.size();
@@ -454,6 +473,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
     int state=1;
     preproc(x);
 
+    getFeaturesMyo(x);
 
     if(test_on)
         LTR.proect(x,ii,LE_cor2->text().toInt());
