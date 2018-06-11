@@ -72,6 +72,7 @@ float* perc_out;
 perceptron* perc;
 perceptron* perc_Y;
 vector<vector<float>> dataTest;
+vector<vector<float>> sum;
 vector<deque<vector<float>>> data_l_inp;
 vector<vector<float>> data_l_out;
 
@@ -122,7 +123,11 @@ void MainWindow::buttonClicked(int j)
         break;
     case 9:
 
-        for( int k=0;k<80000;k++)//150000
+//        sum.resize(gestures_N);
+
+//        for(int)
+//        sum.resize();
+        for( int k=0;k<50000;k++)//150000
         {
             for(int i=0;i<gestures_N;i++)
             {
@@ -360,10 +365,10 @@ MainWindow::MainWindow(QWidget *parent) :
         data_l_out[i+1][i]=high2;
 
     for(int i=0;i<2;i++)
-        data_l_out[gestures_N-2][i]=high2;
+        data_l_out[gestures_N-2][i]=1;
 
     for(int i=0;i<(fing_N);i++)
-        data_l_out[gestures_N-1][i]=high2;
+        data_l_out[gestures_N-1][i]=1;
 
     for(int i=0;i<gestures_N;i++)
     {
@@ -481,7 +486,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
 
     hist1.increment(x[0],x[1]);
     //    qDebug()<<x[2];
-    hist2.increment(x[1],x[2]);
+    hist2.increment(x[2],x[3]);
     //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)

@@ -6,7 +6,7 @@ Histogramm::Histogramm()
     N2=N*N;
     k=0.997;
     width=20;
-    range=120;
+    range=170;
     discr=range/N;
     incr=3;
 

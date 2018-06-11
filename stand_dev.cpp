@@ -400,12 +400,12 @@ public:
     {
         v[0] = v[1];
         v[1] = v[2];
-        v[2] = (1.576334488051500671e-6 * x)
-                + (-0.99645200271929113001 * v[0])
-                + (1.99644569738133892400 * v[1]);
+        v[2] = (9.865221073379615291e-8 * x)
+             + (-0.99911181807963878043 * v[0])
+             + (1.99911142347079584525 * v[1]);
         return
-                (v[0] + v[2])
-                +2 * v[1];
+             (v[0] + v[2])
+            +2 * v[1];
     }
     
 };
@@ -544,8 +544,8 @@ void preproc(vector<float>& x)
     for(int i=0;i<2;i++)
     {
         x[i]=killRange(FBH[i](x[i]),0);
-//        BR[i].push(x[i]);
-//        x[i]=BR[i].x[3];
+        //        BR[i].push(x[i]);
+        //        x[i]=BR[i].x[3];
     }
     //    for(int i=0;i<2;i++)
     //    {
@@ -553,7 +553,7 @@ void preproc(vector<float>& x)
     //        if(x[i]==0) break;
     //    }
 
-//    order()
+    //    order()
 }
 
 void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
@@ -602,10 +602,10 @@ void getFeaturesMyo(vector<float> x, vector<float>& y)
 void getFeatures_gearbox1(int8_t x, vector<float>& y)
 {
 
-//    y[0]=FE1[0](x)/20;
-//    y[1]=LPF[0](STD[0](x));
-//    y[2]=LPF[1](WA[0](x));
-//    y[3]=(400*VLPF[0]((killRange(MFV[0](x),30))));
+    //    y[0]=FE1[0](x)/20;
+    //    y[1]=LPF[0](STD[0](x));
+    //    y[2]=LPF[1](WA[0](x));
+    //    y[3]=(400*VLPF[0]((killRange(MFV[0](x),30))));
     for(int i=0;i<y.size();i++)
         y[i]=VLPF[i](y[i]);
 }
