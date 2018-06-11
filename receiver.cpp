@@ -89,7 +89,7 @@ void Receiver::processPendingDatagrams()
 {
     static int ptr=0;
     static uint8_t key=255;
-    static int S=13;
+    static int S=17;
     static vector<byte> data;
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;

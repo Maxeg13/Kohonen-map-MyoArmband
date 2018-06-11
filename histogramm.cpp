@@ -6,7 +6,7 @@ Histogramm::Histogramm()
     N2=N*N;
     k=0.997;
     width=20;
-    range=180;
+    range=120;
     discr=range/N;
     incr=3;
 
@@ -84,10 +84,18 @@ void Histogramm::increment(int x, int y)
         for(int i=0;i<N;i++)
             for(int j=0;j<N;j++)
             {
+
                 a[i][j]*=k;
-                ind++;
+
+                if((i==3)||(i==4))
+                    if((j==3)||(j==4))
+                        a[i][j]=0;
+
                 b[ind]=a[i][j]/270.;
+                ind++;
+
             }
+
     }
 
 }

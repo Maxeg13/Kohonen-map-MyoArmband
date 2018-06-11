@@ -431,7 +431,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::getEMG(vector<uint8_t> ix)
 {
-    int dim=3;
+    int dim=4;
     vector<float> x;
 
     x.resize(dim);
@@ -439,7 +439,7 @@ void MainWindow::getEMG(vector<uint8_t> ix)
     {
         x[i]=getInt(ix,i*4);
 //        if(i==2)
-//            x[i]-=92;
+//            x[i]+=15;
     }
 
     int s=x.size();
