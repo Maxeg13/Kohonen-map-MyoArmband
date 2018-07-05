@@ -3,6 +3,8 @@
 #include"layer_koh.h"
 #include "drawing.h"
 #include<QMouseEvent>
+#include <QFile>
+#include <stdio.h>
 float rad=3.;//3
 bool rst_k=0;
 int rst_cnt=0;
@@ -10,6 +12,7 @@ myCurve* set_curve;
 QwtSymbol* plot_symbol;
 QwtPlot* set_plot;
 vector<int> b_ind;
+int gesture_i=0;
 int ind=0;
 
 void norm( vector<float>& x)
@@ -26,7 +29,7 @@ void KohonenWidget::unsaving()
 {
 
     saving_on=0;
-    qDebug()<<data_learn.size();
+//    qDebug()<<data_learn.size();
 }
 
 void KohonenWidget::saving()
@@ -37,39 +40,37 @@ void KohonenWidget::saving()
     {
         saveB->setText(QString("continue..."));
         data_learn.resize(0);
+        gesture_v.resize(gesture_i);
     }
     else
     {
         saveB->setText(QString("save patterns"));
-        qDebug()<<data_learn.size();
+//        qDebug()<<data_learn.size();
     }
 }
 
 void KohonenWidget::learning()
 {
-    float thr=120;
+    float thr=10000;
     int cnt=0;
 
     for(int i=0;i<(data_learn.size()-cnt);i++)
     {
         float scatter2=0;
-        for(int j=0;j<data_learn[0].size()-1;j++)
+        for(int j=0;j<data_learn[0].size();j++)
         {
             scatter2+=data_learn[i][j]*data_learn[i][j];
         }
 
-        if(scatter2<(thr*thr))
+       if(false) //        if(scatter2>(thr*thr))
         {
-            qDebug()<<i;
+            //            qDebug()<<i;
             data_learn.erase(data_learn.begin()+i);
             i--;
             cnt++;
 
         }
     }
-    qDebug()<<"real learn_data  size"<<data_learn.size();
-
-
 
     rst_k=1;
     rst_cnt=0;
@@ -109,14 +110,14 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
     painter->scale(scale,scale);
     //    LK->indOfMin(featureInp);
 
-    if(rst_k)
+    if(rst_k && !saving_on)
     {
         rst_cnt++;
         for(int i=0;i<100;i++)
             LK->learnW(data_learn[rand()%data_learn.size()],rad);
     }
-    if(rst_cnt==100)
-        rst_k=0;
+//    if(rst_cnt==100)
+//        rst_k=0;
 
     LK->reform();
     LK->draw(*painter);
@@ -154,7 +155,10 @@ void KohonenWidget::refresh( vector<float> inp)
     {
         cnt=0;
         if(saving_on)
+        {
             data_learn.push_back(featureInp);
+            gesture_v.push_back(gesture_i);
+        }
     }
 }
 
@@ -183,15 +187,43 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
             //            qDebug()<<pd;
         }
     }
-    qDebug()<<"ind="<<ind;
-    for(int i=0;i<LK->inp_s;i++)
-        qDebug()<<LK->SR[ind].w[i];
-    qDebug()<<"\n\n";
-    //        LK->SR[ind].w[i]=featureInp[i];
+
+
+
+    QString filename="Data.txt";
+    QFile file( filename );
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+//file.
+        QTextStream stream( &file );
+
+        for(int i=0;i<data_learn.size();i++)
+        {
+            QString str, STR;
+            if(data_learn[i].size()==8)
+            for(int j=0;j<data_learn[i].size();j++)
+            {
+                str.sprintf("%6.2f   ", data_learn[i][j] );
+                STR+=str;
+
+
+            }
+            str.sprintf("%d\n",gesture_v[i]);
+            STR+=str;
+//            STR+=QString::number(gesture_i);
+            stream << STR;
+        }
+
+    }
+    file.close();
+
+
+
+
 }
 
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
-{
+{/*cout<<1;*/
     scale=0.2;
     //    QString str("rad 3");
     //    str.remove(0,4);
@@ -231,8 +263,9 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     L_E_shift2->setToolTip(QString("rotate by y"));
     L_E_ind1->setToolTip(QString("w[]"));
     L_E_ind2->setToolTip(QString("w[]"));
-    reconB=new QPushButton("reconnect");
 
+    reconB=new QPushButton("reconnect");
+    gestureB=new QPushButton("change gest");
     saveB=new QPushButton("save patterns");
     corB=new QPushButton("correlation");
     rstB=new QPushButton("rst");
@@ -240,6 +273,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     learningB=new QPushButton("learn");
     featureInp.resize(dimension,0);
     data_learn.push_back(featureInp);
+    gesture_v.push_back(gesture_i);
 
     LK=new layer_koh(featureInp,24);
     //    LK->learnW(data_learn[0]);
@@ -267,6 +301,13 @@ void KohonenWidget::SHIFT()
     //    qDebug()<<LK->is;
 }
 
+
+void KohonenWidget::changeGesture()
+{
+    gesture_i++;
+    gesture_i%=5;
+    qDebug()<<gesture_i;
+}
 
 
 void KohonenWidget::closeEvent (QCloseEvent *event)

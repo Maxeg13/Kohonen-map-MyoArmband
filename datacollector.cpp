@@ -6,7 +6,7 @@ void DataCollector::recon()
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);
 }
 
-DataCollector::DataCollector()
+DataCollector::DataCollector(int& er)
 
 {
     emgSamples.resize(8);               // The values of this array is set by onEmgData() above.
@@ -15,7 +15,9 @@ DataCollector::DataCollector()
 //    while(!myo)
 
     hub=new myo::Hub("ru.myCompany.MyoClass");
+
     myo = hub->waitForMyo(10000);
+//    hub->
 //    myo->unlock(myo->unlockHold);
 //    myo->vibrate(myo->vibrationShort);
     myo->setStreamEmg(myo::Myo::streamEmgEnabled);

@@ -16,7 +16,7 @@ class DataCollector : public myo::DeviceListener
 
 public:
     QDataCollector qdc;
-    DataCollector();
+    DataCollector(int&);
 
     void kick(int x);
     // onUnpair() is called whenever the Myo is disconnected from Myo Connect by the user.

@@ -260,17 +260,18 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     speed_k=0.0016;
 
     ind=indOfMin(inp);
-
+    float exp_val=exp(-0.0005*t);
+    float speed_exp=exp(-0.00006*t);
         for(int i=0;i<N;i++)
         {
             h1=dist2[i][ind];
-            float exp_val=exp(-0.0005*t);
+
             //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
             float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
             //////////////////////////////2400000
             for(int j=0;j<SR[i].size_in;j++)
             {
-                SR[i].w[j]+=speed_k*h_func*
+                SR[i].w[j]+=speed_k*speed_exp*h_func*
                         (inp[j]-SR[i].w[j]);
             }
         }

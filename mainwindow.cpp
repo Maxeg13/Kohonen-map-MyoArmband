@@ -41,7 +41,7 @@ QPainter *painter;
 vector < vector<float>> dataEMG;
 vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
-int dim_in=8,dim_out=9;
+int dim_in=8,dim_out=8;
 
 void MainWindow::connectMyo()
 {
@@ -97,8 +97,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 #else
-
-    collector=new DataCollector();
+    int er=100;
+    collector=new DataCollector(er);
+    if(er==0)
+        emit sign_close();
 
 
     dataEMG.resize(8);
@@ -177,8 +179,8 @@ void MainWindow::getEMG( vector<float> x)
     //        myPCA.proect(featureOut);
 
     featureOut=featurePreOut;
-    featureOut.resize(9);
-    featureOut[8]=20;
+    //    featureOut.resize(9);
+    //    featureOut[8]=20;
 
     //    for(int i=0;i<4;i++)
     //    {

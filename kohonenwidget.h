@@ -23,9 +23,11 @@ public:
     QPushButton *learningB;
     QPushButton *connectB;
     QPushButton *reconB;
+    QPushButton *gestureB;
     layer_koh *LK;
     QTimer *timer;
     vector< vector<float>> data_learn;
+    vector<int> gesture_v;
     KohonenWidget( vector<float>,QWidget *parent = 0);
 //    ~KohonenWidget();
     void drawingInit(QwtPlot* d_plot);
@@ -37,7 +39,7 @@ signals:
     sign_close();
 public slots:
     void SHIFT();
-
+    void changeGesture();
     void learning();
     void drawing();
     void refresh( vector<float>);
