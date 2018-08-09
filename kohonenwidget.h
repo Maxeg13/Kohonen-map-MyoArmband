@@ -30,6 +30,7 @@ public:
     vector<int> gesture_v;
     KohonenWidget( vector<float>,QWidget *parent = 0);
 //    ~KohonenWidget();
+
     void drawingInit(QwtPlot* d_plot);
     void closeEvent (QCloseEvent *event);
     void mousePressEvent(QMouseEvent *);
@@ -38,6 +39,7 @@ signals:
     corSignal();
     sign_close();
 public slots:
+    void sendUDP();
     void SHIFT();
     void changeGesture();
     void learning();
@@ -52,6 +54,7 @@ public slots:
     void getRad();
     void slot_close();
     void killB();
+
 
 protected:
     void paintEvent(QPaintEvent *e);

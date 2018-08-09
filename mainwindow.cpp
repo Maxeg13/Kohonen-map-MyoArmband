@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "headers.h"
 #include "stand_dev.h"
+
 //SERIAL may be defined in mainwindow.h
 #ifdef SERIAL
 #include "serialqobj.h"
@@ -11,7 +12,7 @@
 //#include "pca.h"
 #endif
 
-
+#include <QtNetwork>
 #include "drawing.h"
 #include "mainwindow.h"
 //#include "layer_koh.h"
@@ -36,21 +37,41 @@ myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8];
 QTimer *timer;
 QTimer *timerMyo;
 QPainter *painter;
-
+QUdpSocket* socket_m;
+QTimer* timerUDP;
 
 vector < vector<float>> dataEMG;
 vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
 int dim_in=8,dim_out=8;
 
+
 void MainWindow::connectMyo()
 {
     collector->addListener();
 }
 
+void MainWindow::sendUDP()
+{
+    //    static int cnt;
+    //    cnt++;
+    //    QByteArray ar;
+    //    ar.push_back(prepare_send(degToRad(angles[0]=120*((sin(cnt*0.001)+1)/2))));
+    //    ar.push_back(prepare_send(degToRad(angles[1]=160*((sin(cnt*0.001)+1)/2)+20)));
+    //    ar.push_back(prepare_send(degToRad(angles[2]=50*((cos(cnt*0.001)+1)/2))));
+    //    socket_m->writeDatagram(ar,QHostAddress::LocalHost,49123);
+
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    timerUDP=new QTimer();
+    timerUDP->start(2);
+    //    timerUDP->setInterval(2);
+    socket_m=new QUdpSocket(this);
+    //    connect(timerUDP,SIGNAL(timeout()),this,SLOT(sendUDP()));
+    angles.resize(3);
 
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)
@@ -148,24 +169,42 @@ MainWindow::MainWindow(QWidget *parent) :
 #else
     timerMyo = new QTimer(this);
     connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
-    timerMyo->start(4);
+    timerMyo->start(2);
     connect(&(collector->qdc),SIGNAL(EMG( vector<float>)),this,SLOT(getEMG( vector<float>)));
 #endif
 }
 
 
+
 void MainWindow::kickMyo()
 {
-#ifdef SERIAL
 
-#else
-    collector->kick(10);
-#endif
+//    static int cnt;
+//    cnt++;
+//    qDebug()<<cnt;
+//    QByteArray ar;
+//    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
+//    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
+//    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
+//    //    qDebug()<<b1;
+//    //    srdSocket->writeDatagram(ar,QHostAddress::LocalHost,srdClientPort.toInt());
+//    socket_m->writeDatagram(ar,QHostAddress::LocalHost,49123);
+
+    static int presc;
+    if(presc==2)
+    {
+        collector->kick(10);
+        presc=0;
+    }
+    presc++;
+
 }
 
 void MainWindow::getEMG( vector<float> x)
 {
 #ifndef SERIAL
+
+
     getFeaturesMyo(x,featurePreOut);
     for (int i=0;i<8;i++)
     {

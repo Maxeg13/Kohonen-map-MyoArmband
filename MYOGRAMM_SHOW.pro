@@ -3,7 +3,7 @@
 # Project created by QtCreator 2017-06-20T08:50:42
 #
 #-------------------------------------------------
-
+QT += network widgets
 QT       += core gui
 CONFIG   += qwt
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -68,7 +68,7 @@ HEADERS  += \
     mainwindow.h \
     datacollector.h \
 #    serialqobj.h \
-    layer_koh.h \
+    layer_koh.h
 #    eig.h \
 #    pca.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"

@@ -20,6 +20,8 @@ public:
 #else
     QwtPlot *d_plot[8];
 #endif
+    vector< vector <float>> angles_m;
+    vector<float> angles;
     vector<float> featureOut, featurePreOut;
 
     explicit MainWindow(QWidget *parent = 0);
@@ -40,6 +42,7 @@ public slots:
     void slot_close();
     void connectMyo();
     void recon();
+    void sendUDP();
 signals:
     void sign_close();
     void featureOutSignal( vector<float>);
