@@ -6,14 +6,15 @@
 #include <QPushButton>
 #include <QCoreApplication>
 //#include <windows.h>
-
+#include "HandSpace.h"
 
 int main(int argc, char *argv[])
 {
 
     QApplication a(argc, argv);
 
-
+    HandSpace space;
+    space.show();
     MainWindow SignalMW;
     SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
@@ -56,6 +57,7 @@ int main(int argc, char *argv[])
     QObject::connect(KW.L_E_shift2,SIGNAL(editingFinished()),&KW,SLOT(SHIFT()));
     QObject::connect(KW.gestureB,SIGNAL(released()),&KW,SLOT(changeGesture()));
     QObject::connect(KW.reconB,SIGNAL(released()),&KW,SLOT(recon()));
+    QObject::connect(&space,SIGNAL(sendAngles(vector<int>)),&KW,SLOT(getAngles(vector<int>)));
 //    QObject::connect();
 
     KohonenMW.setWindowTitle("Kohonen hex-top Map");

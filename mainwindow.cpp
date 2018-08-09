@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //    timerUDP->setInterval(2);
     socket_m=new QUdpSocket(this);
     //    connect(timerUDP,SIGNAL(timeout()),this,SLOT(sendUDP()));
-    angles.resize(3);
+
 
     featurePreOut.resize(dim_in);
     for (int i=0;i<featurePreOut.size();i++)

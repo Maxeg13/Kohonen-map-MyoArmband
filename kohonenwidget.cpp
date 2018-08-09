@@ -40,6 +40,8 @@ void norm( vector<float>& x)
 
 KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 {/*cout<<1;*/
+
+    angles.resize(3);
     socket=new QUdpSocket(this);
     QTimer* timer_UDP;
     timer_UDP=new QTimer(this);
@@ -98,7 +100,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     //    LK->learnW(data_learn[0]);
 
     timer_UDP=new QTimer(this);
-    timer_UDP->start(10);
+    timer_UDP->start(20);
     socket=new QUdpSocket(this);
     connect(timer_UDP,SIGNAL(timeout()),this,SLOT(sendUDP()));
 
@@ -120,14 +122,23 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 
 void KohonenWidget::sendUDP()
 {
+//    if(angles.size())
+    {
     static int cnt;
     cnt+=30;
 //    qDebug()<<cnt;
     QByteArray ar;
-    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
-    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
-    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
+    //////////________TEST
+//    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
+//    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
+//    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
+
+
+    ar.push_back(prepare_send(degToRad(angles[0])));
+    ar.push_back(prepare_send(degToRad(angles[1])));
+    ar.push_back(prepare_send(degToRad(angles[2])));
     socket->writeDatagram(ar,QHostAddress::LocalHost,49123);
+    }
 }
 
 void KohonenWidget::unsaving()
@@ -135,6 +146,11 @@ void KohonenWidget::unsaving()
 
     saving_on=0;
     //    qDebug()<<data_learn.size();
+}
+
+void KohonenWidget::getAngles(vector<int> _angles)
+{
+    angles=_angles;
 }
 
 void KohonenWidget::saving()
