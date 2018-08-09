@@ -10,7 +10,7 @@ class KohonenWidget : public QWidget
     Q_OBJECT
 public:
     vector< vector <int>> angles_m;
-    vector<int> angles;
+    vector<int> angles, angles_out;
 
 
     float scale;

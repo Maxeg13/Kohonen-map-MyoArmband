@@ -22,6 +22,7 @@ void HandSpace::mousePressEvent(QMouseEvent *e)
 
     angles[0]=(p.x());
     angles[1]=(p.y());
+    if(angles[1]>180)angles[1]=180;
     angles[2]=(wheel_angle);
     emit sendAngles(angles);
 }
@@ -34,7 +35,7 @@ void HandSpace::mouseReleaseEvent(QMouseEvent *e)
 void HandSpace::wheelEvent(QWheelEvent *e)
 {
 
-    int range=50;
+    int range=60;
     wheel_angle+=e->delta()/8;
     if(wheel_angle<-0)
         wheel_angle=-0;
@@ -55,6 +56,7 @@ void HandSpace::mouseMoveEvent(QMouseEvent *e)
 //        vector<int> angles;
         angles[0]=(p.x());
         angles[1]=(p.y());
+        if(angles[1]>180)angles[1]=180;
         angles[2]=(wheel_angle);
         emit sendAngles(angles);
     }

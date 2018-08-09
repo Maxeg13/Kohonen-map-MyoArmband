@@ -1,7 +1,8 @@
 #include "layer_koh.h"
 #include "headers.h"
+using namespace std;
 //#define TOROID
-//std::vector<float> nullVect_m;
+//vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
 float min(float x, float y)
 {
@@ -34,15 +35,30 @@ void sector::rst()
 
             w[i]=((rand()%1000)/1000.)*range-range/2;
             accum+=w[i]*w[i];
+        }        
+    }
+
+    accum=100000000000;
+    while(accum>(range*range/4))
+    {
+        accum=0;
+        for(int i=0;i<size_out;i++)
+        {
+            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+
+            w_mot[i]=((rand()%1000)/1000.)*range-range/2;
+            accum+=w_mot[i]*w_mot[i];
         }
     }
 }
 
-sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
+sector::sector(vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
     QPolygon(QPT),centre(c)
 {
+    size_out=3;
     size_in=inp.size();
     w=new float[size_in];
+    w_mot=new float[size_out];
     rst();
 }
 
@@ -56,7 +72,7 @@ sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
 //}
 
 
-float sector::getState(std::vector<float>& inp)
+float sector::getState(vector<float>& inp)
 {
     state=0;
     for(int i=0;i<size_in;i++)
@@ -64,7 +80,7 @@ float sector::getState(std::vector<float>& inp)
 }
 
 
-float sector::getDiff(std::vector<float>& inp)
+float sector::getDiff(vector<float>& inp)
 {
     diff=0;
     float h;
@@ -91,13 +107,15 @@ void layer_koh::rst()
     for (int i=0;i<N;i++)
         SR[i].rst();
     t=0;
+    t_mot=0;
 }
 
 
-layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
+layer_koh::layer_koh(vector<float>& inp_m,int N_m)
 {
 
     t=0;
+    t_mot=0;
     s=0.7;
     gap=30;
     QPT_origin.reserve(6);
@@ -115,6 +133,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     for(int i=0;i<inp_m.size();i++)
         state[i]=&SR[i].state;
 
+//    out_s=3;
     inp_s=inp_m.size();
     w=new float**[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
@@ -223,7 +242,7 @@ void layer_koh::GET_TOROID_SHIFT(int _is, int _ks)
     ks=_ks;
 }
 
-int layer_koh::indOfMin(const std::vector<float>& _inp)
+int layer_koh::indOfMin(const vector<float>& _inp)
 {
     inp=_inp;
     int ind_h;
@@ -252,7 +271,7 @@ void layer_koh::learnBegin()
     t=0;
 }
 
-void layer_koh::learnW(const std::vector<float>& inp,float rad)
+void layer_koh::learnW(const vector<float>& inp,float rad)
 {
     t++;
     int ind=0;
@@ -276,9 +295,36 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
             }
         }
 }
-float** layer_koh::refresh(std::vector<float>& inp)
+
+void layer_koh::learnW_mot( vector<float>& inp,  vector<int>& out,float rad)
+{
+    t_mot++;
+    int ind=0;
+    float h1;
+    speed_k=0.0016;
+
+    ind=indOfMin(inp);
+    float exp_val=exp(-0.0005*t_mot);
+    float speed_exp=exp(-0.00006*t);
+        for(int i=0;i<N;i++)
+        {
+            h1=dist2[i][ind];
+
+            //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+            float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
+            //////////////////////////////2400000
+            for(int j=0;j<SR[i].size_out;j++)
+            {
+                SR[i].w_mot[j]+=speed_k*speed_exp*h_func*
+                        (out[j]-SR[i].w_mot[j]);
+            }
+        }
+}
+
+float** layer_koh::refresh(vector<float>& inp, int& _ind)
 {
     ind=indOfMin(inp);
+    _ind=ind;
     for(int k=0;k<N;k++)
         SR[k].getDiff(inp);
 
