@@ -8,6 +8,7 @@ using namespace std;
 class sector:public QPolygon
 {
 public:
+    int ind;
     int clr[3];
     float* w;
     float* w_mot;
@@ -21,7 +22,7 @@ public:
     sector();
     sector(const QVector<QPoint>&);
 //    sector(int ,const QVector<QPoint>&,QPoint );
-    sector(vector<float>& ,const QVector<QPoint>&,QPoint );
+    sector(vector<float>& ,const QVector<QPoint>&,QPoint,int  );
     float getState(vector<float>& );
     float getDiff(vector<float>& );
 };
@@ -50,7 +51,7 @@ public:
     QVector<QPoint> QPT_origin, QPT;
     float x0,y0,s,gap;
     QVector<sector> SR;
-    vector<vector<float>> dist2;
+
 
     void reform();
     layer_koh(vector<float>& inp_m,int N_m);

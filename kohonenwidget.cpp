@@ -291,6 +291,8 @@ void KohonenWidget::refresh( vector<float> inp)
     int ind;
     featureInp=inp;
 
+//    qDebug()<<"hello";
+
     LK->refresh(inp, ind);
     for(int i=0;i<3;i++)
         angles_out[i]=LK->SR[ind].w_mot[i];
@@ -298,7 +300,7 @@ void KohonenWidget::refresh( vector<float> inp)
         angles_out[2]=60;
     else if(angles_out[2]<0)
         angles_out[2]=0;
-    qDebug()<<"hey";
+
 
 
     static int cnt=0;
@@ -397,7 +399,7 @@ void KohonenWidget::changeGesture()
 
 void KohonenWidget::closeEvent (QCloseEvent *event)
 {
-    //   qDebug()<<"hello";
+
 }
 void KohonenWidget::drawingInit(QwtPlot* d_plot)
 {

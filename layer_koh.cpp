@@ -1,6 +1,10 @@
+//dont forget rst
 #include "layer_koh.h"
 #include "headers.h"
 using namespace std;
+int ind_cen;
+vector<vector<float>> dist2;
+
 //#define TOROID
 //vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
@@ -26,17 +30,17 @@ void sector::rst()
 {
     float range=500;
     float accum=100000000000;
-    while(accum>(range*range/4))
-    {
-        accum=0;
-        for(int i=0;i<size_in;i++)
-        {
-            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+//        while(accum>(range*range/4))
+//        {
+//            accum=0;
+//            for(int i=0;i<size_in;i++)
+//            {
+//                //        w[i]=((rand()%10)/10.-0.5)*1;//2000
 
-            w[i]=((rand()%1000)/1000.)*range-range/2;
-            accum+=w[i]*w[i];
-        }        
-    }
+//                w[i]=((rand()%1000)/1000.)*range-range/2;
+//                accum+=w[i]*w[i];
+//            }
+//        }
 
     accum=100000000000;
     while(accum>(range*range/4))
@@ -44,22 +48,32 @@ void sector::rst()
         accum=0;
         for(int i=0;i<size_out;i++)
         {
-            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
 
             w_mot[i]=((rand()%1000)/1000.)*range-range/2;
             accum+=w_mot[i]*w_mot[i];
         }
     }
+
+
+//    qDebug()<<ind_cen;
+    float gauss;
+    for(int i=0;i<size_in;i++)
+    {
+        gauss=(rand()%10+rand()%10+rand()%10+rand()%10+rand()%10-25);
+        w[i]=gauss*exp(-dist2[ind_cen][ind]/1200000);
+//        qDebug()<<dist2[ind_cen][ind];
+    }
 }
 
-sector::sector(vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
+sector::sector(vector<float>& inp, const QVector<QPoint> &QPT, QPoint c, int _ind):
     QPolygon(QPT),centre(c)
 {
+    ind=_ind;
     size_out=3;
     size_in=inp.size();
     w=new float[size_in];
     w_mot=new float[size_out];
-    rst();
+    //    rst();
 }
 
 
@@ -113,7 +127,26 @@ void layer_koh::rst()
 
 layer_koh::layer_koh(vector<float>& inp_m,int N_m)
 {
+    Nx=N_m/3;
+    width=(300+gap)*Nx;
+    Ny=N_m;
+    height=(86+gap*.36)*Ny;
+    N=Nx*Ny;
 
+    for(int k1=0;k1<Ny;k1++)
+    {
+        for(int i1=0;i1<Nx;i1++)
+        {
+            int i=(i1)%Nx;
+            int k=(k1)%Ny;
+
+            if(i1==(Nx/2-1))
+                if(k1==(Ny/2))
+                    ind_cen=k1*Nx+i1;
+        }
+    }
+
+  qDebug()<<"still works";
     t=0;
     t_mot=0;
     s=0.7;
@@ -123,26 +156,29 @@ layer_koh::layer_koh(vector<float>& inp_m,int N_m)
     is=0;
     ks=0;
 
-    Nx=N_m/3;
-    width=(300+gap)*Nx;
-    Ny=N_m;
-    height=(86+gap*.36)*Ny;
-    N=Nx*Ny;
+
+
+
+
+
+
+    dist2.resize(N);
+    for(int i=0;i<N;i++)
+        dist2[i].resize(N);
+
 
     state=new float*[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         state[i]=&SR[i].state;
 
-//    out_s=3;
+    //    out_s=3;
     inp_s=inp_m.size();
     w=new float**[inp_m.size()];
     for(int i=0;i<inp_m.size();i++)
         w[i]=new float*[N];
 
     SR.reserve(N);
-    dist2.resize(N);
-    for(int i=0;i<N;i++)
-        dist2[i].resize(N);
+
 
     x0=400;y0=100;
     QPT_origin.push_back(QPoint(-100,0));
@@ -163,19 +199,23 @@ layer_koh::layer_koh(vector<float>& inp_m,int N_m)
             SHIFT=QPoint((300+gap)*i+x0-(150+gap/2)*(k%2),y0+(86+gap*.36)*k);
             for(int j=0;j<QPT_origin.size();j++)
                 QPT[j]=QPT_origin[j]*s+SHIFT;
-            SR[k1*Nx+i1]=(sector(inp_m,QPT,SHIFT));
+            SR[k1*Nx+i1]=(sector(inp_m,QPT,SHIFT,k1*Nx+i1));
+
+
             //            SR.
         }
     }
 
+
+
     //my fit
     ///////
-//    for(int i=0;i<N/2;i++)
-//    {
-//        SR[i].clr[0]=255;
-//        SR[i].clr[1]=0;
-//        SR[i].clr[2]=0;
-//    }
+    //    for(int i=0;i<N/2;i++)
+    //    {
+    //        SR[i].clr[0]=255;
+    //        SR[i].clr[1]=0;
+    //        SR[i].clr[2]=0;
+    //    }
 
 
     for(int i=(0);i<N;i++)
@@ -189,6 +229,16 @@ layer_koh::layer_koh(vector<float>& inp_m,int N_m)
     out=new float*[N];
     for(int i=0;i<N;i++)
         out[i]=&SR[i].diff;
+
+
+
+//    for(int i=0;i<N;i++)
+//        for(int j=0;j<N;j++)
+//        {
+//            qDebug()<<i;
+
+//            dist2[i][j];
+//        }
 
 
     for(int i=0;i<N;i++)
@@ -210,9 +260,13 @@ layer_koh::layer_koh(vector<float>& inp_m,int N_m)
 #endif
         }
 
+    for(int i=0;i<N;i++)
+        SR[i].rst();
+
     for(int i=0;i<inp_m.size();i++)
         for(int j=0;j<N;j++)
             w[i][j]=&SR[j].w[i];
+
 }
 
 void layer_koh::reform()
@@ -280,20 +334,20 @@ void layer_koh::learnW(const vector<float>& inp,float rad)
 
     ind=indOfMin(inp);
     float exp_val=exp(-0.0005*t);
-    float speed_exp=exp(-0.00006*t);
-        for(int i=0;i<N;i++)
-        {
-            h1=dist2[i][ind];
+    float speed_exp=exp(-0.0004*t);
+    for(int i=0;i<N;i++)
+    {
+        h1=dist2[i][ind];
 
-            //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
-            float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
-            //////////////////////////////2400000
-            for(int j=0;j<SR[i].size_in;j++)
-            {
-                SR[i].w[j]+=speed_k*speed_exp*h_func*
-                        (inp[j]-SR[i].w[j]);
-            }
+        //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+        float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
+        /////////////////////////////2400000
+        for(int j=0;j<SR[i].size_in;j++)
+        {
+            SR[i].w[j]+=speed_k*speed_exp*h_func*
+                    (inp[j]-SR[i].w[j]);
         }
+    }
 }
 
 void layer_koh::learnW_mot( vector<float>& inp,  vector<int>& out,float rad)
@@ -306,19 +360,19 @@ void layer_koh::learnW_mot( vector<float>& inp,  vector<int>& out,float rad)
     ind=indOfMin(inp);
     float exp_val=exp(-0.0005*t_mot);
     float speed_exp=exp(-0.00006*t);
-        for(int i=0;i<N;i++)
-        {
-            h1=dist2[i][ind];
+    for(int i=0;i<N;i++)
+    {
+        h1=dist2[i][ind];
 
-            //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
-            float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
-            //////////////////////////////2400000
-            for(int j=0;j<SR[i].size_out;j++)
-            {
-                SR[i].w_mot[j]+=speed_k*speed_exp*h_func*
-                        (out[j]-SR[i].w_mot[j]);
-            }
+        //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
+        float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
+        //////////////////////////////2400000
+        for(int j=0;j<SR[i].size_out;j++)
+        {
+            SR[i].w_mot[j]+=speed_k*speed_exp*h_func*
+                    (out[j]-SR[i].w_mot[j]);
         }
+    }
 }
 
 float** layer_koh::refresh(vector<float>& inp, int& _ind)

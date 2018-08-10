@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     MainWindow SignalMW;
     SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
-    KohonenMW.resize(QSize(590,570));
+    KohonenMW.resize(QSize(590,610));
 //    qDebug()<< SignalMW.featureOut;
     KohonenWidget KW(SignalMW.featureOut);
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     QObject::connect(KW.L_E_shift1,SIGNAL(editingFinished()),&KW,SLOT(SHIFT()));
     QObject::connect(KW.L_E_shift2,SIGNAL(editingFinished()),&KW,SLOT(SHIFT()));
     QObject::connect(KW.gestureB,SIGNAL(released()),&KW,SLOT(changeGesture()));
-    QObject::connect(KW.reconB,SIGNAL(released()),&KW,SLOT(recon()));
+//    QObject::connect(KW.reconB,SIGNAL(released()),&KW,SLOT(recon()));
     QObject::connect(&space,SIGNAL(sendAngles(vector<int>)),&KW,SLOT(getAngles(vector<int>)));
 //    QObject::connect();
 
