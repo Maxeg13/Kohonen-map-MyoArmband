@@ -12,6 +12,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void wheelEvent(QWheelEvent *e);
+    void paintEvent(QPaintEvent *e);
 signals:
     void sendAngles(vector<int>);
 public slots:
