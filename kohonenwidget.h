@@ -9,9 +9,9 @@ class KohonenWidget : public QWidget
 {
     Q_OBJECT
 public:
-    vector< vector <int>> angles_m;
-    vector<int> angles, angles_out;
-
+    vector< vector <float>> angles_m;
+    vector<float>  angles_out;
+    vector<float> angles;
 
     float scale;
     bool saving_on;
@@ -43,7 +43,7 @@ signals:
     corSignal();
     sign_close();
 public slots:
-    void getAngles(vector<int> _angles);
+    void getAngles(vector<float> _angles);
     void sendUDP();
     void SHIFT();
     void changeGesture();

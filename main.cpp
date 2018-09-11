@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     QObject::connect(KW.L_E_shift2,SIGNAL(editingFinished()),&KW,SLOT(SHIFT()));
     QObject::connect(KW.gestureB,SIGNAL(released()),&KW,SLOT(changeGesture()));
 //    QObject::connect(KW.reconB,SIGNAL(released()),&KW,SLOT(recon()));
-    QObject::connect(&space,SIGNAL(sendAngles(vector<int>)),&KW,SLOT(getAngles(vector<int>)));
+    QObject::connect(&space,SIGNAL(sendAngles(vector<float>)),&KW,SLOT(getAngles(vector<float>)));
 //    QObject::connect();
 
     KohonenMW.setWindowTitle("Kohonen hex-top Map");

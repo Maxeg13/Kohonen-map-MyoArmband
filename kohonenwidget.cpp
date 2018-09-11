@@ -136,14 +136,14 @@ void KohonenWidget::sendUDP()
 
         if(!out_from_map)
         {
-            ar.push_back(prepare_send(degToRad(angles[0])));
-            ar.push_back(prepare_send(degToRad(angles[1])));
-            ar.push_back(prepare_send(degToRad(angles[2])));
+            ar.push_back(prepare_send(/*degToRad*/(3.14-angles[0])));
+            ar.push_back(prepare_send(/*degToRad*/(angles[1])));
+            ar.push_back(prepare_send(/*degToRad*/(angles[2])));
         }else
         {
-            ar.push_back(prepare_send(degToRad(angles_out[0])));
-            ar.push_back(prepare_send(degToRad(angles_out[1])));
-            ar.push_back(prepare_send(degToRad(angles_out[2])));
+            ar.push_back(prepare_send(/*degToRad*/(3.14-angles_out[0])));
+            ar.push_back(prepare_send(/*degToRad*/(angles_out[1])));
+            ar.push_back(prepare_send(/*degToRad*/(angles_out[2])));
         }
         socket->writeDatagram(ar,QHostAddress::LocalHost,49123);
     }
@@ -156,7 +156,7 @@ void KohonenWidget::unsaving()
     //    qDebug()<<data_learn.size();
 }
 
-void KohonenWidget::getAngles(vector<int> _angles)
+void KohonenWidget::getAngles(vector<float> _angles)
 {
     angles=_angles;
 }
@@ -371,13 +371,8 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
             //            STR+=QString::number(gesture_i);
             stream << STR;
         }
-
     }
     file.close();
-
-
-
-
 }
 
 

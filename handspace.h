@@ -14,7 +14,7 @@ public:
     void wheelEvent(QWheelEvent *e);
     void paintEvent(QPaintEvent *e);
 signals:
-    void sendAngles(vector<int>);
+    void sendAngles(vector<float>);
 public slots:
 };
 

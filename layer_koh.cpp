@@ -350,7 +350,7 @@ void layer_koh::learnW(const vector<float>& inp,float rad)
     }
 }
 
-void layer_koh::learnW_mot( vector<float>& inp,  vector<int>& out,float rad)
+void layer_koh::learnW_mot( vector<float>& inp,  vector<float>& out,float rad)
 {
     t_mot++;
     int ind=0;
