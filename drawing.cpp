@@ -16,13 +16,13 @@ myCurve::myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,con
 {
     d_plot=d_plotH;
     setTitle(title);
-    setPen(color,3);
+    setPen(color,2);
 
 
     dataH.resize(bufShowSize);
     for(int i=0;i<dataH.size();i++)
     {
-        dataH[i ]=cos(i/4.);
+        dataH[i ]=0;
     }
 }
 
