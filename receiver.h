@@ -75,7 +75,7 @@ private:
     QPushButton *quitButton;
     QUdpSocket *udpSocket;
     signals:
-    void sig_out(vector<uint8_t>);
+    void sig_out(vector<float>);
 
 };
 

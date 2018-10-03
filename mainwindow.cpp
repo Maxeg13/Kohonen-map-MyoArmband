@@ -417,7 +417,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
         REC=new Receiver();
-        connect(REC,SIGNAL(sig_out(vector<uint8_t>)),this,SLOT(getEMG(vector<uint8_t>)));
+        connect(REC,SIGNAL(sig_out(vector<float>)),this,SLOT(getEMG(vector<float>)));
     }
 
 
@@ -453,20 +453,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-void MainWindow::getEMG(vector<uint8_t> ix)
+void MainWindow::getEMG(vector<float> x)
 {
-    int dim=4;
-    vector<float> x;
 
-    x.resize(dim);
-    for(int i=0;i<dim;i++)
-    {
-        x[i]=getInt(ix,i*4);
-        //        if(i==2)
-        //            x[i]+=15;
-    }
 
-    int s=x.size();
+    int dim=x.size();
     int ii=LE_cor1->text().toInt();
 
 
@@ -778,18 +769,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     delete painter;
 }
 
-int getInt(vector<uint8_t>& xi, int k)
-{
-    static int i=0;
-    static int out=0;
-    out=0;
-    for(i=(3+k);i>(-1+k);i--)
-    {
-        out=(out<<8)+xi[i];
-    }
-    //    qDebug()<<xi[0]<<" "<<xi[1]<<" "<<xi[2]<<" "<<xi[3];
-    return out;
-}
+
 
 void convertFromVec(vector<float>& x,float* y, float scale)
 {

@@ -52,6 +52,18 @@
 #include <QtNetwork>
 #include "receiver.h"
 
+int getInt(vector<uint8_t>& xi, int k)
+{
+    static int i=0;
+    static int out=0;
+    out=0;
+    for(i=(3+k);i>(-1+k);i--)
+    {
+        out=(out<<8)+xi[i];
+    }
+    return out;
+}
+
 uint8_t readVar;
 Receiver::Receiver(QWidget *parent)
     : QWidget(parent)
@@ -113,7 +125,20 @@ void Receiver::processPendingDatagrams()
                 {
                     //                                qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
 //                    qDebug()<<data.size();
-                    emit sig_out(data);
+//                    emit sig_out(data);
+                    int dim=4;
+                    vector<float> x;
+
+                    x.resize(dim);
+                    for(int i=0;i<dim;i++)
+                    {
+                        x[i]=getInt(data,i*4);
+                        //        if(i==2)
+                        //            x[i]+=15;
+                    }
+                    emit sig_out(x);
+                    //to flush utilized data
+
                     data.resize(0);
                     ptr=0;
                 }

@@ -35,7 +35,7 @@ public slots:
     void drawing();
     void getFeature(vector<float>);
     void reconnect(QString);
-    void getEMG(vector<uint8_t>);
+    void getEMG(vector<float>);
     void getCor();
     void buttonClicked(int);
     void buttonReleased(int );
