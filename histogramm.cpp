@@ -87,9 +87,9 @@ void Histogramm::increment(int x, int y)
 
                 a[i][j]*=k;
 
-                if((i==3)||(i==4))
-                    if((j==3)||(j==4))
-                        a[i][j]=0;
+//                if((i==3)||(i==4))
+//                    if((j==3)||(j==4))
+//                        a[i][j]=0;
 
                 b[ind]=a[i][j]/270.;
                 ind++;
