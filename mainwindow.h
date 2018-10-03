@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     Histogramm hist1, hist2;
-    Receiver* REC;
+    EMG_UDP_Receiver* REC;
     QwtPlot *d_plot[8];
 
     vector<float> featureOut, featurePreOut;

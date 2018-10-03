@@ -65,13 +65,9 @@ int getInt(vector<uint8_t>& xi, int k)
 }
 
 uint8_t readVar;
-Receiver::Receiver(QWidget *parent)
+EMG_UDP_Receiver::EMG_UDP_Receiver(QWidget *parent)
     : QWidget(parent)
 {
-    statusLabel = new QLabel(tr("Listening for broadcasted messages"));
-    statusLabel->setWordWrap(true);
-
-    quitButton = new QPushButton(tr("&Quit"));
 
     //! [0]
     udpSocket = new QUdpSocket(this);
@@ -81,23 +77,10 @@ Receiver::Receiver(QWidget *parent)
     //! [1]
     connect(udpSocket, SIGNAL(readyRead()),
             this, SLOT(processPendingDatagrams()));
-    //! [1]
-    connect(quitButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->addStretch(1);
-    buttonLayout->addWidget(quitButton);
-    buttonLayout->addStretch(1);
-
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(statusLabel);
-    mainLayout->addLayout(buttonLayout);
-    setLayout(mainLayout);
-
-    setWindowTitle(tr("Broadcast Receiver"));
 }
 
-void Receiver::processPendingDatagrams()
+void EMG_UDP_Receiver::processPendingDatagrams()
 {
     static int ptr=0;
     static uint8_t key=255;

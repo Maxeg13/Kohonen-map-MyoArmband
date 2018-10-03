@@ -416,7 +416,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 new myCurve(bufShowSize,featureEMG[i_pl][1],d_plot[i_pl],"bipolar feature1",Qt::red,Qt::black,ind_c[i_pl]);
 
 
-        REC=new Receiver();
+        REC=new EMG_UDP_Receiver();
         connect(REC,SIGNAL(sig_out(vector<float>)),this,SLOT(getEMG(vector<float>)));
     }
 
