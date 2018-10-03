@@ -6,7 +6,7 @@
 #include "QKeyEvent"
 //#include "kohonenwidget.h"
 #include "headers.h"
-#include "receiver.h"
+#include "emg_udp_receiver.h"
 
 using namespace std;
 

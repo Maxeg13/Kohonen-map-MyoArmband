@@ -50,7 +50,7 @@
 
 #include <QtWidgets>
 #include <QtNetwork>
-#include "receiver.h"
+#include "emg_udp_receiver.h"
 
 int getInt(vector<uint8_t>& xi, int k)
 {

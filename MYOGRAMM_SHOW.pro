@@ -47,8 +47,8 @@ SOURCES += main.cpp\
     layer.cpp \
     perceptron.cpp \
     serial.cpp \
-    receiver.cpp \
-    histogramm.cpp
+    histogramm.cpp \
+    emg_udp_receiver.cpp
 #    stand_dev.cpp
 
 HEADERS  += \
@@ -74,8 +74,8 @@ HEADERS  += \
     stand_dev.h \
     stdafx.h \
     targetver.h \
-    receiver.h \
-    histogramm.h
+    histogramm.h \
+    emg_udp_receiver.h
 #QMAKE_CLEAN +="$$OUT_PWD/MYOGRAMM_SHOW.EXE"
 #FORMS    += mainwindow.ui
 

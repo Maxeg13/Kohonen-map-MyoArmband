@@ -48,8 +48,8 @@
 **
 ****************************************************************************/
 
-#ifndef RECEIVER_H
-#define RECEIVER_H
+#ifndef EMG_UDP_RECEIVER_H
+#define EMG_UDP_RECEIVER_H
 
 #include <QWidget>
 using namespace std;
