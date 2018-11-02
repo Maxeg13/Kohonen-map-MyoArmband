@@ -332,7 +332,7 @@ standartDevMyo STDM[8];
 lowPassFrMyo LPFM[16];
 
 standartDev STD[2];
-frBuHp2 FBH[2];
+frBuHp2 FBH[8];
 //bandPassFr BPF[2];
 matchedFr MF[4];
 lowPassFr LPF[8];
@@ -347,7 +347,7 @@ void getFeaturesMyo(std::vector<float> x, std::vector<float>& y)
 {
 //    y=x;
     for(int i=0;i<x.size();i++)
-        y[i]=LPFM[i](.02*STDM[i](x[i]));
+        y[i]=LPFM[i](.02*STDM[i](FBH[i](x[i])));
     for(int i=0;i<x.size();i++)
         y[i+x.size()]=30000*LPF2[i](HAAR1[i](x[i]));
 

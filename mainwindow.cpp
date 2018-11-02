@@ -1,3 +1,5 @@
+//8642
+//7531
 #include "mainwindow.h"
 #include "headers.h"
 #include "stand_dev.h"
@@ -20,6 +22,7 @@ using namespace std;
 
 int axisScale=1000;
 int bufShowSize=300;
+int  y_scale=700;
 
 myCurve *curveTest[8], *curveFeature1[8], *curveFeature2[8];
 
@@ -36,7 +39,7 @@ Receiver* REC;
 vector < vector<float>> dataEMG;
 vector < vector < vector<float>>> featureEMG;
 int ind_c[8];
-int dim_in=8,dim_out=8;
+int dim_in=4,dim_out=4;
 
 int getInt(vector<uint8_t>& xi, int k);
 
@@ -94,7 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl]);
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-400,400);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-y_scale,y_scale);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         //        d_plot[i_pl]->setAxisScaleDiv(QwtPlot::xBottom,QwtScaleDiv::NoTick);
         //        d_plot[i_pl]->setAxisScaleDiv(1,QwtScaleDiv(-10000,10000));
