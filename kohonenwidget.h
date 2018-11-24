@@ -32,19 +32,21 @@ public:
     QTimer *timer;
     vector< vector<float>> data_learn;
     vector<int> gesture_v;
-    KohonenWidget( vector<float>,QWidget *parent = 0);
+    KohonenWidget( int ,QWidget *parent = 0);
 //    ~KohonenWidget();
 
     void drawingInit(QwtPlot* d_plot);
     void closeEvent (QCloseEvent *event);
     void mousePressEvent(QMouseEvent *);
 signals:
+    sendAngles(vector<float>);
     pushStringS(QString);
     corSignal();
     sign_close();
 public slots:
     void getAngles(vector<float> _angles);
-    void sendUDP();
+
+//    void sendUDP();
     void SHIFT();
     void changeGesture();
     void learning();

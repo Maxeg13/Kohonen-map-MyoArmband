@@ -28,7 +28,7 @@ sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 
 void sector::rst()
 {
-    float range=500;
+    float range=200;
     float accum=100000000000;
 //        while(accum>(range*range/4))
 //        {
@@ -43,8 +43,8 @@ void sector::rst()
 //        }
 
     accum=100000000000;
-    while(accum>(range*range/4))
-    {
+//    while(accum>(range*range/4))
+//    {
         accum=0;
         for(int i=0;i<size_out;i++)
         {
@@ -52,7 +52,7 @@ void sector::rst()
             w_mot[i]=((rand()%1000)/1000.)*range-range/2;
             accum+=w_mot[i]*w_mot[i];
         }
-    }
+//    }
 
 
 //    qDebug()<<ind_cen;
@@ -61,7 +61,7 @@ void sector::rst()
     {
 //        gauss=(rand()%10+rand()%10+rand()%10+rand()%10+rand()%10-25);
 //        w[i]=gauss*exp(-dist2[ind_cen][ind]/120000000);
-        w[i]=rand()%1000-500;
+        w[i]=((rand()%1000)/1000.)*range-range/2;
 
     }
 }
@@ -264,6 +264,7 @@ layer_koh::layer_koh(vector<float>& inp_m,int N_m)
     for(int i=0;i<N;i++)
         SR[i].rst();
 
+    //////////warning
     for(int i=0;i<inp_m.size();i++)
         for(int j=0;j<N;j++)
             w[i][j]=&SR[j].w[i];
@@ -334,8 +335,8 @@ void layer_koh::learnW(const vector<float>& inp,float rad)
     speed_k=0.0016;//0.0016
 
     ind=indOfMin(inp);
-    float exp_val=exp(-0.0005*t);
-    float speed_exp=exp(-0.0004*t);
+    float exp_val=exp(-0.0004*t);
+    float speed_exp=exp(-0.00007*t);
     for(int i=0;i<N;i++)
     {
         h1=dist2[i][ind];
@@ -359,8 +360,8 @@ void layer_koh::learnW_mot( vector<float>& inp,  vector<float>& out,float rad)
     speed_k=0.0016;
 
     ind=indOfMin(inp);
-    float exp_val=exp(-0.0005*t_mot);
-    float speed_exp=exp(-0.00006*t);
+    float exp_val=exp(-0.0004*t_mot);
+    float speed_exp=/*exp(-0.00006*t)*/1;
     for(int i=0;i<N;i++)
     {
         h1=dist2[i][ind];

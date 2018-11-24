@@ -7,6 +7,7 @@
 #include <QFile>
 #include <stdio.h>
 
+extern bool first_half;
 float rad=3.;//3
 bool rst_k=0;
 int rst_cnt=0;
@@ -17,7 +18,7 @@ vector<int> b_ind;
 int gesture_i=0;
 int ind=0;
 bool out_from_map=0;
-QUdpSocket* socket;
+//QUdpSocket* socket;
 
 float degToRad(float x)
 {
@@ -39,11 +40,11 @@ void norm( vector<float>& x)
 }
 
 
-KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
+KohonenWidget::KohonenWidget( int dim,QWidget *parent):QWidget(parent)
 {/*cout<<1;*/
     angles_out.resize(3);
     angles.resize(3);
-    socket=new QUdpSocket(this);
+//    socket=new QUdpSocket(this);
     QTimer* timer_UDP;
     timer_UDP=new QTimer(this);
     scale=0.2;
@@ -57,8 +58,8 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     int ii2=150*1;
     //    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     //    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
-    set_plot->setAxisTitle(QwtPlot::yLeft,"RMS1");
-    set_plot->setAxisTitle(QwtPlot::xBottom,"RMS2");
+    set_plot->setAxisTitle(QwtPlot::yLeft,"-Y");
+    set_plot->setAxisTitle(QwtPlot::xBottom,"X");
     //    set_plot->set
     set_plot->show();
     drawingInit(set_plot);
@@ -74,7 +75,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     set_curve->setSymbol( plot_symbol );
 
     saving_on=0;
-    dimension=inp.size();
+    dimension=dim;
     L_E=new QLineEdit("COM5");
     L_E_rad=new QLineEdit("rad: 3");
     L_E_ind1=new QLineEdit("0");
@@ -102,8 +103,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
 
     timer_UDP=new QTimer(this);
     timer_UDP->start(18);
-    socket=new QUdpSocket(this);
-    connect(timer_UDP,SIGNAL(timeout()),this,SLOT(sendUDP()));
+//    connect(timer_UDP,SIGNAL(timeout()),this,SLOT(sendUDP()));
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(drawing()));
@@ -121,33 +121,33 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     update();
 }
 
-void KohonenWidget::sendUDP()
-{
-    //    if(angles.size())
-    {
-        static int cnt;
-        cnt+=30;
-        //    qDebug()<<cnt;
-        QByteArray ar;
-        //////////________TEST
-        //    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
-        //    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
-        //    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
+//void KohonenWidget::sendUDP()
+//{
+//    //    if(angles.size())
+//    {
+//        static int cnt;
+//        cnt+=30;
+//        //    qDebug()<<cnt;
+//        QByteArray ar;
+//        //////////________TEST
+//        //    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
+//        //    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
+//        //    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
 
-        if(!out_from_map)
-        {
-            ar.push_back(prepare_send(/*degToRad*/(3.14-angles[0])));
-            ar.push_back(prepare_send(/*degToRad*/(angles[1])));
-            ar.push_back(prepare_send(/*degToRad*/(angles[2])));
-        }else
-        {
-            ar.push_back(prepare_send(/*degToRad*/(3.14-angles_out[0])));
-            ar.push_back(prepare_send(/*degToRad*/(angles_out[1])));
-            ar.push_back(prepare_send(/*degToRad*/(angles_out[2])));
-        }
-        socket->writeDatagram(ar,QHostAddress::LocalHost,49123);
-    }
-}
+//        if(!out_from_map)
+//        {
+//            ar.push_back(prepare_send(/*degToRad*/(3.14-angles[0])));
+//            ar.push_back(prepare_send(/*degToRad*/(angles[1])));
+//            ar.push_back(prepare_send(/*degToRad*/(angles[2])));
+//        }else
+//        {
+//            ar.push_back(prepare_send(/*degToRad*/(3.14-angles_out[0])));
+//            ar.push_back(prepare_send(/*degToRad*/(angles_out[1])));
+//            ar.push_back(prepare_send(/*degToRad*/(angles_out[2])));
+//        }
+//        socket->writeDatagram(ar,QHostAddress::LocalHost,49123);
+//    }
+//}
 
 void KohonenWidget::unsaving()
 {
@@ -244,17 +244,19 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
 
     if(rst_k && !saving_on)
     {
+        first_half=0;
         rst_cnt++;
         for(int i=0;i<100;i++)
             LK->learnW(data_learn[rand()%data_learn.size()],rad);
     }
     if(rst_cnt==100)
     {
-        for(int i=0;i<10000;i++)
+        qDebug()<<"hello";
+        for(int i=0;i<100000;i++)
         {
             int ind=rand()%data_learn.size();
             LK->learnW_mot(data_learn[ind],angles_m[ind],rad);
-            out_from_map=1;
+//            out_from_map=1;
         }
     }
 
@@ -301,6 +303,8 @@ void KohonenWidget::refresh( vector<float> inp)
     else if(angles_out[2]<0)
         angles_out[2]=0;
 
+
+    emit sendAngles(angles_out);
 
 
     static int cnt=0;

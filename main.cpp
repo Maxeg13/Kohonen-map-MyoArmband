@@ -15,12 +15,12 @@ int main(int argc, char *argv[])
 
     HandSpace space;
     space.show();
-    MainWindow SignalMW;
-    SignalMW.resize(QSize(600,300));
+//    MainWindow SignalMW;
+//    SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
     KohonenMW.resize(QSize(590,610));
 //    qDebug()<< SignalMW.featureOut;
-    KohonenWidget KW(SignalMW.featureOut);
+    KohonenWidget KW(2);
 
 
 
@@ -45,26 +45,30 @@ int main(int argc, char *argv[])
     GL->addWidget(KW.gestureB,4,3);
     //    L_E.setText("COM6");
 
-    QObject::connect(&SignalMW,SIGNAL(sign_close()),&a,SLOT(closeAllWindows()));
+//    QObject::connect(&SignalMW,SIGNAL(sign_close()),&a,SLOT(closeAllWindows()));
     KohonenMW.setCentralWidget(centralWidget1);
-    QObject::connect(&SignalMW,SIGNAL(featureOutSignal( vector<float>)),&KW,SLOT(refresh( vector<float>)));
+    ///////////////////////////////
+    QObject::connect(&space,SIGNAL(sendCoords(vector<float>)),&KW,SLOT(refresh( vector<float>)));
+    QObject::connect(&space,SIGNAL(sendAngles(vector<float>)),&KW,SLOT(getAngles(vector<float>)));
+    QObject::connect(&KW,SIGNAL(sendAngles(vector<float>)),&space,SLOT(getAngles(vector<float>)));
+
 //    QObject::connect(&KW.learnB1,SIGNAL(released()),&KW,SLOT(learning_1()));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));
-    QObject::connect(&KW,SIGNAL(pushStringS(QString)),&SignalMW,SLOT(reconnect(QString)));
-    QObject::connect(&KW,SIGNAL(corSignal()),&SignalMW,SLOT(getCor()));
-    QObject::connect(KW.connectB,SIGNAL(released()),&SignalMW,SLOT(connectMyo()));
+//    QObject::connect(&KW,SIGNAL(pushStringS(QString)),&SignalMW,SLOT(reconnect(QString)));
+//    QObject::connect(&KW,SIGNAL(corSignal()),&SignalMW,SLOT(getCor()));
+//    QObject::connect(KW.connectB,SIGNAL(released()),&SignalMW,SLOT(connectMyo()));
     QObject::connect(KW.L_E_shift1,SIGNAL(editingFinished()),&KW,SLOT(SHIFT()));
     QObject::connect(KW.L_E_shift2,SIGNAL(editingFinished()),&KW,SLOT(SHIFT()));
     QObject::connect(KW.gestureB,SIGNAL(released()),&KW,SLOT(changeGesture()));
 //    QObject::connect(KW.reconB,SIGNAL(released()),&KW,SLOT(recon()));
-    QObject::connect(&space,SIGNAL(sendAngles(vector<float>)),&KW,SLOT(getAngles(vector<float>)));
+
 //    QObject::connect();
 
     KohonenMW.setWindowTitle("Kohonen hex-top Map");
-    SignalMW.setWindowTitle("Myographic signals");
+//    SignalMW.setWindowTitle("Myographic signals");
 
     KohonenMW.show();
-    SignalMW.show();
+//    SignalMW.show();
     //    w.kohonenWidget->show();
      a.exec();
 //     a.closeAllWindows();

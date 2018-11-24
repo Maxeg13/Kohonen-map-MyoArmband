@@ -2,11 +2,16 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <Qpainter>
+
 using namespace std;
 bool pressed;
+bool first_half=1;
+
+
 float wheel_angle;
 vector<vector<vector<float>>> angles;
-vector<float> angles_s;
+vector<float> angles_s, coords_s, coords_s_4_send;//s-sample?
+
 float lk=3;
 int l0=46*lk, l1=42*lk, l2=10*lk;
 int xx0=(l0+l1+l2)*1.1;
@@ -24,6 +29,8 @@ void coords(int& x, int& y, float a, float b)
 
 HandSpace::HandSpace(QWidget *parent) : QWidget(parent)
 {
+
+
     angles.resize((int)(2.1*(l0+l1)));
     for(int i=0;i<((int)(2.1*(l0+l1)));i++)
         angles[i].resize((int)(2.1*(l0+l1)));
@@ -33,6 +40,8 @@ HandSpace::HandSpace(QWidget *parent) : QWidget(parent)
             angles[i][j].resize(2);
 
     angles_s.resize(3);
+    coords_s.resize(2);
+    coords_s_4_send.resize(2);
 
     int x, y;
     for(float a=0;a<3.14;a+=0.001)
@@ -48,44 +57,74 @@ HandSpace::HandSpace(QWidget *parent) : QWidget(parent)
                 angles[x+l0+l1][y+l0+l1][1]=b;
             }
         }
+    timer2= new QTimer();
+    timer2->setInterval(42);
+    timer2->start();
+    connect(timer2,SIGNAL(timeout()),this,SLOT(myTimerEvent()));
+}
+
+void HandSpace::getAngles(vector<float> a)
+{
+    if(!first_half)
+        angles_s=a;
+}
+
+void HandSpace::myTimerEvent()
+{
+    emit sendAngles(angles_s);
+    emit sendCoords(coords_s_4_send);
+    update();
 
 }
 
-
 void HandSpace::mousePressEvent(QMouseEvent *e)
 {
-    pressed=1;
     QPointF p=(e->pos())-QPointF(xx0,yy0);
+
+    pressed=1;
+
 
     if((p.x()<(l0+l1))&&(p.y()<(l0+l1)))
         if((p.x()>-(l0+l1))&&(p.y()>-(l0+l1)))
             if(angles[p.x()+l0+l1][p.y()+l0+l1][0]&&angles[p.x()+l0+l1][p.y()+l0+l1][1])
             {
-                angles_s=angles[p.x()+l0+l1][p.y()+l0+l1];
-                angles_s.push_back(wheel_angle);
+                if(first_half)
+                {
+                    angles_s=angles[p.x()+l0+l1][p.y()+l0+l1];
+                    angles_s.push_back(wheel_angle);
+                }
             }
     //    qDebug()<<angles_s[0];
-    emit sendAngles(angles_s);
-    update();
+
+    coords_s_4_send[0]=p.x();
+    coords_s_4_send[1]=p.y();
 }
 
 void HandSpace::mouseMoveEvent(QMouseEvent *e)
 {
+
     if(pressed)
     {
         QPointF p=(e->pos())-QPointF(xx0,yy0);
+
 
         if((p.x()<(l0+l1))&&(p.y()<(l0+l1)))
             if((p.x()>-(l0+l1))&&(p.y()>-(l0+l1)))
                 if(angles[p.x()+(l0+l1)][p.y()+(l0+l1)][0]&&angles[p.x()+(l0+l1)][p.y()+(l0+l1)][1])
                 {
-                    angles_s=angles[p.x()+l0+l1][p.y()+l0+l1];
-                    angles_s.push_back(wheel_angle);
+                    if(first_half)
+                    {
+                        angles_s=angles[p.x()+l0+l1][p.y()+l0+l1];
+                        angles_s.push_back(wheel_angle);
+                    }
+                    coords_s_4_send[0]=p.x();
+                    coords_s_4_send[1]=p.y();
                 }
-        emit sendAngles(angles_s);
-        update();
-
+        //            update();
     }
+
+    //        emit sendCoords(coords_s_4_send);
+
 }
 
 void HandSpace::paintEvent(QPaintEvent *e)
@@ -129,11 +168,11 @@ void HandSpace::wheelEvent(QWheelEvent *e)
         wheel_angle=range;
 
     angles_s[2]=(wheel_angle);
-    emit sendAngles(angles_s);
+    //    emit sendAngles(angles_s);
 
 
-        qDebug()<<angles_s[2];
-    update();
+    //    qDebug()<<angles_s[2];
+    //    update();
 }
 
 
