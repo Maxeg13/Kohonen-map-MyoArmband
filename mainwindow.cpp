@@ -129,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timerMyo, SIGNAL(timeout()), this, SLOT(kickMyo()));
     timerMyo->start(2);
     /////////////////
-//    connect(&(collector->qdc),SIGNAL(EMG( vector<float>)),this,SLOT(getEMG( vector<uint8_t>)));
+    //    connect(&(collector->qdc),SIGNAL(EMG( vector<float>)),this,SLOT(getEMG( vector<uint8_t>)));
 
 
     REC=new Receiver();
@@ -142,16 +142,16 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::kickMyo()
 {
 
-//    static int cnt;
-//    cnt++;
-//    qDebug()<<cnt;
-//    QByteArray ar;
-//    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
-//    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
-//    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
-//    //    qDebug()<<b1;
-//    //    srdSocket->writeDatagram(ar,QHostAddress::LocalHost,srdClientPort.toInt());
-//    socket_m->writeDatagram(ar,QHostAddress::LocalHost,49123);
+    //    static int cnt;
+    //    cnt++;
+    //    qDebug()<<cnt;
+    //    QByteArray ar;
+    //    ar.push_back(prepare_send(degToRad(120*((sin(cnt*0.001)+1)/2))));
+    //    ar.push_back(prepare_send(degToRad(160*((sin(cnt*0.001)+1)/2)+20)));
+    //    ar.push_back(prepare_send(degToRad(50*((cos(cnt*0.001)+1)/2))));
+    //    //    qDebug()<<b1;
+    //    //    srdSocket->writeDatagram(ar,QHostAddress::LocalHost,srdClientPort.toInt());
+    //    socket_m->writeDatagram(ar,QHostAddress::LocalHost,49123);
 
     static int presc;
     if(presc==2)
@@ -167,41 +167,45 @@ void MainWindow::kickMyo()
 void MainWindow::getEMG( vector<uint8_t> ix)
 {
 #ifndef SERIAL
-
-    int dim=4;
-    vector<float> x;
-
-    x.resize(dim);
-    for(int i=0;i<dim;i++)
+    static uint8_t cnt=0;
+    cnt++;
+    if(cnt%2==0)
     {
-        x[i]=getInt(ix,i*4);
-        //        if(i==2)
-        //            x[i]+=15;
+        int dim=4;
+        vector<float> x;
+
+        x.resize(dim);
+        for(int i=0;i<dim;i++)
+        {
+            x[i]=getInt(ix,i*4);
+            //        if(i==2)
+            //            x[i]+=15;
+        }
+
+
+
+
+        getFeaturesMyo(x,featurePreOut);
+        for (int i=0;i<dim;i++)
+        {
+            ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
+            dataEMG[i][ind_c[i]]=x[i];
+            featureEMG[i][0][ind_c[i]]=featurePreOut[i];
+            //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
+        }
+        //    myPCA.updateBuf(featurePreOut);
+        //qDebug()<<featureOut.size();
+        //        myPCA.proect(featureOut);
+
+        featureOut=featurePreOut;
+        //    featureOut.resize(9);
+        //    featureOut[8]=20;
+
+        //    for(int i=0;i<4;i++)
+        //    {
+        //        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
+        //    }
     }
-
-
-
-
-    getFeaturesMyo(x,featurePreOut);
-    for (int i=0;i<dim;i++)
-    {
-        ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
-        dataEMG[i][ind_c[i]]=x[i];
-        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
-        //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
-    }
-    //    myPCA.updateBuf(featurePreOut);
-    //qDebug()<<featureOut.size();
-    //        myPCA.proect(featureOut);
-
-    featureOut=featurePreOut;
-    //    featureOut.resize(9);
-    //    featureOut[8]=20;
-
-    //    for(int i=0;i<4;i++)
-    //    {
-    //        featureOut[i]=featurePreOut[i]-featurePreOut[(i+4)];
-    //    }
 #endif
 }
 

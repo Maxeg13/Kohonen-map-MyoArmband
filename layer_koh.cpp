@@ -59,9 +59,10 @@ void sector::rst()
     float gauss;
     for(int i=0;i<size_in;i++)
     {
-        gauss=(rand()%10+rand()%10+rand()%10+rand()%10+rand()%10-25);
-        w[i]=gauss*exp(-dist2[ind_cen][ind]/1200000);
-//        qDebug()<<dist2[ind_cen][ind];
+//        gauss=(rand()%10+rand()%10+rand()%10+rand()%10+rand()%10-25);
+//        w[i]=gauss*exp(-dist2[ind_cen][ind]/120000000);
+        w[i]=rand()%1000-500;
+
     }
 }
 
@@ -330,7 +331,7 @@ void layer_koh::learnW(const vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.0016;
+    speed_k=0.0016;//0.0016
 
     ind=indOfMin(inp);
     float exp_val=exp(-0.0005*t);
