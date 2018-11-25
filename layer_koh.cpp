@@ -28,19 +28,19 @@ sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 
 void sector::rst()
 {
-    float range=200;
+    float range=2;
     float accum=100000000000;
-//        while(accum>(range*range/4))
-//        {
-//            accum=0;
-//            for(int i=0;i<size_in;i++)
-//            {
-//                //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+        while(accum>(range*range/4))
+        {
+            accum=0;
+            for(int i=0;i<size_in;i++)
+            {
+                //        w[i]=((rand()%10)/10.-0.5)*1;//2000
 
-//                w[i]=((rand()%1000)/1000.)*range-range/2;
-//                accum+=w[i]*w[i];
-//            }
-//        }
+                w[i]=((rand()%1000)/1000.)*range-range/2;
+                accum+=w[i]*w[i];
+            }
+        }
 
     accum=100000000000;
 //    while(accum>(range*range/4))
@@ -56,14 +56,14 @@ void sector::rst()
 
 
 //    qDebug()<<ind_cen;
-    float gauss;
-    for(int i=0;i<size_in;i++)
-    {
-//        gauss=(rand()%10+rand()%10+rand()%10+rand()%10+rand()%10-25);
-//        w[i]=gauss*exp(-dist2[ind_cen][ind]/120000000);
-        w[i]=((rand()%1000)/1000.)*range-range/2;
+//    float gauss;
+//    for(int i=0;i<size_in;i++)
+//    {
+////        gauss=(rand()%10+rand()%10+rand()%10+rand()%10+rand()%10-25);
+////        w[i]=gauss*exp(-dist2[ind_cen][ind]/120000000);
+//        w[i]=((rand()%10000)/10000.)*range-range/2;
 
-    }
+//    }
 }
 
 sector::sector(vector<float>& inp, const QVector<QPoint> &QPT, QPoint c, int _ind):

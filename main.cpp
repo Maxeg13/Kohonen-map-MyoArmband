@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     QMainWindow KohonenMW;
     KohonenMW.resize(QSize(590,610));
 //    qDebug()<< SignalMW.featureOut;
-    KohonenWidget KW(2);
+    KohonenWidget KW(3);
 
 
 
@@ -48,9 +48,9 @@ int main(int argc, char *argv[])
 //    QObject::connect(&SignalMW,SIGNAL(sign_close()),&a,SLOT(closeAllWindows()));
     KohonenMW.setCentralWidget(centralWidget1);
     ///////////////////////////////
-    QObject::connect(&space,SIGNAL(sendCoords(vector<float>)),&KW,SLOT(refresh( vector<float>)));
-    QObject::connect(&space,SIGNAL(sendAngles(vector<float>)),&KW,SLOT(getAngles(vector<float>)));
-    QObject::connect(&KW,SIGNAL(sendAngles(vector<float>)),&space,SLOT(getAngles(vector<float>)));
+    QObject::connect(&space,SIGNAL(sendAngles(vector<float>)),&KW,SLOT(refresh( vector<float>)));
+//    QObject::connect(&space,SIGNAL(sendAngles(vector<float>)),&KW,SLOT(getAngles(vector<float>)));
+//    QObject::connect(&KW,SIGNAL(sendAngles(vector<float>)),&space,SLOT(getAngles(vector<float>)));
 
 //    QObject::connect(&KW.learnB1,SIGNAL(released()),&KW,SLOT(learning_1()));
     QObject::connect((KW.L_E),SIGNAL(editingFinished()),&KW,SLOT(pushString()));

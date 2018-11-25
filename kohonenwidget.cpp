@@ -58,8 +58,8 @@ KohonenWidget::KohonenWidget( int dim,QWidget *parent):QWidget(parent)
     int ii2=150*1;
     //    set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     //    set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
-    set_plot->setAxisTitle(QwtPlot::yLeft,"-Y");
-    set_plot->setAxisTitle(QwtPlot::xBottom,"X");
+    set_plot->setAxisTitle(QwtPlot::yLeft,"angle");
+    set_plot->setAxisTitle(QwtPlot::xBottom,"angle");
     //    set_plot->set
     set_plot->show();
     drawingInit(set_plot);
@@ -244,21 +244,21 @@ void KohonenWidget::paintEvent(QPaintEvent *e)
 
     if(rst_k && !saving_on)
     {
-        first_half=0;
+//        first_half=0;
         rst_cnt++;
         for(int i=0;i<100;i++)
             LK->learnW(data_learn[rand()%data_learn.size()],rad);
     }
-    if(rst_cnt==100)
-    {
-        qDebug()<<"hello";
-        for(int i=0;i<100000;i++)
-        {
-            int ind=rand()%data_learn.size();
-            LK->learnW_mot(data_learn[ind],angles_m[ind],rad);
-//            out_from_map=1;
-        }
-    }
+//    if(rst_cnt==100)
+//    {
+//        qDebug()<<"hello";
+//        for(int i=0;i<100000;i++)
+//        {
+//            int ind=rand()%data_learn.size();
+//            LK->learnW_mot(data_learn[ind],angles_m[ind],rad);
+////            out_from_map=1;
+//        }
+//    }
 
 
     LK->reform();
@@ -304,7 +304,7 @@ void KohonenWidget::refresh( vector<float> inp)
         angles_out[2]=0;
 
 
-    emit sendAngles(angles_out);
+//    emit sendAngles(angles_out);
 
 
     static int cnt=0;
