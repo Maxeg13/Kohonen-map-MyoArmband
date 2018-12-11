@@ -32,7 +32,7 @@
 //serial_obj* SO;
 myCurve *setCurve, *emgCurve, *rmsCurve;
 Serial hSerial;
-QLineEdit *LE, *LE_cor1, *LE_cor2, *LE_shift;
+QLineEdit *LE, *cor1_le, *cor2_le, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
 
@@ -88,7 +88,7 @@ int perc_dim;
 int gestures_N=8;//5+...
 int fing_N=5;
 
-int getInt(vector<uint8_t>& xi, int k);
+
 
 void convertFromVec(vector<float>& x,float* y, float scale);
 
@@ -141,7 +141,7 @@ void MainWindow::buttonClicked(int j)
             vector<float>::iterator it;
             it= max_element(sum[i].begin(),sum[i].end());
             maxV[i]=sum[i][distance(sum[i].begin(),it)];
-//            qDebug()<<i<<"   "<<maxV[i];
+            //            qDebug()<<i<<"   "<<maxV[i];
         }
 
         for( int k=0;k<50000;k++)//150000
@@ -150,9 +150,9 @@ void MainWindow::buttonClicked(int j)
             {
 
                 perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i],sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000001));
-//                qDebug()<<sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000000001);
+                //                qDebug()<<sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000000001);
             }
-//            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);
+            //            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);
         }
         break;
     case 10:
@@ -174,9 +174,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
     if(event->text()=="l")
     {
-        for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
-            qDebug()<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor1->text().toInt()][i]<<
-                                                                                                             " "<<((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*dataEMG[LE_cor2->text().toInt()][i];
+        for(int i=0;i<dataEMG[cor1_le->text().toInt()].size();i++)
+            qDebug()<<((dataEMG[cor1_le->text().toInt()][i]>0)?1:(-1))*dataEMG[cor1_le->text().toInt()][i]<<
+                                                                                                             " "<<((dataEMG[cor1_le->text().toInt()][i]>0)?1:(-1))*dataEMG[cor2_le->text().toInt()][i];
     }
     if(event->text()=="t")
     {
@@ -187,15 +187,15 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         e1=0;e2=0;
         ee1=0;ee2=0;
-        for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
+        for(int i=0;i<dataEMG[cor1_le->text().toInt()].size();i++)
         {
-            //            if(dataEMG[LE_cor1->text().toInt()][i]>0)
+            //            if(dataEMG[cor1_le->text().toInt()][i]>0)
             {
-                e1+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
-                e2+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
+                e1+=((dataEMG[cor1_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor1_le->text().toInt()][i]);
+                e2+=((dataEMG[cor1_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor2_le->text().toInt()][i]);
 
-                ee1+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
-                ee2+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
+                ee1+=((dataEMG[cor2_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor1_le->text().toInt()][i]);
+                ee2+=((dataEMG[cor2_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor2_le->text().toInt()][i]);
             }
         }
         if((ee1*ee1+ee2*ee2)>(e1*e1+e2*e2))
@@ -209,15 +209,15 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     {
         e3=0;e4=0;
         ee3=0;ee4=0;
-        for(int i=0;i<dataEMG[LE_cor1->text().toInt()].size();i++)
+        for(int i=0;i<dataEMG[cor1_le->text().toInt()].size();i++)
         {
-            //            if(dataEMG[LE_cor1->text().toInt()][i]>0)
+            //            if(dataEMG[cor1_le->text().toInt()][i]>0)
             {
-                e3+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
-                e4+=((dataEMG[LE_cor1->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
+                e3+=((dataEMG[cor1_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor1_le->text().toInt()][i]);
+                e4+=((dataEMG[cor1_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor2_le->text().toInt()][i]);
 
-                ee3+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor1->text().toInt()][i]);
-                ee4+=((dataEMG[LE_cor2->text().toInt()][i]>0)?1:(-1))*(dataEMG[LE_cor2->text().toInt()][i]);
+                ee3+=((dataEMG[cor2_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor1_le->text().toInt()][i]);
+                ee4+=((dataEMG[cor2_le->text().toInt()][i]>0)?1:(-1))*(dataEMG[cor2_le->text().toInt()][i]);
             }
         }
         if((ee3*ee3+ee4*ee4)>(e3*e3+e4*e4))
@@ -261,10 +261,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ser_on=1;
     hSerial.InitCOM(str.c_str());
 
-    LE_cor1=new QLineEdit;
-    LE_cor1->setText("0");
-    LE_cor2=new QLineEdit;
-    LE_cor2->setText("1");
+    cor1_le=new QLineEdit;
+    cor1_le->setText("6");
+    cor2_le=new QLineEdit;
+    cor2_le->setText("7");
     LE_shift=new QLineEdit;
     LE_shift->setText("0");
 
@@ -333,8 +333,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //    GL->addWidget(slider_x,2+(gestures_N+3)/frame_width,1+(gestures_N+3)%frame_width);
     //    GL->addWidget(slider_y,2+(gestures_N+4)/frame_width,1+(gestures_N+4)%frame_width);
     //    GL->addWidget(LE,2+(gestures_N+5)/frame_width,1+(gestures_N+5)%frame_width);
-    //    GL->addWidget(LE_cor1,2+(gestures_N+6)/frame_width,1+(gestures_N+6)%frame_width);
-    //    GL->addWidget(LE_cor2,2+(gestures_N+7)/frame_width,1+(gestures_N+7)%frame_width);
+    //    GL->addWidget(cor1_le,2+(gestures_N+6)/frame_width,1+(gestures_N+6)%frame_width);
+    //    GL->addWidget(cor2_le,2+(gestures_N+7)/frame_width,1+(gestures_N+7)%frame_width);
     //    GL->addWidget(LE_shift,2+(gestures_N+8)/frame_width,1+(gestures_N+8)%frame_width);
 
     GL->setColumnMinimumWidth(0,400);
@@ -444,8 +444,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     
     drawingInit(set_plot,"EMG set");
-    setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(0,0,0,0),ind_p);
-    setCurve->setPen(QColor(0,0,0,0));
+    setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(255,0,0,255),ind_p);
+    setCurve->setPen(QColor(0,0,0,255));
     QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
                                         QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
     setCurve->setSymbol( symbol2 );
@@ -457,17 +457,18 @@ void MainWindow::getEMG(vector<float> x)
 {
 
 
-    int dim=x.size();
-    int ii=LE_cor1->text().toInt();
+    //    int dim=x.size();
+    int dim=8;
+    int ii3=cor1_le->text().toInt();
 
 
     int state=1;
     preproc(x);
 
-    getFeaturesMyo(x);
+    getFeaturesMyo(x);//stupid name
 
     if(test_on)
-        LTR.proect(x,ii,LE_cor2->text().toInt());
+        LTR.proect(x,ii3,cor2_le->text().toInt());
 
     //zerro-filling
     int thr=65;
@@ -479,6 +480,23 @@ void MainWindow::getEMG(vector<float> x)
     //    getFeaturesKhor(x,featurePreOut, state);
 
     //    if(state)
+    int ii=cor1_le->text().toInt();
+    int ii2=cor2_le->text().toInt();
+    //    int ii=0;
+    ////////////
+//    static int rising[8],bufEMG[8],rising_buf[8];
+//    if((x[ii]-bufEMG[ii])>0)
+//        rising[ii]=1;
+//    else
+//        rising[ii]=0;
+
+//    if((x[ii2]-bufEMG[ii2])>0)
+//        rising[ii2]=1;
+//    else
+//        rising[ii2]=0;
+
+
+//if((((rising_buf[ii]-rising[ii])>0)&&((rising_buf[ii2]-rising[ii2]))>0))
     for (int i=0;i<dim;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
@@ -493,6 +511,11 @@ void MainWindow::getEMG(vector<float> x)
         //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
 
+    //////////
+//    bufEMG[ii]=x[ii];
+//    rising_buf[ii]=rising[ii];
+//    bufEMG[ii2]=x[ii2];
+//    rising_buf[ii2]=rising[ii2];
 
 
     hist1.increment(x[0],x[1]);
@@ -561,13 +584,18 @@ void MainWindow::drawing()
 
     //    QString::
 
-    int ii=LE_cor1->text().toInt();
-    int ii2=LE_cor2->text().toInt();
-    //    int ii=0;
+
+    int ii=cor1_le->text().toInt();
+    int ii2=cor2_le->text().toInt();
+
     if((ii>-1)&(ii<8))
     {
-        setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
+//        if(((rising[ii]>0)||((rising[ii2]))>0))
+            setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
     }
+
+
+
     update();
     emit featureOutSignal(featureOut);
 }

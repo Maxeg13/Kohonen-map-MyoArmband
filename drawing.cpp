@@ -1,9 +1,6 @@
 #include "drawing.h"
 
 
-
-
-
 myCurve::myCurve(int bufShowSize, std::vector<float> &dataH,QwtPlot* d_plotH,const QString &title,
                  const QColor &color, const QColor &colorSymbol,int& ind_ch ):
     data(dataH),ind_c(ind_ch)

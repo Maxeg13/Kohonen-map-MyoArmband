@@ -52,17 +52,7 @@
 #include <QtNetwork>
 #include "emg_udp_receiver.h"
 
-int getInt(vector<uint8_t>& xi, int k)
-{
-    static int i=0;
-    static int out=0;
-    out=0;
-    for(i=(3+k);i>(-1+k);i--)
-    {
-        out=(out<<8)+xi[i];
-    }
-    return out;
-}
+int getInt(vector<uint8_t>& xi, int k);
 
 uint8_t readVar;
 EMG_UDP_Receiver::EMG_UDP_Receiver(QWidget *parent)
@@ -82,9 +72,10 @@ EMG_UDP_Receiver::EMG_UDP_Receiver(QWidget *parent)
 
 void EMG_UDP_Receiver::processPendingDatagrams()
 {
+    int dim=8;
     static int ptr=0;
     static uint8_t key=255;
-    static int S=17;
+    static int S=sizeof(int)*dim+sizeof(uint8_t);
     static vector<byte> data;
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
@@ -109,13 +100,13 @@ void EMG_UDP_Receiver::processPendingDatagrams()
                     //                                qDebug()<<(uint8_t)readVar<<" ptr="<<(int8_t)ptr<<"\n";
 //                    qDebug()<<data.size();
 //                    emit sig_out(data);
-                    int dim=4;
+
                     vector<float> x;
 
                     x.resize(dim);
                     for(int i=0;i<dim;i++)
                     {
-                        x[i]=getInt(data,i*4);
+                        x[i]=getInt(data,i*sizeof(int));//really hard 4
                         //        if(i==2)
                         //            x[i]+=15;
                     }
@@ -136,4 +127,16 @@ void EMG_UDP_Receiver::processPendingDatagrams()
 
     }
 
+}
+
+int getInt(vector<uint8_t>& xi, int k)
+{
+    static int i=0;
+    static int out=0;
+    out=0;
+    for(i=(3+k);i>(-1+k);i--)
+    {
+        out=(out<<8)+xi[i];
+    }
+    return out;
 }
