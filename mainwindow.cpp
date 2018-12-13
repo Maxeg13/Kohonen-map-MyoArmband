@@ -347,11 +347,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     vector<int> constr;
     constr.push_back(hist1.N2+hist2.N2);
-    constr.push_back(10);
+    constr.push_back(5);//10
     //    constr.push_back(8);
-    constr.push_back(fing_N);//output
+//    constr.push_back(fing_N);//output
     perc=new perceptron(constr);
-    perc->lr[1]->two_sub_inLayers=1;
+//    perc->lr[1]->two_sub_inLayers=1;
     //    perc_Y=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
@@ -445,7 +445,7 @@ MainWindow::MainWindow(QWidget *parent) :
     
     drawingInit(set_plot,"EMG set");
     setCurve=new myCurve(bufShowSize, percBuf,set_plot,"perc out", Qt::black, QColor(255,0,0,255),ind_p);
-    setCurve->setPen(QColor(0,0,0,255));
+    setCurve->setPen(QColor(0,0,0,0));
     QwtSymbol* symbol2 = new QwtSymbol( QwtSymbol::Ellipse,
                                         QBrush(QColor(0,0,0)), QPen( Qt::black, 2 ), QSize( 3, 3 ) );
     setCurve->setSymbol( symbol2 );
@@ -472,11 +472,11 @@ void MainWindow::getEMG(vector<float> x)
 
     //zerro-filling
     int thr=65;
-    if(test_on)
-        if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
-        {
-            x[0]=x[1]=0;
-        }
+//    if(test_on)
+//        if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
+//        {
+//            x[0]=x[1]=0;
+//        }
     //    getFeaturesKhor(x,featurePreOut, state);
 
     //    if(state)
@@ -518,9 +518,9 @@ void MainWindow::getEMG(vector<float> x)
 //    rising_buf[ii2]=rising[ii2];
 
 
-    hist1.increment(x[0],x[1]);
+    hist1.increment(x[6],x[7]);
     //    qDebug()<<x[2];
-    hist2.increment(x[2],x[3]);
+    hist2.increment(x[6],x[3]);
     //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
