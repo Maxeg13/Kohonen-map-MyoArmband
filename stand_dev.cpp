@@ -525,7 +525,7 @@ standartDevMyo STDM[8];
 lowPassFrMyo LPFM[16], LPFM2[8];
 buffer BR[8];
 standartDevF STD[8];
-frBuHp2 FBH[8];
+frBuHp2 FBH[16];
 //bandPassFr BPF[2];
 matchedFr MF[4];
 lowPassFr LPF[5];
@@ -543,7 +543,7 @@ void preproc(vector<float>& x)
 {
     for(int i=0;i<2;i++)
     {
-        x[i]=killRange(FBH[i](x[i]),0);
+        x[i]=FBH[i+8](x[i]);
         //        BR[i].push(x[i]);
         //        x[i]=BR[i].x[3];
     }
@@ -602,7 +602,7 @@ void getFeatures_gearbox1(int8_t x, vector<float>& y)
     //    y[2]=LPF[1](WA[0](x));
     //    y[3]=(400*VLPF[0]((killRange(MFV[0](x),30))));
     for(int i=0;i<y.size();i++)
-        y[i]=VLPF[i](y[i]);
+        y[i]=LPF[i](y[i]);
 }
 
 void getFeatures_gearbox2(int8_t x, vector<float>& y)

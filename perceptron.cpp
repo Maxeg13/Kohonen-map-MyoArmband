@@ -78,13 +78,24 @@ void perceptron::learn1(float* x,float* t)
         lr[i]->refreshW();
 }
 
+void perceptron::learnRandom1(vector<float>& x,vector<float>& t, float k)
+{
+    for( i=0;i<lr[0]->size;i++)
+        inp_ptr[i]=x[i]*(1+(rand()%10/10.-0.5)*k);
+
+    for( i=0;i<lr[N-1]->size;i++)
+        tg_ptr[i]=t[i];
+
+    learn1(inp_ptr, tg_ptr);
+}
+
 void perceptron::learn1(vector<float>& x,vector<float>& t, float k)
 {
     for( i=0;i<lr[0]->size;i++)
-        inp_ptr[i]=x[i];
+        inp_ptr[i]=x[i]*k;
 
     for( i=0;i<lr[N-1]->size;i++)
-        tg_ptr[i]=t[i]*k;
+        tg_ptr[i]=t[i];
 
     learn1(inp_ptr, tg_ptr);
 }

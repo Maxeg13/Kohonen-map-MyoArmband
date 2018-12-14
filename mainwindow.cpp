@@ -146,14 +146,17 @@ void MainWindow::buttonClicked(int j)
             //            qDebug()<<i<<"   "<<maxV[i];
         }
 
-        for( int k=0;k<50000;k++)//150000
+
+        for( int k=0;k<70000;k++)//150000
         {
-//            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);//excess-zero-learning
+            static int ind0;
+            ind0=rand()%gestures_N;
+            perc->learn1(data_l_inp[ind0][k%data_l_inp[ind0].size()], data_l_out[0],0.2);//excess-zero-learning
             for(int i=0;i<gestures_N;i++)
             {
 
-                perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i],sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000001));
-                //                qDebug()<<sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000000001);
+                //                perc->learn1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i],sum[i][k%data_l_inp[i].size()]/(maxV[i]+.0000001));
+                perc->learnRandom1(data_l_inp[i][k%data_l_inp[i].size()], data_l_out[i],0.3);
             }
             //            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);
         }
@@ -236,7 +239,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    PCA_btn=new QPushButton("accum PCA buf");
+    PCA_btn=new QPushButton("apply PCA");
 
     qDebug()<<hist1.N;
     perc_dim=hist1.N2;
@@ -474,17 +477,17 @@ void MainWindow::getEMG(vector<float> vv)
 
     int state=1;
 
-//    preproc(x);
+    //    preproc(x);
 
     getFeaturesMyo(x);//stupid name
 
     static int cnt;
 
 
-myPCA.updateBuf(x);
+    myPCA.updateBuf(x);
     if(PCA_on)
     {
-//        qDebug()<<x.size();
+        //        qDebug()<<x.size();
 
         myPCA.proect(x);
     }
@@ -639,10 +642,10 @@ void MainWindow::buttonReleased(int x)
 void MainWindow::getCor()
 {
 
-//    myPCA.centr();
+    //    myPCA.centr();
     myPCA.getCor();
     myPCA.algorithm();
-//    myPCA.sort();
+    //    myPCA.sort();
     PCA_on=1;
 
 }
