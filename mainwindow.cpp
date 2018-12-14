@@ -50,7 +50,8 @@ using namespace std;
 const float hh[]={1,2};
 vector<float> ab(hh,hh+2);
 linearTr LTR=linearTr(ab, ab);
-PCA myPCA(1000,16);
+bool PCA_on=0;
+PCA myPCA(5000,3);
 int axisScale=1000;
 int bufShowSize=700;
 //DataCollector* collector;
@@ -62,6 +63,7 @@ QTimer *timerCOM;
 QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
+QPushButton *PCA_btn;
 
 int gest_ind;
 int resize_on;
@@ -146,6 +148,7 @@ void MainWindow::buttonClicked(int j)
 
         for( int k=0;k<50000;k++)//150000
         {
+//            perc->learn1(data_l_inp[0][k%data_l_inp[0].size()], data_l_out[0]);//excess-zero-learning
             for(int i=0;i<gestures_N;i++)
             {
 
@@ -233,6 +236,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    PCA_btn=new QPushButton("accum PCA buf");
+
     qDebug()<<hist1.N;
     perc_dim=hist1.N2;
 
@@ -326,6 +331,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     }
 
+    connect(PCA_btn,SIGNAL(released()),this,SLOT(getCor()));
+    GL->addWidget(PCA_btn, 2+3,1+ 0);
     //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
@@ -349,9 +356,9 @@ MainWindow::MainWindow(QWidget *parent) :
     constr.push_back(hist1.N2+hist2.N2);
     constr.push_back(5);//10
     //    constr.push_back(8);
-//    constr.push_back(fing_N);//output
+    //    constr.push_back(fing_N);//output
     perc=new perceptron(constr);
-//    perc->lr[1]->two_sub_inLayers=1;
+    //    perc->lr[1]->two_sub_inLayers=1;
     //    perc_Y=new perceptron(constr);
 
     featurePreOut.resize(dim_in);
@@ -453,9 +460,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-void MainWindow::getEMG(vector<float> x)
+void MainWindow::getEMG(vector<float> vv)
 {
-
+    vector<float> x;
+    x.push_back(vv[6]);
+    x.push_back(vv[7]);
+    x.push_back(vv[3]);
 
     //    int dim=x.size();
     int dim=8;
@@ -463,20 +473,34 @@ void MainWindow::getEMG(vector<float> x)
 
 
     int state=1;
-    preproc(x);
+
+//    preproc(x);
 
     getFeaturesMyo(x);//stupid name
+
+    static int cnt;
+
+
+myPCA.updateBuf(x);
+    if(PCA_on)
+    {
+//        qDebug()<<x.size();
+
+        myPCA.proect(x);
+    }
+
+
 
     if(test_on)
         LTR.proect(x,ii3,cor2_le->text().toInt());
 
     //zerro-filling
     int thr=65;
-//    if(test_on)
-//        if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
-//        {
-//            x[0]=x[1]=0;
-//        }
+    //    if(test_on)
+    //        if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
+    //        {
+    //            x[0]=x[1]=0;
+    //        }
     //    getFeaturesKhor(x,featurePreOut, state);
 
     //    if(state)
@@ -484,20 +508,20 @@ void MainWindow::getEMG(vector<float> x)
     int ii2=cor2_le->text().toInt();
     //    int ii=0;
     ////////////
-//    static int rising[8],bufEMG[8],rising_buf[8];
-//    if((x[ii]-bufEMG[ii])>0)
-//        rising[ii]=1;
-//    else
-//        rising[ii]=0;
+    //    static int rising[8],bufEMG[8],rising_buf[8];
+    //    if((x[ii]-bufEMG[ii])>0)
+    //        rising[ii]=1;
+    //    else
+    //        rising[ii]=0;
 
-//    if((x[ii2]-bufEMG[ii2])>0)
-//        rising[ii2]=1;
-//    else
-//        rising[ii2]=0;
+    //    if((x[ii2]-bufEMG[ii2])>0)
+    //        rising[ii2]=1;
+    //    else
+    //        rising[ii2]=0;
 
 
-//if((((rising_buf[ii]-rising[ii])>0)&&((rising_buf[ii2]-rising[ii2]))>0))
-    for (int i=0;i<dim;i++)
+    //if((((rising_buf[ii]-rising[ii])>0)&&((rising_buf[ii2]-rising[ii2]))>0))
+    for (int i=0;i<3;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
@@ -512,15 +536,15 @@ void MainWindow::getEMG(vector<float> x)
     }
 
     //////////
-//    bufEMG[ii]=x[ii];
-//    rising_buf[ii]=rising[ii];
-//    bufEMG[ii2]=x[ii2];
-//    rising_buf[ii2]=rising[ii2];
+    //    bufEMG[ii]=x[ii];
+    //    rising_buf[ii]=rising[ii];
+    //    bufEMG[ii2]=x[ii2];
+    //    rising_buf[ii2]=rising[ii2];
 
 
-    hist1.increment(x[6],x[7]);
+    hist1.increment(x[0],x[1]);
     //    qDebug()<<x[2];
-    hist2.increment(x[6],x[3]);
+    hist2.increment(x[0],x[2]);
     //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
     if(write_on)
@@ -590,8 +614,8 @@ void MainWindow::drawing()
 
     if((ii>-1)&(ii<8))
     {
-//        if(((rising[ii]>0)||((rising[ii2]))>0))
-            setCurve->set_Drawing(dataEMG[ii],dataEMG[ii2],LE_shift->text().toInt(),EMG_scale);
+        //        if(((rising[ii]>0)||((rising[ii2]))>0))
+        setCurve->set_Drawing(dataEMG[0],dataEMG[1],LE_shift->text().toInt(),EMG_scale);
     }
 
 
@@ -614,11 +638,13 @@ void MainWindow::buttonReleased(int x)
 
 void MainWindow::getCor()
 {
-    myPCA.centr();
+
+//    myPCA.centr();
     myPCA.getCor();
     myPCA.algorithm();
-    myPCA.sort();
-    //    myPCA.proect(8,v);
+//    myPCA.sort();
+    PCA_on=1;
+
 }
 
 void MainWindow::getFeature(vector<float> x)

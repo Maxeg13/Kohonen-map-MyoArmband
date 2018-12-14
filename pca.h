@@ -25,6 +25,7 @@ private:
     MatrixXd cor;
     MatrixXd eigvecs, eigvecs_s;
     MatrixXd eigvals;
+	MatrixXd inverseEigens;
     MatrixXd features, featuresOut;
 };
 
