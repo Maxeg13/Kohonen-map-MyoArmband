@@ -12,6 +12,7 @@
 #include "QSignalMapper"
 #include "QSlider"
 #include "QLineEdit"
+#include <QFile>
 //HELLO
 //SERIAL may be defined in mainwindow.h
 
@@ -35,6 +36,10 @@ Serial hSerial;
 QLineEdit *LE, *cor1_le, *cor2_le, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
+
+QTextStream* out;
+QFile* gest_file;
+bool saving_is;
 
 float EMG_scale=1;
 int thresh(float);
@@ -64,9 +69,10 @@ QPainter *painter;
 QwtPlot* perc_pl;
 QPushButton *button_learn;
 QPushButton *PCA_btn;
+QPushButton *save_btn;
 
 int gest_ind;
-int resize_on;
+int data_appending_is;
 
 
 
@@ -78,6 +84,7 @@ vector<vector<float>> dataTest;
 vector<vector<float>> sum;
 vector<float> maxV;
 vector<deque<vector<float>>> data_l_inp;
+vector<deque<vector<float>>> raw_data_l_inp;
 vector<vector<float>> data_l_out;
 
 vector <vector<float>> dataEMG;
@@ -100,13 +107,6 @@ void convertFromVec(vector<deque<float>>& x,float* y, float scale);
 void MainWindow::buttonClicked(int j)
 {
 
-
-    //    for(int i=0;i<(gestures_N);i++)
-    //        data_l_out[gestures_N][i]=high1;
-
-
-
-    //    qDebug()<<j;
     switch(j)
     {
     case 0:
@@ -120,9 +120,11 @@ void MainWindow::buttonClicked(int j)
     case 8:
 
         gest_ind=j;
-        resize_on=1;
+        data_appending_is=1;
 
         data_l_inp[gest_ind].resize(0);
+        if(gest_ind<6)
+            raw_data_l_inp[gest_ind].resize(0);
 
         break;
     case 9:
@@ -150,7 +152,7 @@ void MainWindow::buttonClicked(int j)
         for( int k=0;k<70000;k++)//150000
         {
             static int ind0;
-            ind0=rand()%gestures_N;
+            ind0=rand()%(gestures_N-1);
             perc->learn1(data_l_inp[ind0][k%data_l_inp[ind0].size()], data_l_out[0],0.2);//excess-zero-learning
             for(int i=0;i<gestures_N;i++)
             {
@@ -239,7 +241,13 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    gest_file=new QFile("1khz-gestures-file");
+
     PCA_btn=new QPushButton("apply PCA");
+
+    save_btn=new QPushButton("no saving");
+
+    connect(save_btn,SIGNAL(pressed()),this,SLOT(saveGestures()));
 
     qDebug()<<hist1.N;
     perc_dim=hist1.N2;
@@ -336,6 +344,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(PCA_btn,SIGNAL(released()),this,SLOT(getCor()));
     GL->addWidget(PCA_btn, 2+3,1+ 0);
+    GL->addWidget(save_btn, 2+3,2+ 0);
     //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
@@ -372,6 +381,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     data_l_inp.resize(gestures_N);
+    raw_data_l_inp.resize(6);
 
     for(int i=0;i<gestures_N;i++)
         data_l_inp[i].resize(1);
@@ -384,7 +394,7 @@ MainWindow::MainWindow(QWidget *parent) :
         data_l_out[i].resize(fing_N);
 
     float med1=.3, med2=.45;
-    float high1=.7, high2=.9;
+    float high1=.7, high2=1;
 
     for(int i=0;i<gestures_N;i++)
         for(int j=0;j<fing_N;j++)
@@ -445,8 +455,8 @@ MainWindow::MainWindow(QWidget *parent) :
     int ii2=800;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
-    set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2, mV");
-    set_plot->setAxisTitle(QwtPlot::xBottom,"EMG1, mV");
+    set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2");
+    set_plot->setAxisTitle(QwtPlot::xBottom,"EMG1");
     //    set_plot->set
     set_plot->show();
 
@@ -461,14 +471,31 @@ MainWindow::MainWindow(QWidget *parent) :
     setCurve->setSymbol( symbol2 );
 }
 
-
+void MainWindow::saveGestures()
+{
+        saving_is=!saving_is;
+        if(saving_is)
+        {
+            save_btn->setText("saving");
+            gest_file->open(QIODevice::WriteOnly | QIODevice::Text);
+            out=new QTextStream(gest_file);
+            out->flush();
+//            out->setFlo
+        }
+        else
+        {
+            gest_file->close();
+            save_btn->setText("no saving");
+        }
+}
 
 void MainWindow::getEMG(vector<float> vv)
 {
+    static long global_cnt;
+    global_cnt++;
+
     vector<float> x;
-    x.push_back(vv[6]);
-    x.push_back(vv[7]);
-    x.push_back(vv[3]);
+
 
     //    int dim=x.size();
     int dim=8;
@@ -479,7 +506,22 @@ void MainWindow::getEMG(vector<float> vv)
 
     //    preproc(x);
 
-    getFeaturesMyo(x);//stupid name
+    getFeaturesMyo(vv);//stupid name
+
+    x.push_back(vv[6]);
+    x.push_back(vv[7]);
+    x.push_back(vv[3]);
+
+    if(data_appending_is)
+        if(saving_is)
+        {
+            *out<<global_cnt<<"     ";
+            for(int i=0;i<8;i++)
+            {
+                *out<<QString::number(vv[i],'e',2)<<"     ";
+            }
+            *out<<gest_ind<<"\n";
+        }
 
     static int cnt;
 
@@ -497,43 +539,20 @@ void MainWindow::getEMG(vector<float> vv)
     if(test_on)
         LTR.proect(x,ii3,cor2_le->text().toInt());
 
-    //zerro-filling
+    //    zerro-filling
     int thr=65;
-    //    if(test_on)
-    //        if((fabs(x[0])>thr)&&(fabs(x[1])>thr))
-    //        {
-    //            x[0]=x[1]=0;
-    //        }
-    //    getFeaturesKhor(x,featurePreOut, state);
 
-    //    if(state)
     int ii=cor1_le->text().toInt();
     int ii2=cor2_le->text().toInt();
-    //    int ii=0;
-    ////////////
-    //    static int rising[8],bufEMG[8],rising_buf[8];
-    //    if((x[ii]-bufEMG[ii])>0)
-    //        rising[ii]=1;
-    //    else
-    //        rising[ii]=0;
 
-    //    if((x[ii2]-bufEMG[ii2])>0)
-    //        rising[ii2]=1;
-    //    else
-    //        rising[ii2]=0;
-
-
-    //if((((rising_buf[ii]-rising[ii])>0)&&((rising_buf[ii2]-rising[ii2]))>0))
-    for (int i=0;i<3;i++)
+    for (int i=0;i<6;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
 
-        dataEMG[i][ind_c[i]]=x[i];
+        dataEMG[i][ind_c[i]]=vv[i];
 
-        float h=x[i];
-        if(write_on)
-            cout<<h<<"  ";
+//        float h=x[i];
         //        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
@@ -550,13 +569,16 @@ void MainWindow::getEMG(vector<float> vv)
     hist2.increment(x[0],x[2]);
     //    qDebug()<<hist1.a[3][3];
     //    difEMG[ind_c[ii]]=dataEMG[ii][ind_c[ii]]-dataEMG[ii][(ind_c[ii]-1)%dataEMG[0].size()];
-    if(write_on)
-        cout<<endl;
-
 
     static int gg=0;
-    if(resize_on)
+    if(data_appending_is)
     {
+        if(saving_is)
+        {
+            if(gest_ind<6)
+                raw_data_l_inp[gest_ind].push_back(vv);
+        }
+
         gg++;
         if(gg%10==0)
         {
@@ -630,7 +652,7 @@ void MainWindow::drawing()
 void MainWindow::buttonReleased(int x)
 {
     if((x>-1)&&(x<gestures_N))
-        resize_on=0;
+        data_appending_is=0;
     if(x==11)
         write_on=0;
 

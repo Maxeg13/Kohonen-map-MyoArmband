@@ -30,6 +30,7 @@ private:
 
     void paintEvent(QPaintEvent *e);
 public slots:
+    void saveGestures();
     void keyPressEvent(QKeyEvent *event);
     //   void clicked(int buttonId);
     void drawing();
