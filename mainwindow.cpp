@@ -70,10 +70,13 @@ QwtPlot* perc_pl;
 QPushButton *button_learn;
 QPushButton *PCA_btn;
 QPushButton *save_btn;
+QPushButton *to_stream_btn;
+
 
 int gest_ind;
-int data_appending_is;
-
+int stream_gest_ind;
+bool data_appending_is;
+bool stream_is;
 
 
 float* perc_inp;
@@ -243,11 +246,15 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     gest_file=new QFile("1khz-gestures-file");
 
+    to_stream_btn=new QPushButton("to stream");
+
     PCA_btn=new QPushButton("apply PCA");
 
     save_btn=new QPushButton("no saving");
 
     connect(save_btn,SIGNAL(pressed()),this,SLOT(saveGestures()));
+    connect(to_stream_btn,SIGNAL(pressed()),this,SLOT(toStream()));
+    connect(to_stream_btn,SIGNAL(released()),this,SLOT(notToStream()));
 
     qDebug()<<hist1.N;
     perc_dim=hist1.N2;
@@ -345,6 +352,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(PCA_btn,SIGNAL(released()),this,SLOT(getCor()));
     GL->addWidget(PCA_btn, 2+3,1+ 0);
     GL->addWidget(save_btn, 2+3,2+ 0);
+    GL->addWidget(to_stream_btn,2+3,3+0);
     //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
@@ -452,7 +460,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QwtPlot* set_plot;
     set_plot=new QwtPlot();
     set_plot->setMinimumSize(QSize(600,600));
-    int ii2=800;
+    int ii2=400;
     set_plot->setAxisScale(QwtPlot::xBottom,-ii2,ii2);
     set_plot->setAxisScale(QwtPlot::yLeft,-ii2,ii2);
     set_plot->setAxisTitle(QwtPlot::yLeft,"EMG2");
@@ -471,11 +479,25 @@ MainWindow::MainWindow(QWidget *parent) :
     setCurve->setSymbol( symbol2 );
 }
 
+void MainWindow::toStream()
+{
+
+    stream_is=1;
+}
+
+void MainWindow::notToStream()
+{
+    stream_is=0;
+    stream_gest_ind++;
+}
+
+
 void MainWindow::saveGestures()
 {
         saving_is=!saving_is;
         if(saving_is)
         {
+            stream_gest_ind=1;
             save_btn->setText("saving");
             gest_file->open(QIODevice::WriteOnly | QIODevice::Text);
             out=new QTextStream(gest_file);
@@ -506,21 +528,26 @@ void MainWindow::getEMG(vector<float> vv)
 
     //    preproc(x);
 
-    getFeaturesMyo(vv);//stupid name
 
     x.push_back(vv[6]);
     x.push_back(vv[7]);
     x.push_back(vv[3]);
 
-    if(data_appending_is)
+    getFeaturesMyo(x);//stupid name
+
+
+    if(stream_is)
         if(saving_is)
         {
             *out<<global_cnt<<"     ";
-            for(int i=0;i<8;i++)
+            for(int i=0;i<3;i++)
             {
-                *out<<QString::number(vv[i],'e',2)<<"     ";
+                *out<<QString::number(x[i],'e',2)<<"     ";
             }
-            *out<<gest_ind<<"\n";
+            for(int i=3;i<8;i++)
+                *out<<QString::number(0,'e',2)<<"     ";
+
+            *out<<stream_gest_ind<<"\n";
         }
 
     static int cnt;
@@ -545,12 +572,12 @@ void MainWindow::getEMG(vector<float> vv)
     int ii=cor1_le->text().toInt();
     int ii2=cor2_le->text().toInt();
 
-    for (int i=0;i<6;i++)
+    for (int i=0;i<3;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
 
-        dataEMG[i][ind_c[i]]=vv[i];
+        dataEMG[i][ind_c[i]]=x[i];
 
 //        float h=x[i];
         //        featureEMG[i][0][ind_c[i]]=featurePreOut[i];

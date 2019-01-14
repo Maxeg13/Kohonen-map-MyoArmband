@@ -34,6 +34,8 @@ public slots:
     void keyPressEvent(QKeyEvent *event);
     //   void clicked(int buttonId);
     void drawing();
+    void toStream();
+    void notToStream();
     void getFeature(vector<float>);
     void reconnect(QString);
     void getEMG(vector<float>);
