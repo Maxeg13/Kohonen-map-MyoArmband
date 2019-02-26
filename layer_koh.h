@@ -26,6 +26,7 @@ public:
 class layer_koh
 {
 public:
+    int middle_ind;
     int is, ks;
     int inp_s;
     std::vector<float> inp;

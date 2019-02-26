@@ -1,6 +1,6 @@
 #include "layer_koh.h"
 #include "headers.h"
-#define TOROID
+//#define TOROID
 //std::vector<float> nullVect_m;
 // EMG классификация позы при стрельбе из спортивного лука
 float min(float x, float y)
@@ -23,19 +23,29 @@ sector::sector(const QVector<QPoint> &QPT):QPolygon(QPT)
 
 void sector::rst()
 {
-    float range=500;
-    float accum=100000000000;
-    while(accum>(range*range/4))
-    {
-        accum=0;
-        for(int i=0;i<size_in;i++)
-        {
-            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+    //    float range=500;
+    //    float accum=100000000000;
+    //    while(accum>(range*range/4))
+    //    {
+    //        accum=0;
+    //        for(int i=0;i<size_in;i++)
+    //        {
+    //            //        w[i]=((rand()%10)/10.-0.5)*1;//2000
 
-            w[i]=((rand()%1000)/1000.)*range-range/2;
-            accum+=w[i]*w[i];
-        }
+    //            w[i]=((rand()%1000)/1000.)*range-range/2;
+    //            accum+=w[i]*w[i];
+    //        }
+    //    }
+
+    float range=500;
+    for(int i=0;i<size_in;i++)
+    {
+        //        w[i]=((rand()%10)/10.-0.5)*1;//2000
+        w[i]=(((rand()%1000)/1000.)*range-range/2+((rand()%1000)/1000.)*range-range/2+((rand()%1000)/1000.)*range-range/2+
+              ((rand()%1000)/1000.)*range-range/2+((rand()%1000)/1000.)*range-range/2)/5.;
+
     }
+
 }
 
 sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
@@ -43,7 +53,7 @@ sector::sector(std::vector<float>& inp,const QVector<QPoint> &QPT,QPoint c):
 {
     size_in=inp.size();
     w=new float[size_in];
-    rst();
+//    rst();
 }
 
 
@@ -90,7 +100,20 @@ void layer_koh::rst()
 {
     for (int i=0;i<N;i++)
         SR[i].rst();
-    t=0;
+
+
+    for (int i=0;i<N;i++)
+    {
+        QPointF sp1=SR[middle_ind].centre-SR[i].centre;
+        for(int j=0;j<inp_s;j++)
+        {
+            float sc2=QPointF::dotProduct(sp1,sp1);
+
+            SR[i].w[j]*=exp(-sc2/1000000.)*3;
+//            qDebug()<<(-sc2*sc2/1000000.);
+        }
+    }
+     t=0;
 }
 
 
@@ -135,6 +158,10 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     QPT=QPT_origin;
 
     SR.resize(N);
+
+    /////////// weak snippet
+    middle_ind=N/2+3;
+
     for(int k1=0;k1<Ny;k1++)
     {
         for(int i1=0;i1<Nx;i1++)
@@ -177,11 +204,14 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     for(int i=0;i<inp_m.size();i++)
         for(int j=0;j<N;j++)
             w[i][j]=&SR[j].w[i];
+
+    qDebug()<<middle_ind;
+    rst();
 }
 
 void layer_koh::reform()
 {
-//    qDebug()<<is;
+    //    qDebug()<<is;
     int ind_h;
     for(int k1=0;k1<Ny;k1++)
     {
@@ -248,7 +278,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     for(int i=0;i<N;i++)
     {
         h1=dist2[i][ind];
-        float exp_val=exp(-0.0005*t);
+        float exp_val=exp(-0.0008*t);
         //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
         float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000

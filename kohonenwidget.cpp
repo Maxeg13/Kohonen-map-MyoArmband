@@ -45,6 +45,7 @@ void KohonenWidget::rst()
 {    
     LK->rst();
 
+
 }
 
 void KohonenWidget::getCor()
@@ -143,7 +144,7 @@ void KohonenWidget::mousePressEvent(QMouseEvent *e)
             //            qDebug()<<pd;
         }
     }
-    qDebug()<<ind;
+    qDebug()<<ind/*LK->SR[ind].centre*/;
     for(int i=0;i<LK->inp_s;i++)
         LK->SR[ind].w[i]=featureInp[i];
 }
