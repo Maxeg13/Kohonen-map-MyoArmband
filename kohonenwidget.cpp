@@ -3,7 +3,7 @@
 #include"layer_koh.h"
 #include "drawing.h"
 #include<QMouseEvent>
-float rad=3.;//3
+float rad=4.;//3
 bool rst_k=0;
 int rst_cnt=0;
 myCurve* set_curve;
@@ -181,7 +181,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     saving_on=0;
     dimension=inp.size();
     L_E=new QLineEdit("COM5");
-    L_E_rad=new QLineEdit("rad: 3");
+    L_E_rad=new QLineEdit("rad: "+QString::number(rad));
     L_E_ind1=new QLineEdit("0");
     L_E_ind2=new QLineEdit("1");
     L_E_shift1=new QLineEdit("0");
@@ -199,7 +199,7 @@ KohonenWidget::KohonenWidget( vector<float> inp,QWidget *parent):QWidget(parent)
     featureInp.resize(dimension,0);
     data_learn.push_back(featureInp);
 
-    LK=new layer_koh(featureInp,24);
+    LK=new layer_koh(featureInp,32);
     //    LK->learnW(data_learn[0]);
 
     timer = new QTimer(this);

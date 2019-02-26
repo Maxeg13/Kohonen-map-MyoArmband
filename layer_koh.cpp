@@ -160,7 +160,7 @@ layer_koh::layer_koh(std::vector<float>& inp_m,int N_m)
     SR.resize(N);
 
     /////////// weak snippet
-    middle_ind=N/2+3;
+    middle_ind=Ny/2*Nx+Nx/2;
 
     for(int k1=0;k1<Ny;k1++)
     {
@@ -270,7 +270,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     t++;
     int ind=0;
     float h1;
-    speed_k=0.0016;
+    speed_k=0.0013;
 
 
     ind=indOfMin(inp);
@@ -278,7 +278,7 @@ void layer_koh::learnW(const std::vector<float>& inp,float rad)
     for(int i=0;i<N;i++)
     {
         h1=dist2[i][ind];
-        float exp_val=exp(-0.0008*t);
+        float exp_val=exp(-0.00056*t);
         //        float h_func=exp(-h1/(6400000*rad*exp_val*exp_val+0.00001));//.0000001
         float h_func=exp(-h1/(3000000*rad*exp_val+0.00001));//.0000001
         //////////////////////////////2400000

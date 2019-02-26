@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     MainWindow SignalMW;
     SignalMW.resize(QSize(600,300));
     QMainWindow KohonenMW;
-    KohonenMW.resize(QSize(590,570));
+    KohonenMW.resize(QSize(780,780));
     qDebug()<< SignalMW.featureOut;
     KohonenWidget KW(SignalMW.featureOut);
 
