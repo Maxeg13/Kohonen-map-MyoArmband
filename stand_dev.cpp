@@ -163,8 +163,68 @@ public:
 };
 
 
+//Band stop butterworth filter order=2 alpha1=0.04 alpha2=0.06
+class  rejectFilter50
+{
+    public:
+        rejectFilter50()
+        {
+            for(int i=0; i <= 4; i++)
+                v[i]=0.0;
+        }
+    private:
+        float v[5];
+    public:
+        float operator()(float x) //class II
+        {
+            v[0] = v[1];
+            v[1] = v[2];
+            v[2] = v[3];
+            v[3] = v[4];
+            v[4] = (9.149691441130363145e-1 * x)
+                 + (-0.83718165125602272969 * v[0])
+                 + (3.33247589527322407577 * v[1])
+                 + (-5.14618775407228135066 * v[2])
+                 + (3.64278712669532955815 * v[3]);
+            return
+                 (v[0] + v[4])
+                - 3.811748 * (v[1] + v[3])
+                +5.632355 * v[2];
+        }
+};
 
 
+//Band stop butterworth filter order=2 alpha1=0.09 alpha2=0.11
+class  rejectFilter100
+{
+    public:
+        rejectFilter100()
+        {
+            for(int i=0; i <= 4; i++)
+                v[i]=0.0;
+        }
+    private:
+        float v[5];
+    public:
+        float operator()(float x) //class II
+        {
+            v[0] = v[1];
+            v[1] = v[2];
+            v[2] = v[3];
+            v[3] = v[4];
+            v[4] = (9.149691441130810565e-1 * x)
+                 + (-0.83718165125602261867 * v[0])
+                 + (2.83477331412785549247 * v[1])
+                 + (-4.22759692844426915315 * v[2])
+                 + (3.09873981397778708313 * v[3]);
+            return
+                 1.000000 * v[0]
+                +v[4]
+                - 3.242466 * v[1]
+                - 3.242466 * v[3]
+                +4.628397 * v[2];
+        }
+};
 
 class standartDev
 {
@@ -521,6 +581,8 @@ float order(vector<float>& x, vector<float>& y)
     }
 }
 
+rejectFilter50 RF1[8];
+rejectFilter100 RF2[8];
 standartDevMyo STDM[8];
 lowPassFrMyo LPFM[16], LPFM2[8];
 buffer BR[8];
@@ -589,14 +651,14 @@ void getFeaturesKhor(vector<float>& x, vector<float>& y, int& state)
 void getFeaturesMyo(vector<float>& y)
 {
     for(int i=0;i<y.size();i++)
-        y[i]=FBH[i](y[i]);
+        y[i]=/*RF2[i]*/(/*RF1[i]*/(FBH[i](y[i])));
 }
 
 
 
 void getFeatures_gearbox1(int8_t x, vector<float>& y)
 {
-
+//    qDebug()<<1;
     //    y[0]=FE1[0](x)/20;
     //    y[1]=LPF[0](STD[0](x));
     //    y[2]=LPF[1](WA[0](x));

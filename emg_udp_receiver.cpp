@@ -124,9 +124,7 @@ void EMG_UDP_Receiver::processPendingDatagrams()
                 ptr++;
             }
         }
-
     }
-
 }
 
 int getInt(vector<uint8_t>& xi, int k)

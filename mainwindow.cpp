@@ -433,7 +433,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         d_plot[i_pl] = new QwtPlot(this);
         drawingInit(d_plot[i_pl],QString("myo chan ")+QString::number(i_pl+1));
-        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-2000,2000);
+        d_plot[i_pl]->setAxisScale(QwtPlot::yLeft,-500,500);
         d_plot[i_pl]->setAxisScale(QwtPlot::xBottom,0,bufShowSize);
         GL->addWidget(d_plot[i_pl],(i_pl)/4,1+(i_pl)%4);
 
@@ -494,21 +494,21 @@ void MainWindow::notToStream()
 
 void MainWindow::saveGestures()
 {
-        saving_is=!saving_is;
-        if(saving_is)
-        {
-            stream_gest_ind=1;
-            save_btn->setText("saving");
-            gest_file->open(QIODevice::WriteOnly | QIODevice::Text);
-            out=new QTextStream(gest_file);
-            out->flush();
-//            out->setFlo
-        }
-        else
-        {
-            gest_file->close();
-            save_btn->setText("no saving");
-        }
+    saving_is=!saving_is;
+    if(saving_is)
+    {
+        stream_gest_ind=1;
+        save_btn->setText("saving");
+        gest_file->open(QIODevice::WriteOnly | QIODevice::Text);
+        out=new QTextStream(gest_file);
+        out->flush();
+        //            out->setFlo
+    }
+    else
+    {
+        gest_file->close();
+        save_btn->setText("no saving");
+    }
 }
 
 void MainWindow::getEMG(vector<float> vv)
@@ -527,11 +527,26 @@ void MainWindow::getEMG(vector<float> vv)
     int state=1;
 
     //    preproc(x);
+    for(int i=0;i<8;i++)
+        x.push_back(vv[i]);
+
+    //        x.push_back(vv[0]);
+    //        x.push_back(vv[1]);
+    //        x.push_back(vv[2]);
+
+    //        x.push_back(vv[5]);//4
+    //        x.push_back(vv[4]);//5
+    //        x.push_back(vv[1]);
+
+    //    x.push_back(vv[6]);
+    //    x.push_back(vv[7]);
+    //    x.push_back(vv[3]);
 
 
-    x.push_back(vv[6]);
-    x.push_back(vv[7]);
-    x.push_back(vv[3]);
+    //        x.push_back(vv[0]);
+    //        x.push_back(vv[1]);
+    //        x.push_back(vv[2]);
+    //        x.push_back(vv[3]);
 
     getFeaturesMyo(x);//stupid name
 
@@ -572,14 +587,14 @@ void MainWindow::getEMG(vector<float> vv)
     int ii=cor1_le->text().toInt();
     int ii2=cor2_le->text().toInt();
 
-    for (int i=0;i<3;i++)
+    for (int i=0;i<dim;i++)
     {
         ind_c[i]=(ind_c[i]+1)%dataEMG[i].size();
         ind_p=ind_c[0];
 
         dataEMG[i][ind_c[i]]=x[i];
 
-//        float h=x[i];
+        //        float h=x[i];
         //        featureEMG[i][0][ind_c[i]]=featurePreOut[i];
         //        featureEMG[i][1][ind_c[i]]=featurePreOut[8+i];
     }
