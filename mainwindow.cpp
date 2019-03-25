@@ -13,6 +13,7 @@
 #include "QSlider"
 #include "QLineEdit"
 #include <QFile>
+#include <QLabel>
 //HELLO
 //SERIAL may be defined in mainwindow.h
 
@@ -36,6 +37,8 @@ Serial hSerial;
 QLineEdit *LE, *cor1_le, *cor2_le, *LE_shift;
 QSlider *slider_x;
 QSlider *slider_y;
+QLabel *targs_state_label;
+QLineEdit* file_name_le;
 
 QTextStream* out;
 QFile* gest_file;
@@ -239,11 +242,23 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         LTR=linearTr(e1,e2,e3,e4);
         LTR.inv();
     }
+
+
+
+    if(('0'<=event->text()[0])&&('9'>=event->text()[0]))
+    {
+        stream_gest_ind=(event->text()).toInt();//
+        targs_state_label->setText(QString("targ: ")+event->text());
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    file_name_le=new QLineEdit("Enter file name...");
+
+    targs_state_label=new QLabel("targ: 0");
+
     gest_file=new QFile("1khz-gestures-file");
 
     to_stream_btn=new QPushButton("to stream");
@@ -352,7 +367,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(PCA_btn,SIGNAL(released()),this,SLOT(getCor()));
     GL->addWidget(PCA_btn, 2+3,1+ 0);
     GL->addWidget(save_btn, 2+3,2+ 0);
-    GL->addWidget(to_stream_btn,2+3,3+0);
+    GL->addWidget(file_name_le,2+3,3+0);
+     GL->addWidget(targs_state_label,2+3,4+0);
     //    connect(LE,SIGNAL(editingFinished()),this,SLOT(serialChoose()));
 
     int frame_width=4;
@@ -494,12 +510,22 @@ void MainWindow::notToStream()
 
 void MainWindow::saveGestures()
 {
+
     saving_is=!saving_is;
+
+    //bad_idea
+    stream_is=!stream_is;
+    stream_gest_ind=0;
+
+
     if(saving_is)
     {
-        stream_gest_ind=1;
+        //bad_comment
+        //        stream_gest_ind=1;
         save_btn->setText("saving");
+        gest_file->setFileName(file_name_le->text());
         gest_file->open(QIODevice::WriteOnly | QIODevice::Text);
+
         out=new QTextStream(gest_file);
         out->flush();
         //            out->setFlo
