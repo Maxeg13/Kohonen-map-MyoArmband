@@ -523,7 +523,7 @@ void MainWindow::saveGestures()
         //bad_comment
         //        stream_gest_ind=1;
         save_btn->setText("saving");
-        gest_file->setFileName(file_name_le->text());
+        gest_file->setFileName(QString("C:/Users/chibi/Desktop/ech_monitor/data/ExoFeet/")+file_name_le->text());
         gest_file->open(QIODevice::WriteOnly | QIODevice::Text);
 
         out=new QTextStream(gest_file);
@@ -581,12 +581,12 @@ void MainWindow::getEMG(vector<float> vv)
         if(saving_is)
         {
             *out<<global_cnt<<"     ";
-            for(int i=0;i<3;i++)
+            for(int i=0;i<8;i++)
             {
                 *out<<QString::number(x[i],'e',2)<<"     ";
             }
-            for(int i=3;i<8;i++)
-                *out<<QString::number(0,'e',2)<<"     ";
+//            for(int i=3;i<8;i++)
+//                *out<<QString::number(0,'e',2)<<"     ";
 
             *out<<stream_gest_ind<<"\n";
         }
